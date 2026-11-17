@@ -274,7 +274,7 @@ main{padding-bottom:96px}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </head>
 <body>
 <header><div class="hd"><div class="brand"><div class="hlogo"><img id="hlogo" alt=""></div><div><div class="bn">SantriTrack</div><div class="bs">PPP. AL-AS’ADIYAH BLEGA</div></div></div><div class="hr"><div class="ub" id="ubw" style="display:none"><span class="ui" id="wi">W</span><span id="who"></span></div><button id="chatbtn" class="bellb" style="display:none" onclick="U.tab='chat';draw()" title="Obrolan"><i class="fa-solid fa-comments"></i><span id="cdot" style="display:none"></span></button><button id="bell" class="bellb" style="display:none" onclick="U.tab='notif';draw()" title="Notifikasi"><i class="fa-solid fa-bell"></i><span id="bdot" style="display:none"></span></button><button id="srch" class="bellb" style="display:none" onclick="toggleMenuSearch()" title="Cari menu"><i class="fa-solid fa-magnifying-glass"></i></button><button id="lo" class="lob" style="display:none"></button></div></div></header>
@@ -1667,7 +1667,21 @@ async function hapusLogoKartu(){uiConfirm('Pakai logo aplikasi untuk kartu?',asy
 
 /* ---- Scan QR dengan kamera (Kasir) ---- */
 let SCN=null;
-async function scanQR(){if(!window.jsQR)return msgBox('Pemindai QR belum termuat. Periksa koneksi internet.');
+function loadJsQR(){
+  if(window.jsQR)return Promise.resolve(true);
+  if(window._jqp)return window._jqp;
+  const srcs=['https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js','https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js','https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'];
+  window._jqp=(async()=>{
+    for(const u of srcs){
+      const ok=await new Promise(r=>{const sc=document.createElement('script');sc.src=u;sc.onload=()=>r(!!window.jsQR);sc.onerror=()=>r(false);document.head.appendChild(sc)});
+      if(ok)return true;
+    }
+    window._jqp=null;return false;
+  })();
+  return window._jqp;
+}
+async function scanQR(){if(!window.jsQR){toast('Memuat pemindai QR…');await loadJsQR()}
+if(!window.jsQR)return msgBox('Pemindai QR belum termuat. Periksa koneksi internet, lalu coba lagi.');
 const ov=document.createElement('div');ov.id='scn';ov.style.cssText='position:fixed;inset:0;z-index:80;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff';ov.innerHTML='<video id="scv" playsinline muted style="width:100%;max-height:75%;object-fit:cover"></video><p style="padding:12px;text-align:center">Arahkan kamera ke QR di belakang kartu santri</p><button class="sec" onclick="stopQR()">Batal</button>';document.body.appendChild(ov);
 try{SCN={st:await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}),on:true};const v=$('scv');v.srcObject=SCN.st;await v.play();const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
 const tick=()=>{if(!SCN||!SCN.on)return;if(v.videoWidth){c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);const im=x.getImageData(0,0,c.width,c.height),r=jsQR(im.data,im.width,im.height);if(r&&/^PPPAS-\d+$/i.test(r.data.trim())){const kd=r.data.trim().toUpperCase();stopQR();$('kc').value=kd;toast('Kode terbaca: '+kd);return}}requestAnimationFrame(tick)};tick()}catch(e){stopQR();msgBox('Kamera tidak bisa dibuka: '+e.message)}}
