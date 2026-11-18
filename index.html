@@ -364,7 +364,7 @@ const JN={jamaah:'Telat jamaah',ngaji:'Telat ngaji/pelajaran',hp:'Menelepon/HP',
 const KG=[['Subuh','jamaah'],['Dzuhur','jamaah'],['Ashar','jamaah'],['Maghrib','jamaah'],['Isya’','jamaah'],['Ngaji Qur’an','ngaji'],['Ngaji Kitab','ngaji']];
 const TW=[['anak','Anak saya'],['ringkasan','Ringkasan'],['notif','Notifikasi'],['chat','Obrolan'],['info','Info & agenda'],['media','Profil & jadwal'],['kartu','Kartu santri'],['saku','Coin uang saku'],['kesehatan','Kesehatan'],['tabungan','Tabungan'],['struktur','Struktur organisasi'],['tagihan','Tagihan'],['izin','Izin pulang'],['akun','Akun']];
 const TS=[['absensi','Absensi'],['kasir','Kasir QR'],['izin','Izin'],['sanksi','Sanksi'],['wa','Antrian WA'],['info','Info & agenda'],['media','Profil & jadwal'],['daftarsantri','Data santri'],['kartu','Kartu santri'],['kesehatan','Kesehatan'],['tabungan','Tabungan'],['struktur','Struktur organisasi'],['chat','Obrolan'],['akun','Akun']];
-const TA=[...TS.slice(0,-1),['sisacoin','Sisa coin'],['tagihanadm','Tagihan'],['rekap','Rekap'],['top','Top pelanggar'],['pendaftar','Pendaftar baru'],['kode','Kode wali'],['konten','Kelola konten'],['kartuedit','Edit kartu'],['konfirmasi','Konfirmasi coin'],['strukturedit','Edit struktur'],['riwayatlengkap','Riwayat lengkap'],['akunwali','Akun wali'],['penggunaaktif','Pengguna aktif'],['pengaturan','Pengaturan'],TS[TS.length-1]];
+const TA=[...TS.slice(0,-1),['sisacoin','Sisa coin'],['tagihanadm','Tagihan'],['rekap','Rekap'],['top','Top pelanggar'],['pendaftar','Pendaftar baru'],['kode','Kode wali'],['konten','Kelola konten'],['kartuedit','Edit kartu'],['konfirmasi','Konfirmasi coin'],['strukturedit','Edit struktur'],['riwayatlengkap','Riwayat lengkap'],['keamanan','Keamanan'],['akunwali','Akun wali'],['penggunaaktif','Pengguna aktif'],['pengaturan','Pengaturan'],TS[TS.length-1]];
 let U={me:null,tab:'',sid:null,santri:[],allSantri:[],online:{}};
 
 const LOGO_DEF='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#047857" stroke="#facc15" stroke-width="4"/><path d="M50 20c-16 4-24 24-14 40-9-9-7-33 14-40z" fill="#facc15"/><path d="M50 20c16 4 24 24 14 40 9-9 7-33-14-40z" fill="#facc15"/><rect x="45" y="30" width="10" height="32" rx="2" fill="#fff"/><text x="50" y="80" font-size="11" font-weight="700" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif">AL-AS’ADIYAH</text></svg>');
@@ -408,10 +408,34 @@ if(isAl){
     const pwAl=($('pw')&&$('pw').value)||'';
     if(!nis){b.disabled=false;return msgBox('Masukkan NIS Alumni.');}
     if(!pwAl||pwAl.length<6){b.disabled=false;return msgBox('Masukkan kata sandi alumni (minimal 6 karakter).');}
-    const{data,error}=await SB.rpc('cek_alumni_nis',{p_nis:nis});
-    if(error)throw error;
-    const al=(data&&data[0])||null;
-    if(!al){b.disabled=false;return msgBox('NIS Alumni tidak ditemukan atau bukan alumni.');}
+    const fnMissing=e=>/PGRST202|PGRST204|42883|could not find the function|schema cache/i.test(((e&&e.code)||'')+' '+((e&&e.message)||''));
+    // Verifikasi sandi alumni: utamakan server (hash + kunci percobaan + tiket); mode lama dipakai bila SQL belum dipasang
+    let srv=null;
+    try{
+      const r=await SB.rpc('alumni_masuk',{p_nis:String(nis),p_sandi:pwAl});
+      if(r.error){if(!fnMissing(r.error))throw r.error}else srv=r.data;
+    }catch(e){if(!fnMissing(e)){b.disabled=false;return msgBox(e.message||'Gagal verifikasi sandi.')}}
+    let al=(srv&&srv.alumni)||null;
+    if(srv){
+      if(srv.status==='terkunci'){b.disabled=false;return msgBox('Terlalu banyak percobaan salah. Coba lagi dalam '+Math.max(1,Math.ceil((srv.sisa_detik||0)/60))+' menit.')}
+      if(srv.status==='salah'){b.disabled=false;return msgBox(srv.terkunci?'Akun dikunci 15 menit karena terlalu banyak percobaan salah.':'NIS atau kata sandi alumni salah.'+((srv.sisa!=null&&srv.sisa<5)?' Sisa percobaan: '+srv.sisa+'.':''))}
+      if(srv.status==='belum_ada'){
+        const r2=await SB.rpc('alumni_daftar',{p_nis:String(nis),p_sandi:pwAl});
+        if(r2.error||!r2.data||r2.data.status!=='ok'){b.disabled=false;return msgBox((r2.error&&r2.error.message)||'Gagal membuat sandi alumni.')}
+        toast('Sandi alumni dibuat. Selamat datang!');
+        srv.tiket=r2.data.tiket;al=r2.data.alumni||al;
+      }else if(srv.status!=='ok'){b.disabled=false;return msgBox('NIS atau kata sandi alumni salah.')}
+    }
+    if(!al){
+      const{data,error}=await SB.rpc('cek_alumni_nis',{p_nis:nis});
+      if(error)throw error;
+      al=(data&&data[0])||null;
+      if(!al){b.disabled=false;return msgBox('NIS Alumni tidak ditemukan atau bukan alumni.');}
+    }
+    if(srv){
+      if(srv.tiket)al.tiket=srv.tiket;
+      try{localStorage.removeItem('st_al_pw_'+String(nis))}catch(e){}
+    }else{
     // Verifikasi / set sandi alumni (konten + localStorage)
     const normPw=v=>{
       if(v==null||v==='')return '';
@@ -436,6 +460,7 @@ if(isAl){
       try{localStorage.setItem('st_al_pw_'+String(nis),pwAl)}catch(e){}
       try{await SB.from('konten').upsert({kunci:'alumni_sandi_'+String(nis),nilai:pwAl,diubah:new Date().toISOString()})}catch(e){}
     }
+    }
     sessionStorage.setItem('st_alumni',JSON.stringify(al));
     sessionStorage.setItem('st_sesi','1');
     U={me:{role:'alumni',nama:al.nama,id:'alumni-'+al.id},tab:'home',sid:null,santri:[],allSantri:[],alumni:al,online:{}};
@@ -446,11 +471,20 @@ if(isAl){
 localStorage.setItem('st_ingat',$('ingat').checked?'1':'0');sessionStorage.setItem('st_sesi','1');
 sessionStorage.removeItem('st_alumni');
 const pwVal=$('pw').value;
+const emKey='email:'+String(idEmail($('em').value)).toLowerCase();
+try{const lk=await SB.rpc('login_cek',{p_kunci:emKey});if(!lk.error&&lk.data&&lk.data.terkunci){b.disabled=false;return msgBox('Terlalu banyak percobaan salah. Coba lagi dalam '+Math.max(1,Math.ceil((lk.data.sisa_detik||0)/60))+' menit.')}}catch(e){}
 const{data:lgData,error}=await SB.auth.signInWithPassword({email:idEmail($('em').value),password:pwVal});
-if(error){b.disabled=false;return msgBox(/invalid login/i.test(error.message)?'Nomor/email atau kata sandi salah.':'Gagal masuk: '+error.message)}
+if(error){
+  let tambah='';
+  if(/invalid login/i.test(error.message)){try{const g=await SB.rpc('login_gagal_catat',{p_kunci:emKey});if(!g.error&&g.data)tambah=g.data.terkunci?' Akun dikunci 15 menit karena terlalu banyak percobaan salah.':' Sisa percobaan: '+g.data.sisa+'.'}catch(e){}}
+  b.disabled=false;return msgBox(/invalid login/i.test(error.message)?'Nomor/email atau kata sandi salah.'+tambah:'Gagal masuk: '+error.message)
+}
+try{await SB.rpc('login_ok',{p_kunci:emKey})}catch(e){}
+if(!(await mfaWajibJikaAda())){await SB.auth.signOut();b.disabled=false;return}
 if($('tw')&&$('tw').classList.contains('on')&&lgData?.user?.id)await simpanSandiWali(lgData.user.id,pwVal);
 boot()}
 async function logout(){
+  try{const tk=U.alumni&&U.alumni.tiket;if(tk)await SB.rpc('alumni_keluar',{p_tiket:tk})}catch(e){}
   try{if(U._presCh)SB.removeChannel(U._presCh)}catch(e){}
   try{if(U._notifCh)SB.removeChannel(U._notifCh)}catch(e){}
   SB.removeAllChannels();
@@ -470,10 +504,11 @@ async function bootAlumni(){
   }catch(e){U.allSantri=[];U.santri=[]}
   if(!U.santri.length){
     try{
-      const{data,error}=await SB.rpc('alumni_daftar_santri_aktif',{p_nis:String((U.alumni&&U.alumni.nis)||'')});
+      const{data,error}=await alRpc('alumni_daftar_santri_aktif',{},{p_nis:String((U.alumni&&U.alumni.nis)||'')});
       if(!error&&Array.isArray(data))U.santri=data;
     }catch(e){}
   }
+  if(!U||!U.me||U._alHabis)return;
   startRealtimePresence();
   draw();startJam();
 }
@@ -499,6 +534,7 @@ async function boot(){
   }
   if(localStorage.getItem('st_ingat')==='0'&&!sessionStorage.getItem('st_sesi'))await SB.auth.signOut();
   const{data:{session}}=await SB.auth.getSession();if(!session)return loginView();
+  if(!(await mfaWajibJikaAda())){await SB.auth.signOut();return loginView()}
   const{data:me}=await SB.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
   if(!me){await SB.auth.signOut();loginView();return msgBox('Profil akun tidak ditemukan.')}
   me.email=session.user.email||me.email||'';
@@ -579,7 +615,7 @@ async function hapusProfilFoto(){
   });
 }
 
-async function draw(){document.body.classList.remove('lgmode');
+async function draw(){if(!U||!U.me)return;document.body.classList.remove('lgmode');
 const isAl=U.me.role==='alumni';
 const st=U.me.role!='wali'&&!isAl;
 const TAL=[['home','Beranda'],['riwayatsantri','Riwayat santri'],['direktorialumni','Direktori Alumni'],['chat','Obrolan'],['media','Profil & jadwal'],['struktur','Struktur'],['info','Info & agenda'],['akun','Akun']];
@@ -615,7 +651,7 @@ const BN=isAl
   :[['home','Beranda','fa-solid fa-house'],['info','Info','fa-solid fa-bullhorn'],U.me.role==='admin'?['chat','Obrolan','fa-solid fa-comments']:(st?['wa','Antrian WA','fa-brands fa-whatsapp']:['notif','Notifikasi','fa-solid fa-bell']),['akun','Akun','fa-solid fa-circle-user']];
 $('bn').innerHTML=BN.map(b=>`<button class="${U.tab==b[0]?'on':''}" onclick="U.tab='${b[0]}';draw()"><i class="${b[2]}"></i>${b[1]}${b[0]=='notif'&&U.unread?`<b class="mb" style="top:0;right:4px">${U.unread}</b>`:''}</button>`).join('');
 $('v').innerHTML=pg+sel+'<p class="mu">Memuat…</p>';
-try{$('v').innerHTML=pg+sel+await R[U.tab]()}catch(e){$('v').innerHTML=pg+sel+`<div class="card">Gagal memuat: ${esc(e.message)}</div>`}
+try{const _h=await R[U.tab]();if(!U||!U.me)return;$('v').innerHTML=pg+sel+_h}catch(e){if(!U||!U.me)return;kmCatatError('Halaman '+U.tab+': '+(e&&e.message),U.tab);$('v').innerHTML=pg+sel+`<div class="card">Gagal memuat: ${esc(e.message)}</div>`}
 document.querySelectorAll('.qrbox').forEach(e=>{if(window.QRCode){e.innerHTML='';new QRCode(e,{text:e.dataset.c,width:256,height:256})}});const q=$('qr');if(q&&window.QRCode){q.innerHTML='';new QRCode(q,{text:'PPPAS-'+U.sid,width:150,height:150})}
 if(U.tab==='chat'){const cm=$('chat_msgs');if(cm)cm.scrollTop=cm.scrollHeight}
 if(U.pqShow&&U.pq)filterPageContent(U.pq);const pgi=$('pg_q');if(pgi&&U.pqShow){pgi.focus();try{pgi.setSelectionRange(pgi.value.length,pgi.value.length)}catch(e){}}
@@ -645,7 +681,7 @@ R.riwayatsantri=async()=>{
   const sObj=aktif.find(x=>x.id==sid)||{};
   let a,b,c,iz,ks,viaRpc=false;
   try{
-    const r=await SB.rpc('alumni_riwayat_santri',{p_nis:String((U.alumni&&U.alumni.nis)||''),p_santri:sid});
+    const r=await alRpc('alumni_riwayat_santri',{p_santri:sid},{p_nis:String((U.alumni&&U.alumni.nis)||''),p_santri:sid});
     if(!r.error&&r.data&&typeof r.data==='object'){
       const d=r.data;a=d.rekap||[];b=d.pelanggaran||[];c=d.sanksi||[];iz=d.izin||[];ks=d.kesehatan||[];viaRpc=true;
     }
@@ -951,6 +987,311 @@ const q=await SB.rpc('klaim_santri',{p_kode:k,p_nama:n,p_hp:hpNorm(h),p_hubungan
 if(q.error){msgBox(q.error.message);return boot()}
 if(!q.data){msgBox('Kode tidak valid. Periksa kembali kode dari pondok.');return boot()}
 toast('Berhasil. Ananda '+q.data+' terhubung ke akun Anda.');boot()}
+/* ===== Menu Keamanan (admin): uji keamanan, status proteksi, kunci login, reset sandi alumni, log aktivitas ===== */
+const KM_TABEL=['santri','profiles','wali_santri','transaksi','topup_request','tabungan','tagihan','pelanggaran','sanksi_santri','izin','kesehatan','konten','notifikasi','pengumuman','story','acara','pendaftar','rekap_bulan','wa_antrian'];
+const KM_BOLEH_TERBUKA=['pengumuman','acara','story'];
+const KM_RPC=[['semua_saldo_coin',{},'Saldo coin seluruh santri'],['saldo',{p_santri:0},'Saldo coin per santri'],['saldo_tabungan',{p_santri:0},'Saldo tabungan'],['tabungan_riwayat',{p_santri:0},'Riwayat tabungan'],['top_pelanggar',{},'Peringkat pelanggar']];
+function kmIsFnMissing(e){return /PGRST202|PGRST204|42883|could not find the function|schema cache/i.test(((e&&e.code)||'')+' '+((e&&e.message)||''))}
+function kmAnonClient(){return supabase.createClient(SB.supabaseUrl,SB.supabaseKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'st-uji-anon'}})}
+async function ujiKeamanan(){
+  toast('Menguji keamanan… (±15 detik)');
+  const X=kmAnonClient(),out=[];
+  const add=(t,j,k)=>out.push({t,j,k:k||''});
+  for(const t of KM_TABEL){
+    try{
+      if(t==='konten'){
+        const r=await X.from('konten').select('kunci').limit(1000);
+        if(r.error){add('aman','Tabel konten tertutup untuk umum');continue}
+        const ks=(r.data||[]).map(x=>x.kunci||'');
+        const sandi=ks.filter(k=>/sandi|password|passwd|pw_/i.test(k));
+        if(sandi.length)add('bahaya','Sandi dapat dibaca publik ('+sandi.length+' data di tabel konten)','Siapa pun yang punya alamat web ini bisa membaca sandi. Pasang keamanan.sql untuk alumni; sandi wali perlu dipindahkan dari tabel konten.');
+        add(ks.length?'waspada':'info','Tabel konten dapat dibaca publik ('+ks.length+' kunci)',ks.length?'Pastikan tidak ada data pribadi di dalamnya (foto profil alumni tersimpan di sini).':'Tabel kosong atau tertutup.');
+        continue;
+      }
+      const r=await X.from(t).select('*').limit(1);
+      if(r.error){add('aman','Tabel '+t+' tertutup untuk umum');continue}
+      if(r.data&&r.data.length){
+        const cols=Object.keys(r.data[0]);
+        if(KM_BOLEH_TERBUKA.includes(t))add('info','Tabel '+t+' terbuka untuk umum','Wajar: isinya memang informasi publik.');
+        else add('bahaya','Tabel '+t+' TERBUKA untuk umum','Data bisa dibaca tanpa login. Kolom: '+cols.slice(0,8).join(', ')+(cols.length>8?'…':'')+'. Perketat RLS.');
+      }else add('aman','Tabel '+t+' tertutup atau kosong');
+    }catch(e){add('info','Tabel '+t+' tidak bisa diuji',String(e.message||e).slice(0,80))}
+  }
+  for(const b of ['aset','bukti','foto']){
+    try{
+      const r=await X.storage.from(b).list('',{limit:3});
+      if(!r.error&&r.data&&r.data.length)add('waspada','Isi bucket "'+b+'" bisa didaftar publik','Siapa pun bisa melihat daftar nama file. Batasi izin SELECT pada storage.objects.');
+      else add('aman','Daftar bucket "'+b+'" tertutup');
+    }catch(e){add('info','Bucket '+b+' tidak bisa diuji')}
+  }
+  for(const f of KM_RPC){
+    try{
+      const r=await X.rpc(f[0],f[1]);
+      if(r.error){
+        if(kmIsFnMissing(r.error))add('aman',f[2]+' tidak bisa dipanggil publik');
+        else if(/denied|berhak|authoriz|policy|jwt|izin|login|ditolak|akses|admin/i.test(r.error.message||''))add('aman',f[2]+' ditolak untuk umum');
+        else add('info',f[2]+' tidak bisa diuji',String(r.error.message||'').slice(0,80));
+      }else{
+        const d=r.data,ada=Array.isArray(d)?d.length>0:(d!==null&&d!==undefined);
+        if(Array.isArray(d)&&d.length)add('bahaya',f[2]+' TERBUKA untuk umum','Fungsi '+f[0]+' mengembalikan data tanpa login.');
+        else if(ada)add('waspada',f[2]+': fungsi menjawab tanpa login','Tidak ada pengecekan hak akses di dalam fungsi '+f[0]+' (jawaban untuk ID uji: '+JSON.stringify(d).slice(0,30)+').');
+        else add('aman',f[2]+' tidak memberi data ke umum');
+      }
+    }catch(e){add('info',f[2]+' tidak bisa diuji')}
+  }
+  out.push({t:'info',j:'Fungsi yang mengubah data tidak diuji',k:'setujui_topup, admin_set_coin, kasir_proses, reset_sandi, dll. sengaja tidak dipanggil agar aman. Pastikan masing-masing memeriksa hak akses di dalamnya.'});
+  U._kmUji={waktu:new Date().toISOString(),hasil:out};
+  draw();
+}
+async function ujiTulisKeamanan(){
+  uiConfirm('Uji tulis akan mencoba membuat 1 baris uji ("zz_uji_keamanan") di tabel konten tanpa login, lalu menghapusnya. Lanjutkan?',async()=>{
+    const X=kmAnonClient(),out=(U._kmUji&&U._kmUji.hasil)||[];
+    let r=await X.from('konten').upsert({kunci:'zz_uji_keamanan',nilai:'uji',diubah:new Date().toISOString()});
+    if(r.error)out.unshift({t:'aman',j:'Tulis ke tabel konten tanpa login ditolak',k:''});
+    else{
+      const d=await X.from('konten').delete().eq('kunci','zz_uji_keamanan');
+      out.unshift({t:'bahaya',j:'Siapa pun bisa MENULIS ke tabel konten',k:'Penyerang bisa mengubah profil pondok, story, atau menimpa data lain. '+(d.error?'Baris uji "zz_uji_keamanan" gagal dihapus otomatis, hapus manual.':'Baris uji sudah dihapus.')});
+    }
+    U._kmUji={waktu:new Date().toISOString(),hasil:out};draw();
+  });
+}
+async function kmBukaKunci(k){
+  const r=await SB.rpc('login_buka_kunci',{p_kunci:k});
+  if(r.error)return msgBox(r.error.message);
+  toast('Kunci dibuka.');draw();
+}
+async function kmResetAlumni(){
+  const nis=($('km_nis')?.value||'').trim();
+  if(!nis)return msgBox('Isi NIS alumni.');
+  uiConfirm('Reset sandi alumni NIS '+nis+'? Alumni harus membuat sandi baru saat masuk berikutnya.',async()=>{
+    const r=await SB.rpc('admin_reset_sandi_alumni',{p_nis:nis});
+    if(r.error)return msgBox(kmIsFnMissing(r.error)?'Pasang keamanan.sql dulu di Supabase.':r.error.message);
+    toast('Sandi alumni direset.');draw();
+  });
+}
+function kmRingkasLog(x){
+  const d=x.detail||{};
+  const cut=v=>{let s=(v!==null&&typeof v==='object')?JSON.stringify(v):String(v);return s.length>40?s.slice(0,40)+'…':s};
+  if(x.aksi==='UPDATE')return Object.keys(d).slice(0,4).map(k=>k+': '+cut((d[k]||{}).lama)+' → '+cut((d[k]||{}).baru)).join('; ');
+  return Object.keys(d).filter(k=>d[k]!==null&&d[k]!=='').slice(0,4).map(k=>k+': '+cut(d[k])).join('; ');
+}
+R.keamanan=async()=>{
+  if(U.me.role!=='admin')return '<div class="card">Akses khusus admin.</div>';
+  const f=U.kmAksi||'semua';
+  // status pemasangan
+  const st={};
+  try{const r=await SB.rpc('login_cek',{p_kunci:'uji-status'});st.kunci=!r.error}catch(e){st.kunci=false}
+  try{const r=await SB.rpc('alumni_masuk',{p_nis:'0',p_sandi:'x'});st.alumni=!r.error}catch(e){st.alumni=false}
+  try{const r=await SB.rpc('alumni_keluar',{p_tiket:'x'});st.tiket=!r.error}catch(e){st.tiket=false}
+  let logs=[],logOk=true;
+  try{
+    let q=SB.from('log_aktivitas').select('*').order('waktu',{ascending:false}).limit(100);
+    if(f!=='semua')q=q.eq('aksi',f);
+    const r=await q;if(r.error)throw r.error;logs=r.data||[];
+  }catch(e){logOk=false}
+  let kunci=[];
+  if(st.kunci){try{const r=await SB.rpc('login_daftar_kunci');if(!r.error)kunci=r.data||[]}catch(e){}}
+  const bdg=ok=>`<span class="badge ${ok?'b0':'b2'}">${ok?'Aktif':'Belum dipasang'}</span>`;
+  let h=`<div class="card"><h3><i class="fa-solid fa-shield-halved" style="color:#047857"></i> Status perlindungan</h3>
+    <div class="li"><span>Log aktivitas admin</span>${bdg(logOk)}</div>
+    <div class="li"><span>Kunci login gagal (5x salah = 15 menit)</span>${bdg(st.kunci)}</div>
+    <div class="li"><span>Sandi alumni terenkripsi di server</span>${bdg(st.alumni)}</div>
+    <div class="li"><span>Tiket login alumni (riwayat santri)</span>${bdg(st.tiket)}</div>
+    ${(!logOk||!st.kunci||!st.alumni||!st.tiket)?'<div class="mu" style="margin-top:8px">Jalankan <b>keamanan.sql</b>, lalu <b>alumni_tiket.sql</b>, di Supabase (SQL Editor) untuk mengaktifkan yang belum.</div>':''}</div>`;
+  // uji
+  const u=U._kmUji,lbl={bahaya:['b2','Bahaya'],waspada:['b1','Waspada'],aman:['b0','Aman'],info:['b1','Info']};
+  const urut={bahaya:0,waspada:1,info:2,aman:3};
+  const cnt=k=>u?u.hasil.filter(x=>x.t===k).length:0;
+  h+=`<div class="card"><h3>Uji keamanan otomatis</h3><div class="mu">Aplikasi bertindak sebagai orang luar (tanpa login) dan mencoba membaca data Anda. Semua yang berhasil dibaca ditandai.</div>
+    <div class="row" style="margin-top:10px"><button type="button" onclick="ujiKeamanan()"><i class="fa-solid fa-magnifying-glass-chart"></i> Jalankan uji</button><button type="button" class="sec" onclick="ujiTulisKeamanan()">Uji tulis</button></div>`
+    +(u?`<div class="mu" style="margin-top:10px">Hasil ${fdt(u.waktu)}: <b style="color:var(--rd)">${cnt('bahaya')} bahaya</b> · <b>${cnt('waspada')} waspada</b> · <b style="color:var(--ok)">${cnt('aman')} aman</b></div>`
+    +u.hasil.slice().sort((a,b)=>urut[a.t]-urut[b.t]).map(x=>`<div class="li" style="align-items:flex-start"><span><b>${esc(x.j)}</b>${x.k?`<div class="mu">${esc(x.k)}</div>`:''}</span><span class="badge ${lbl[x.t][0]}">${lbl[x.t][1]}</span></div>`).join(''):'')+`</div>`;
+  // kunci login
+  h+=`<div class="card"><h3>Login terkunci / gagal (${kunci.length})</h3>`+(!st.kunci?'<div class="mu">Aktif setelah keamanan.sql dipasang.</div>':(kunci.length?kunci.map(x=>{const lock=x.terkunci_sampai&&new Date(x.terkunci_sampai)>new Date();return `<div class="li"><span><b>${esc(x.kunci)}</b><div class="mu">${x.jumlah}x salah · ${fdt(x.terakhir)}${lock?' · dikunci sampai '+fdt(x.terkunci_sampai):''}</div></span>${lock?`<button type="button" class="sec" style="padding:6px 10px;font-size:12px" data-k="${esc(x.kunci)}" onclick="kmBukaKunci(this.dataset.k)">Buka kunci</button>`:'<span class="badge b1">Dipantau</span>'}</div>`}).join(''):'<div class="mu">Tidak ada percobaan gagal tercatat.</div>'))+`</div>`;
+  // reset alumni
+  h+=`<div class="card"><h3>Reset sandi alumni</h3><div class="mu">Untuk alumni yang lupa sandi. Setelah direset, alumni membuat sandi baru saat masuk berikutnya.</div><label>NIS alumni</label><input id="km_nis" style="width:100%" inputmode="numeric" placeholder="Contoh: 20110001"><p><button type="button" onclick="kmResetAlumni()">Reset sandi</button></p></div>`;
+  // sandi wali tersimpan
+  let swN=0;
+  try{const r=await SB.from('profiles').select('id',{count:'exact',head:true}).not('sandi_wali','is',null);if(!r.error)swN=r.count||0}catch(e){}
+  h+=`<div class="card"><h3>Sandi wali tersimpan</h3><div class="mu">Aplikasi versi lama menyimpan sandi wali dalam bentuk yang bisa dibaca. Itu berbahaya jika data bocor. Sekarang sandi tidak lagi disimpan.</div>
+    <div class="li"><span>Akun dengan sandi tersimpan di profil</span><b style="color:${swN?'var(--rd)':'var(--ok)'}">${swN}</b></div>
+    <p><button type="button" onclick="bersihkanSandiWali()"><i class="fa-solid fa-broom"></i> Hapus semua sandi tersimpan</button></p></div>`;
+  // cadangan: memakai fitur "Cadangan & pemulihan data otomatis" di Pengaturan
+  let bkN=0,bkLast='';
+  try{
+    const ls=await SB.storage.from('bukti').list('backups',{limit:100});
+    const fl=(ls.data||[]).filter(x=>x.name&&x.name.startsWith('backup-')).sort((a,b)=>b.name.localeCompare(a.name));
+    bkN=fl.length;if(fl[0])bkLast=fl[0].name.slice(7,17);
+  }catch(e){}
+  const bkLama=bkLast?Math.floor((Date.now()-new Date(bkLast+'T00:00:00').getTime())/86400000):null;
+  h+=`<div class="card"><h3>Cadangan data</h3>
+    <div class="li"><span>Cadangan cloud tersimpan</span><b>${bkN}</b></div>
+    <div class="li"><span>Cadangan terakhir</span><b style="color:${bkLast&&bkLama<=2?'var(--ok)':'var(--rd)'}">${bkLast?fd(bkLast)+' ('+bkLama+' hari lalu)':'Belum ada'}</b></div>
+    ${(!bkLast||bkLama>2)?'<div class="mu" style="color:var(--rd)">Cadangan otomatis harian berjalan saat admin membuka aplikasi. Buka Pengaturan untuk membuat cadangan sekarang.</div>':''}
+    <p><button type="button" class="sec" onclick="U.tab='pengaturan';draw()"><i class="fa-solid fa-database"></i> Buka Cadangan &amp; pemulihan</button></p></div>`;
+  // verifikasi dua langkah
+  let mf=[];try{mf=await mfaFaktor()}catch(e){}
+  h+=`<div class="card"><h3>Verifikasi dua langkah (akun ini)</h3><div class="mu">Selain sandi, login admin meminta 6 angka dari aplikasi autentikator di HP. Pencuri sandi tetap tidak bisa masuk.</div>
+    <div class="li"><span>Status</span><span class="badge ${mf.length?'b0':'b1'}">${mf.length?'Aktif':'Belum aktif'}</span></div>
+    <p>${mf.length?`<button type="button" class="sec" onclick="mfaNonaktifkan('${esc(mf[0].id)}')">Nonaktifkan</button>`:`<button type="button" onclick="mfaAktifkan()"><i class="fa-solid fa-mobile-screen"></i> Aktifkan</button>`}</p>
+    <div class="mu">Hanya berlaku untuk akun yang mengaktifkannya. Pastikan ada admin cadangan sebelum mengaktifkan.</div></div>`;
+  // audit database
+  const A=U._audit;let aItems=[],aFn=0;
+  if(A){
+    const d=A.d||{};
+    (d.rls_mati||[]).forEach(t=>aItems.push(['bahaya','RLS mati pada tabel '+t,'Siapa pun dengan kunci aplikasi bisa membaca atau mengubah tabel ini.']));
+    (d.policy_anon||[]).forEach(p=>{
+      const tulis=/INSERT|UPDATE|DELETE|ALL/.test(p.perintah||''),buka=String(p.syarat||'').trim()==='true'||String(p.cek||'').trim()==='true';
+      aItems.push([buka?'bahaya':(tulis?'waspada':'info'),'Aturan untuk umum: '+p.tabel+' ('+p.perintah+')',p.nama+' · syarat: '+(p.syarat||p.cek||'-')]);
+    });
+    (d.fungsi_anon||[]).forEach(f=>{aFn++;if(f.mengubah)aItems.push([f.ada_cek?'info':'bahaya','Fungsi '+f.nama+' bisa dipanggil tanpa login dan mengubah data',f.ada_cek?'Ada pengecekan hak di dalamnya.':'Pengecekan hak tidak terdeteksi. Periksa isi fungsi.'])});
+  }
+  const sevL={bahaya:['b2','Bahaya'],waspada:['b1','Waspada'],info:['b0','Info']},sevU={bahaya:0,waspada:1,info:2};
+  h+=`<div class="card"><h3>Audit database</h3><div class="mu">Memeriksa aturan akses di database: tabel tanpa RLS, aturan yang terbuka untuk umum, dan fungsi yang bisa dipanggil tanpa login.</div>
+    <p><button type="button" onclick="jalankanAudit()"><i class="fa-solid fa-clipboard-check"></i> Jalankan audit</button></p>`
+    +(A?`<div class="mu">Hasil ${fdt(A.waktu)} · ${aFn} fungsi publik diperiksa</div>`+(aItems.length?aItems.sort((x,y)=>sevU[x[0]]-sevU[y[0]]).map(x=>`<div class="li" style="align-items:flex-start"><span><b>${esc(x[1])}</b><div class="mu" style="word-break:break-word">${esc(x[2])}</div></span><span class="badge ${sevL[x[0]][0]}">${sevL[x[0]][1]}</span></div>`).join(''):'<div class="mu">Tidak ada temuan.</div>'):'')+`</div>`;
+  // catatan kesalahan aplikasi
+  let errs=[];try{errs=JSON.parse(localStorage.getItem('st_err')||'[]')}catch(e){}
+  h+=`<div class="card"><h3>Kesalahan aplikasi terbaru (${errs.length})</h3><div class="mu">Dicatat otomatis di HP ini. Berguna untuk dilaporkan jika ada layar kosong atau fitur macet.</div>`
+    +(errs.length?errs.slice(0,10).map(x=>`<div class="li" style="align-items:flex-start"><span style="word-break:break-word"><b>${esc(x.m)}</b><div class="mu">${fdt(new Date(x.t).toISOString())} · ${esc(x.u)}${x.h?' · '+esc(x.h):''}</div></span></div>`).join('')+`<p><button type="button" class="sec" onclick="kmHapusError()">Hapus catatan</button></p>`:'<div class="mu" style="margin-top:6px">Belum ada kesalahan tercatat.</div>')+`</div>`;
+  // log
+  const chips=[['semua','Semua'],['INSERT','Tambah'],['UPDATE','Ubah'],['DELETE','Hapus']];
+  const al={INSERT:'Tambah',UPDATE:'Ubah',DELETE:'Hapus'};
+  h+=`<div class="card"><h3>Log aktivitas (100 terbaru)</h3>`+(logOk?`<div class="row">${chips.map(c=>`<button class="${f==c[0]?'':'sec'}" style="padding:7px 12px;font-size:12px" onclick="U.kmAksi='${c[0]}';draw()">${c[1]}</button>`).join('')}</div>`
+    +(logs.length?logs.map(x=>`<div class="li" style="align-items:flex-start"><span><b>${esc(x.user_nama||'Tanpa login')}</b> <span class="mu">${esc(x.user_role||'')}</span><div class="mu">${al[x.aksi]||esc(x.aksi)} · ${esc(x.tabel)}${x.baris_id?' #'+esc(x.baris_id):''} · ${fdt(x.waktu)}</div>${kmRingkasLog(x)?`<div class="mu" style="word-break:break-word">${esc(kmRingkasLog(x))}</div>`:''}</span></div>`).join(''):'<div class="mu" style="margin-top:8px">Belum ada aktivitas tercatat.</div>'):'<div class="mu">Aktif setelah keamanan.sql dipasang.</div>')+`</div>`;
+  return h;
+};
+
+/* ---- Tiket login alumni: panggil fungsi data alumni dengan tiket; mode lama hanya bila SQL tiket belum dipasang ---- */
+function alTiketHabis(detail){
+  if(U&&U._alHabis)return;
+  if(U)U._alHabis=true;
+  setTimeout(async()=>{
+    try{await logout()}catch(e){}
+    msgBox('Sesi alumni berakhir atau tiket tidak berlaku (mis. akun ini baru masuk di perangkat lain). Silakan masuk kembali.'+(detail?' ['+String(detail).slice(0,90)+']':''));
+  },0);
+}
+async function alRpc(fn,args,legacyArgs){
+  if(U&&U._alHabis)return{data:null,error:{message:'Sesi berakhir'}};
+  const tk=(U.alumni&&U.alumni.tiket)||'';
+  if(tk){
+    const r=await SB.rpc(fn,{...args,p_tiket:tk});
+    if(!r.error)return r;
+    if(/Tiket/i.test(r.error.message||'')){alTiketHabis(r.error.message);return r}
+    if(!kmIsFnMissing(r.error))return r;
+  }
+  const r2=await SB.rpc(fn,legacyArgs);
+  if(r2.error&&kmIsFnMissing(r2.error)&&!tk&&U.me&&U.me.role==='alumni')alTiketHabis('sesi lama tanpa tiket');
+  return r2;
+}
+
+/* ---- Cadangan data & pembersihan sandi wali ---- */
+function bersihkanSandiWali(){
+  uiConfirm('Hapus semua sandi wali yang tersimpan (di profil dan penyimpanan)? Wali tetap bisa masuk dengan sandinya. Setelah ini admin tidak bisa lagi melihat sandi wali.',async()=>{
+    toast('Membersihkan…');
+    let n=0,err='';
+    try{
+      const r=await SB.from('profiles').select('id').eq('role','wali');
+      const ids=(r.data||[]).map(x=>x.id);
+      for(let i=0;i<ids.length;i+=50){
+        const d=await SB.storage.from('bukti').remove(ids.slice(i,i+50).map(id=>id+'/sandi.txt'));
+        if(d.error)err=d.error.message;
+      }
+      const u=await SB.from('profiles').update({sandi_wali:null}).eq('role','wali');
+      if(u.error&&!/sandi_wali|column/i.test(u.error.message||''))err=u.error.message;
+      n=ids.length;
+    }catch(e){err=e.message||String(e)}
+    msgBox(err?'Selesai sebagian. Catatan: '+err:'Selesai. Sandi tersimpan untuk '+n+' akun wali sudah dihapus.');
+    draw();
+  });
+}
+
+/* ===== Keamanan lanjutan: catatan kesalahan, verifikasi dua langkah (admin), audit database ===== */
+function kmCatatError(msg,tab){
+  msg=String(msg||'');
+  if(/ResizeObserver|Script error|Non-Error promise rejection/i.test(msg))return;
+  try{
+    const a=JSON.parse(localStorage.getItem('st_err')||'[]');
+    a.unshift({t:Date.now(),m:msg.slice(0,220),u:(typeof U!=='undefined'&&U&&U.me&&U.me.role)||'-',h:tab||((typeof U!=='undefined'&&U&&U.tab)||'')});
+    localStorage.setItem('st_err',JSON.stringify(a.slice(0,30)));
+  }catch(e){}
+}
+window.addEventListener('error',e=>kmCatatError(e.message));
+window.addEventListener('unhandledrejection',e=>kmCatatError((e.reason&&e.reason.message)||e.reason));
+function kmHapusError(){try{localStorage.removeItem('st_err')}catch(e){}draw()}
+
+async function mfaFaktor(){const r=await SB.auth.mfa.listFactors();return ((r.data&&r.data.totp)||[]).filter(f=>f.status==='verified')}
+function mfaMintaKode(){
+  return new Promise(async res=>{
+    let f=null;try{f=(await mfaFaktor())[0]}catch(e){}
+    if(!f)return res(false);
+    const old=$('mfa-ov');if(old)old.remove();
+    const ov=document.createElement('div');ov.id='mfa-ov';ov.className='mdl-ov';document.body.appendChild(ov);
+    ov.innerHTML=`<div class="mdl-box"><h4>Verifikasi dua langkah</h4><p>Masukkan 6 angka dari aplikasi autentikator di HP Anda.</p>
+      <input id="mfa_kode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="width:100%;text-align:center;font-size:24px;letter-spacing:.3em">
+      <div id="mfa_err" class="mu" style="color:var(--rd);min-height:20px;margin-top:6px"></div>
+      <div class="mdl-acts"><button type="button" class="sec" id="mfa_batal">Batal</button><button type="button" id="mfa_ok">Verifikasi</button></div></div>`;
+    $('mfa_batal').onclick=()=>{ov.remove();res(false)};
+    $('mfa_ok').onclick=async()=>{
+      const kode=($('mfa_kode').value||'').trim();
+      if(kode.length!==6){$('mfa_err').textContent='Masukkan 6 angka.';return}
+      $('mfa_err').textContent='Memeriksa…';
+      const c=await SB.auth.mfa.challenge({factorId:f.id});
+      if(c.error){$('mfa_err').textContent=c.error.message;return}
+      const v=await SB.auth.mfa.verify({factorId:f.id,challengeId:c.data.id,code:kode});
+      if(v.error){$('mfa_err').textContent='Kode salah atau kedaluwarsa.';return}
+      ov.remove();res(true);
+    };
+    setTimeout(()=>{const i=$('mfa_kode');if(i)i.focus()},100);
+  });
+}
+async function mfaWajibJikaAda(){
+  try{
+    const a=await SB.auth.mfa.getAuthenticatorAssuranceLevel();
+    if(a.data&&a.data.nextLevel==='aal2'&&a.data.currentLevel!=='aal2')return await mfaMintaKode();
+  }catch(e){}
+  return true;
+}
+async function mfaAktifkan(){
+  const r=await SB.auth.mfa.enroll({factorType:'totp',friendlyName:'SantriTrack-'+Date.now()});
+  if(r.error)return msgBox(/disabled|not enabled|not allowed/i.test(r.error.message||'')?'Fitur verifikasi dua langkah belum aktif di Supabase. Aktifkan di Authentication → Sign In / Providers → Multi-Factor.':(r.error.message||'Gagal'));
+  const fid=r.data.id;
+  const old=$('mfa-ov');if(old)old.remove();
+  const ov=document.createElement('div');ov.id='mfa-ov';ov.className='mdl-ov';document.body.appendChild(ov);
+  ov.innerHTML=`<div class="mdl-box" style="max-height:90vh;overflow:auto;text-align:center"><h4>Aktifkan verifikasi dua langkah</h4>
+    <p class="mu">1. Buka aplikasi autentikator (Google Authenticator / Microsoft Authenticator), pilih tambah akun, lalu pindai kode QR ini.</p>
+    <img id="mfa_qr" alt="QR" style="width:200px;height:200px;background:#fff;margin:6px auto">
+    <p class="mu">Atau ketik kunci manual:<br><b id="mfa_secret" style="font-family:monospace;word-break:break-all"></b></p>
+    <p class="mu">2. Masukkan 6 angka yang tampil di aplikasi:</p>
+    <input id="mfa_kode" inputmode="numeric" maxlength="6" style="width:100%;text-align:center;font-size:22px;letter-spacing:.3em">
+    <div id="mfa_err" class="mu" style="color:var(--rd);min-height:20px;margin-top:6px"></div>
+    <div class="mu" style="color:var(--rd)">Penting: jika HP hilang dan tidak ada admin lain, akun ini bisa terkunci. Pastikan ada admin cadangan.</div>
+    <div class="mdl-acts"><button type="button" class="sec" id="mfa_batal">Batal</button><button type="button" id="mfa_ok">Aktifkan</button></div></div>`;
+  $('mfa_qr').src=r.data.totp.qr_code;$('mfa_secret').textContent=r.data.totp.secret;
+  $('mfa_batal').onclick=async()=>{ov.remove();try{await SB.auth.mfa.unenroll({factorId:fid})}catch(e){}};
+  $('mfa_ok').onclick=async()=>{
+    const kode=($('mfa_kode').value||'').trim();
+    if(kode.length!==6){$('mfa_err').textContent='Masukkan 6 angka.';return}
+    const c=await SB.auth.mfa.challenge({factorId:fid});
+    if(c.error){$('mfa_err').textContent=c.error.message;return}
+    const v=await SB.auth.mfa.verify({factorId:fid,challengeId:c.data.id,code:kode});
+    if(v.error){$('mfa_err').textContent='Kode salah. Coba lagi.';return}
+    ov.remove();toast('Verifikasi dua langkah aktif.');draw();
+  };
+}
+function mfaNonaktifkan(id){
+  uiConfirm('Nonaktifkan verifikasi dua langkah untuk akun ini? Akun hanya dilindungi sandi.',async()=>{
+    const r=await SB.auth.mfa.unenroll({factorId:id});
+    if(r.error)return msgBox(r.error.message);
+    toast('Verifikasi dua langkah dinonaktifkan.');draw();
+  });
+}
+async function jalankanAudit(){
+  toast('Memeriksa database…');
+  const r=await SB.rpc('audit_keamanan');
+  if(r.error)return msgBox(kmIsFnMissing(r.error)?'Pasang keamanan_lanjutan.sql dulu di Supabase.':r.error.message);
+  U._audit={waktu:new Date().toISOString(),d:r.data||{}};draw();
+}
 /* ---- Profil / biodata pondok (klik logo di header; admin dapat mengedit) ---- */
 const PP_FIELDS=[['nama','Nama pondok pesantren'],['yayasan','Yayasan'],['pembina','Pembina'],['pengasuh','Pengasuh'],['ketua','Kepala / Ketua pondok'],['berdiri','Tahun berdiri'],['izin','Nomor izin / NSPP'],['alamat','Alamat lengkap','ta'],['gps','Lokasi GPS (lintang, bujur)'],['telp','Telepon / WhatsApp'],['email','Email'],['web','Website'],['tentang','Tentang pondok','ta']];
 const PP_DEF={nama:'PPP. Al-As’adiyah Blega'};
@@ -1036,40 +1377,9 @@ return `<div class="card noprint"><h3>Kode pendaftaran wali</h3><div class="mu">
 function kirimKode(id){const s=U.santri.find(x=>x.id==id);window.open('https://wa.me/?text='+encodeURIComponent('Assalamu’alaikum. Kode pendaftaran wali untuk Ananda '+s.nama+' di aplikasi SantriTrack PPP. AL-AS’ADIYAH: '+s.kode_daftar+'\nDaftar di: '+location.origin),'_blank')}
 async function gantiKode(id){uiConfirm('Ganti kode? Kode lama tidak berlaku lagi untuk pendaftaran baru.',async()=>{const{data,error}=await SB.rpc('ganti_kode',{p_santri:id});if(error)return msgBox(error.message);U.santri.find(x=>x.id==id).kode_daftar=data;draw()})}
 
-/* ---- Penyimpanan sandi wali khusus admin ---- */
-async function simpanSandiWali(uid,pw){
-  if(!uid||!pw)return;
-  try{
-    const bl=new Blob([pw],{type:'text/plain;charset=utf-8'});
-    await SB.storage.from('bukti').upload(uid+'/sandi.txt',bl,{upsert:true,contentType:'text/plain',cacheControl:'0'});
-  }catch(e){}
-  try{
-    await SB.from('profiles').update({sandi_wali:pw}).eq('id',uid);
-  }catch(e){}
-}
-async function ambilSandiWaliMap(list){
-  const m={};
-  if(!U.me||U.me.role!=='admin'||!list.length)return m;
-  list.forEach(x=>{if(x.sandi_wali)m[x.id]=x.sandi_wali});
-  const missing=list.filter(x=>!m[x.id]);
-  if(!missing.length)return m;
-  try{
-    const paths=missing.map(x=>x.id+'/sandi.txt');
-    const r=await SB.storage.from('bukti').createSignedUrls(paths,300);
-    const items=(r.data||[]).filter(x=>x.signedUrl);
-    await Promise.all(items.map(async it=>{
-      try{
-        const uid=it.path.split('/')[0];
-        const res=await fetch(it.signedUrl+'&t='+Date.now());
-        if(res.ok){
-          const txt=(await res.text()).trim();
-          if(txt&&!txt.startsWith('{')&&!txt.startsWith('<'))m[uid]=txt;
-        }
-      }catch(e){}
-    }));
-  }catch(e){}
-  return m;
-}
+/* ---- Sandi wali TIDAK lagi disimpan (lihat Keamanan > Sandi wali tersimpan) ---- */
+async function simpanSandiWali(){}
+async function ambilSandiWaliMap(){return {}}
 function toggleSandiItem(uid){
   const el=$('sw_txt_'+uid),ic=$('sw_ic_'+uid);
   if(!el)return;
@@ -1080,7 +1390,7 @@ function toggleSandiItem(uid){
 }
 function kirimSandiWA(nama,hp,pw){
   const no=hpNorm(hp);
-  const psn='Assalamu’alaikum '+nama+'. Berikut informasi akun wali santri SantriTrack PPP. AL-AS’ADIYAH:\nNomor HP: '+(hp||'-')+'\nKata Sandi: '+pw+'\nMasuk di: '+location.origin;
+  const psn='Assalamu’alaikum '+nama+'. Berikut informasi akun wali santri SantriTrack PPP. AL-AS’ADIYAH:\nNomor HP: '+(hp||'-')+'\nKata Sandi: '+pw+'\nMasuk di: '+location.origin+'\nSegera ganti kata sandi di menu Akun setelah masuk.';
   window.open('https://wa.me/'+(no||'')+'?text='+encodeURIComponent(psn),'_blank');
 }
 
@@ -1245,6 +1555,17 @@ async function gantiSandiAlumni(){
   if(s1!==s2)return msgBox('Ulangi kata sandi baru dengan benar.');
   const nis=String((U.alumni&&U.alumni.nis)||'');
   if(!nis)return msgBox('NIS alumni tidak ditemukan.');
+  try{
+    const rg=await SB.rpc('alumni_ganti_sandi',{p_nis:nis,p_lama:s0,p_baru:s1});
+    if(rg.error){if(!/PGRST202|PGRST204|42883|could not find the function|schema cache/i.test((rg.error.code||'')+' '+(rg.error.message||'')))return msgBox(rg.error.message)}
+    else{
+      const sg=rg.data&&rg.data.status;
+      if(sg==='ok'){if(rg.data.tiket&&U.alumni){U.alumni.tiket=rg.data.tiket;try{sessionStorage.setItem('st_alumni',JSON.stringify(U.alumni))}catch(e){}}$('s0').value='';$('s1').value='';$('s2').value='';toast('Kata sandi alumni berhasil diperbarui.');return}
+      if(sg==='terkunci')return msgBox('Terlalu banyak percobaan salah. Coba lagi beberapa menit lagi.');
+      if(sg==='belum_ada')return msgBox('Akun belum punya sandi. Keluar lalu masuk kembali untuk membuat sandi.');
+      return msgBox('Kata sandi lama salah.');
+    }
+  }catch(e){return msgBox(e.message||'Gagal mengganti sandi.')}
   let pwSaved=null;
   try{
     const{data:kd}=await SB.from('konten').select('nilai').eq('kunci','alumni_sandi_'+nis).maybeSingle();
@@ -1261,23 +1582,39 @@ async function gantiSandiAlumni(){
 R.akunwali=async()=>{
   if(U.me.role!=='admin')return '<div class="card">Akses khusus admin.</div>';
   const t=ok(await SB.from('profiles').select('*,wali_santri(hubungan,santri(nama))').eq('role','wali').order('nama'));
-  const smap=await ambilSandiWaliMap(t);
-  return `<div class="card"><h3>Akun wali (${t.length})</h3><div class="mu">Khusus admin: Anda dapat melihat kata sandi wali yang lupa, menyalin, mengirim ke WhatsApp, atau mengatur ulang kata sandi baru.</div>`+(t.length?t.map(x=>{
-    const pw=smap[x.id]||'';
+  return `<div class="card"><h3>Akun wali (${t.length})</h3><div class="mu">Demi keamanan, kata sandi wali <b>tidak disimpan</b> dan tidak bisa dilihat. Jika wali lupa sandi, buat <b>sandi sementara</b> (tampil satu kali untuk disalin atau dikirim lewat WhatsApp), lalu minta wali menggantinya di menu Akun.</div></div>`
+  +(t.length?t.map(x=>{
     const anak=(x.wali_santri||[]).map(w=>esc(w.santri?.nama||'')+(w.hubungan?' ('+esc(w.hubungan)+')':'')).join(', ')||'Belum terhubung ke santri';
-    return `<div class="li"><span style="flex:1"><b>${esc(x.nama)}</b> <span class="mu">${esc(x.no_hp||'')}</span><div class="mu">${anak}</div>
-    <div style="margin-top:8px;padding:8px 10px;background:#f8fafc;border:1px solid var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
-      <span style="font-size:13px"><span class="mu">Sandi:</span> ${pw?`<b id="sw_txt_${esc(x.id)}" data-pw="${esc(pw)}" data-show="0" style="font-family:monospace;font-size:14px;letter-spacing:.04em">••••••••</b>`:'<span class="mu"><i>Belum tercatat (atur ulang sandi untuk mencatat)</i></span>'}</span>
-      ${pw?`<span style="display:inline-flex;gap:4px">
-        <button type="button" class="sec" style="padding:5px 9px;font-size:12px" onclick="toggleSandiItem('${esc(x.id)}')" title="Tampilkan / sembunyikan"><i id="sw_ic_${esc(x.id)}" class="fa-solid fa-eye"></i></button>
-        <button type="button" class="sec" style="padding:5px 9px;font-size:12px" onclick="salin('${esc(pw)}')" title="Salin sandi"><i class="fa-solid fa-copy"></i> Salin</button>
-        <button type="button" class="sec" style="padding:5px 9px;font-size:12px" onclick="kirimSandiWA('${esc(x.nama)}','${esc(x.no_hp||'')}','${esc(pw)}')" title="Kirim ke WhatsApp wali"><i class="fa-brands fa-whatsapp" style="color:#059669"></i> WA</button>
-      </span>`:''}
-    </div>
-    <div style="margin-top:6px"><button class="sec" onclick="resetSandi('${esc(x.id)}','${esc(x.nama)}','${esc(x.no_hp||'')}')"><i class="fa-solid fa-key"></i> Atur ulang sandi</button></div></span></div>`;
-  }).join(''):'<div class="mu">Belum ada wali terdaftar.</div>')+'</div>';
+    return `<div class="card"><b>${esc(x.nama)}</b> <span class="mu">${esc(x.no_hp||'')}</span><div class="mu">${anak}</div>
+      <div class="row" style="margin-top:8px"><button type="button" onclick="sandiSementara('${esc(x.id)}','${esc(x.nama)}','${esc(x.no_hp||'')}')"><i class="fa-solid fa-key"></i> Buat sandi sementara</button>
+      <button type="button" class="sec" onclick="resetSandi('${esc(x.id)}','${esc(x.nama)}','${esc(x.no_hp||'')}')">Atur sandi manual</button></div></div>`;
+  }).join(''):'<div class="card"><div class="mu">Belum ada wali terdaftar.</div></div>');
 };
-async function resetSandi(id,nama,hp){uiPrompt('Atur Ulang Kata Sandi','Masukkan kata sandi baru untuk wali ini (minimal 6 karakter):','',async(b)=>{if(b.length<6)return msgBox('Minimal 6 karakter.');const{error}=await SB.rpc('reset_sandi',{p_user:id,p_baru:b});if(error)return msgBox(error.message);await simpanSandiWali(id,b);toast('Kata sandi diatur ulang & disimpan untuk admin.');draw()})}
+function bikinSandiAcak(n){
+  n=n||8;const a='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789',b=new Uint32Array(n);
+  crypto.getRandomValues(b);return Array.from(b,x=>a[x%a.length]).join('');
+}
+function sandiSementara(id,nama,hp){
+  uiConfirm('Buat sandi sementara untuk '+nama+'? Sandi lama wali tidak berlaku lagi.',async()=>{
+    const pw=bikinSandiAcak(8);
+    const{error}=await SB.rpc('reset_sandi',{p_user:id,p_baru:pw});
+    if(error)return msgBox(error.message);
+    tampilSandiSementara(nama,hp,pw);
+  });
+}
+function tampilSandiSementara(nama,hp,pw){
+  const old=$('ss-ov');if(old)old.remove();
+  const ov=document.createElement('div');ov.id='ss-ov';ov.className='mdl-ov';document.body.appendChild(ov);
+  ov.innerHTML=`<div class="mdl-box" style="text-align:center"><h4>Sandi sementara</h4><div class="mu">${esc(nama)}</div>
+    <div id="ss_pw" style="font-family:monospace;font-size:26px;font-weight:800;letter-spacing:.08em;margin:12px 0"></div>
+    <div class="mu" style="color:var(--rd)">Sandi ini hanya tampil SATU kali dan tidak disimpan di mana pun. Salin atau kirim sekarang, lalu minta wali menggantinya di menu Akun.</div>
+    <div class="mdl-acts" style="flex-wrap:wrap"><button type="button" class="sec" id="ss_salin"><i class="fa-solid fa-copy"></i> Salin</button><button type="button" class="sec" id="ss_wa"><i class="fa-brands fa-whatsapp"></i> WA</button><button type="button" id="ss_tutup">Selesai</button></div></div>`;
+  $('ss_pw').textContent=pw;
+  $('ss_salin').onclick=()=>salin(pw);
+  $('ss_wa').onclick=()=>kirimSandiWA(nama,hp,pw);
+  $('ss_tutup').onclick=()=>{ov.remove()};
+}
+async function resetSandi(id,nama,hp){uiPrompt('Atur Ulang Kata Sandi','Masukkan kata sandi baru untuk wali ini (minimal 6 karakter):','',async(b)=>{if(b.length<6)return msgBox('Minimal 6 karakter.');const{error}=await SB.rpc('reset_sandi',{p_user:id,p_baru:b});if(error)return msgBox(error.message);toast('Kata sandi wali berhasil diatur ulang.');draw()})}
 
 /* ---- Top 3 santri paling sering melanggar (admin) ---- */
 async function hitungTopPelanggarLokal(m){
@@ -1406,7 +1743,7 @@ const TL={direktorialumni:'Direktori Alumni',riwayatsantri:'Riwayat santri',chat
 const MN={
  wali:[['Santri Saya',['anak','ringkasan','izin','kesehatan','kartu']],['Keuangan',['saku','tabungan','tagihan']],['Komunikasi & Info',['chat','notif','info','media','struktur']],['Akun',['akun']]],
  pengurus:[['Kegiatan Santri',['absensi','izin','sanksi','kesehatan']],['Keuangan',['kasir','tabungan']],['Data Santri',['daftarsantri','kartu']],['Informasi',['info','media','struktur','wa']],['Akun',['akun']]],
- admin:[['Kegiatan Santri',['absensi','izin','sanksi','kesehatan']],['Keuangan',['kasir','sisacoin','konfirmasi','tagihanadm','tabungan']],['Data Santri',['daftarsantri','riwayatlengkap','kartu','kartuedit','pendaftar','kode','akunwali']],['Laporan',['rekap','top']],['Informasi & Obrolan',['chat','info','media','struktur','strukturedit','wa','konten']],['Pengaturan',['penggunaaktif','pengaturan','akun']]],
+ admin:[['Kegiatan Santri',['absensi','izin','sanksi','kesehatan']],['Keuangan',['kasir','sisacoin','konfirmasi','tagihanadm','tabungan']],['Data Santri',['daftarsantri','riwayatlengkap','kartu','kartuedit','pendaftar','kode','akunwali']],['Laporan',['rekap','top']],['Informasi & Obrolan',['chat','info','media','struktur','strukturedit','wa','konten']],['Pengaturan',['penggunaaktif','pengaturan','keamanan','akun']]],
  alumni:[['Alumni & Santri',['riwayatsantri','direktorialumni']],['Komunikasi & Info',['chat','media','struktur','info']],['Akun',['akun']]]};
 function menuHtml(){
   const role=U.me.role;
@@ -1804,7 +2141,7 @@ R.home=async()=>{
     let al=U.alumni||{};
     if(U.alprofil===undefined){
       U.alprofil=null;
-      try{const r=await SB.rpc('alumni_profil',{p_nis:String(al.nis||'')});if(!r.error&&r.data&&typeof r.data==='object')U.alprofil=Array.isArray(r.data)?(r.data[0]||null):r.data}catch(e){}
+      try{const r=await alRpc('alumni_profil',{},{p_nis:String(al.nis||'')});if(!r.error&&r.data&&typeof r.data==='object')U.alprofil=Array.isArray(r.data)?(r.data[0]||null):r.data}catch(e){}
     }
     if(U.alprofil)al={...al,...U.alprofil};
     if(U.alfoto===undefined){try{U.alfoto=(await getMyAvatarUrl())||''}catch(e){U.alfoto=''}}
@@ -1901,13 +2238,14 @@ R.sisacoin=async()=>{
   const saldoMap=new Map();
   const list=U.santri||[];
   // Sumber utama: RPC 'saldo' per santri (sama dengan yang dipakai akun wali)
-  await Promise.all(list.map(async s=>{
+  const _ambilSaldo=async s=>{
     try{
       const r=await SB.rpc('saldo',{p_santri:s.id});
       if(r.error||r.data==null)throw (r.error||new Error('kosong'));
       saldoMap.set(String(s.id),Number(r.data)||0);
     }catch(e){}
-  }));
+  };
+  for(let i=0;i<list.length;i+=8)await Promise.all(list.slice(i,i+8).map(_ambilSaldo));
   // Cadangan untuk santri yang belum terisi: jumlahkan transaksi
   const miss=list.filter(s=>!saldoMap.has(String(s.id)));
   if(miss.length){
@@ -1938,6 +2276,8 @@ async function editCoinSantri(id,nama,cur){
 /* ---- Admin: Riwayat lengkap per santri (coin, pelanggaran, sanksi, tagihan, izin, kesehatan, tabungan) ---- */
 Object.assign(IC,{riwayatlengkap:'fa-solid fa-clock-rotate-left'});
 Object.assign(TL,{riwayatlengkap:'Riwayat lengkap'});
+Object.assign(IC,{keamanan:'fa-solid fa-shield-halved'});
+Object.assign(TL,{keamanan:'Keamanan'});
 R.riwayatlengkap=async()=>{
   if(U.me.role!=='admin')return '<div class="card">Akses khusus admin.</div>';
   const all=(U.allSantri&&U.allSantri.length?U.allSantri:U.santri)||[];
