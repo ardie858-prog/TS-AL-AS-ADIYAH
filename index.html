@@ -363,7 +363,7 @@ const CHEST_SVG=(sz=24)=>{const g='chg'+(++_chId);return `<svg width="${sz}" hei
 const JN={jamaah:'Telat jamaah',ngaji:'Telat ngaji/pelajaran',hp:'Menelepon/HP',kembali:'Telat kembali',lain:'Lainnya'};
 const KG=[['Subuh','jamaah'],['Dzuhur','jamaah'],['Ashar','jamaah'],['Maghrib','jamaah'],['Isya’','jamaah'],['Ngaji Qur’an','ngaji'],['Ngaji Kitab','ngaji']];
 const TW=[['anak','Anak saya'],['ringkasan','Ringkasan'],['notif','Notifikasi'],['chat','Obrolan'],['info','Info & agenda'],['media','Profil & jadwal'],['kartu','Kartu santri'],['saku','Coin uang saku'],['kesehatan','Kesehatan'],['tabungan','Tabungan'],['struktur','Struktur organisasi'],['tagihan','Tagihan'],['izin','Izin pulang'],['akun','Akun']];
-const TS=[['absensi','Absensi'],['kasir','Kasir QR'],['izin','Izin'],['sanksi','Sanksi'],['wa','Antrian WA'],['info','Info & agenda'],['media','Profil & jadwal'],['daftarsantri','Data santri'],['kartu','Kartu santri'],['kesehatan','Kesehatan'],['tabungan','Tabungan'],['struktur','Struktur organisasi'],['chat','Obrolan'],['akun','Akun']];
+const TS=[['absensi','Absensi'],['absenqr','Absen QR'],['kasir','Kasir QR'],['izin','Izin'],['sanksi','Sanksi'],['wa','Antrian WA'],['info','Info & agenda'],['media','Profil & jadwal'],['daftarsantri','Data santri'],['kartu','Kartu santri'],['kesehatan','Kesehatan'],['tabungan','Tabungan'],['struktur','Struktur organisasi'],['chat','Obrolan'],['akun','Akun']];
 const TA=[...TS.slice(0,-1),['sisacoin','Sisa coin'],['tagihanadm','Tagihan'],['rekap','Rekap'],['top','Top pelanggar'],['pendaftar','Pendaftar baru'],['kode','Kode wali'],['konten','Kelola konten'],['kartuedit','Edit kartu'],['konfirmasi','Konfirmasi coin'],['strukturedit','Edit struktur'],['riwayatlengkap','Riwayat lengkap'],['keamanan','Keamanan'],['akunwali','Akun wali'],['penggunaaktif','Pengguna aktif'],['pengaturan','Pengaturan'],TS[TS.length-1]];
 let U={me:null,tab:'',sid:null,santri:[],allSantri:[],online:{}};
 
@@ -642,7 +642,7 @@ if(!st&&!isAl){const r=await SB.from('notifikasi').select('id',{count:'exact',he
 $('tabs').innerHTML=T.map(t=>`<button class="${U.tab==t[0]?'on':''}" onclick="U.tab='${t[0]}';draw()"><i class="${IC[t[0]]||'fa-solid fa-circle'}"></i> ${t[1]}${t[0]=='notif'&&U.unread?` <b style="background:var(--rd);color:#fff;border-radius:99px;padding:0 6px;font-size:12px">${U.unread}</b>`:''}</button>`).join('');
 if(!st&&!isAl&&!U.sid&&U.tab!='anak'&&U.tab!='chat'&&U.tab!='akun'){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
 let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
-const noPgSearch=new Set(['pengaturan','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
+const noPgSearch=new Set(['pengaturan','absenqr','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
 const showPgSearch=!noPgSearch.has(U.tab);
 if(!showPgSearch){U.pqShow=false;U.pq=''}
 const pg=U.tab=='home'?'':`<div class="pghd noprint"><button class="sec" onclick="U.tab='home';draw()"><i class="fa-solid fa-chevron-left"></i> Menu</button><b>${TL[U.tab]||''}</b>${showPgSearch?`<button type="button" class="pg-search ${U.pqShow?'on':''}" onclick="togglePageSearch()" title="Cari di halaman ini"><i class="fa-solid fa-magnifying-glass"></i></button>`:''}</div>${showPgSearch?`<div class="pg-sbar noprint ${U.pqShow?'show':''}" id="pg-sbar"><input id="pg_q" placeholder="Cari di halaman ini…" value="${esc(U.pq||'')}" oninput="U.pq=this.value;filterPageContent(this.value)" autocomplete="off">${U.pq?`<button type="button" class="sec" onclick="U.pq='';filterPageContent('');const i=$('pg_q');if(i)i.value=''">Reset</button>`:''}</div>`:''}`;
@@ -1292,6 +1292,275 @@ async function jalankanAudit(){
   if(r.error)return msgBox(kmIsFnMissing(r.error)?'Pasang keamanan_lanjutan.sql dulu di Supabase.':r.error.message);
   U._audit={waktu:new Date().toISOString(),d:r.data||{}};draw();
 }
+/* ===== Absen QR mandiri (kiosk): santri menunjukkan kartu QR, kehadiran tercatat otomatis sesuai jam ===== */
+const AQ_DEF=[
+  {k:'subuh',nama:'Subuh',tipe:'sholat',ref:0,tepat:15,akhir:45,jenis:'jamaah',on:1},
+  {k:'dzuhur',nama:'Dzuhur',tipe:'sholat',ref:2,tepat:15,akhir:45,jenis:'jamaah',on:1},
+  {k:'ashar',nama:'Ashar',tipe:'sholat',ref:3,tepat:15,akhir:45,jenis:'jamaah',on:1},
+  {k:'maghrib',nama:'Maghrib',tipe:'sholat',ref:4,tepat:15,akhir:45,jenis:'jamaah',on:1},
+  {k:'isya',nama:'Isya’',tipe:'sholat',ref:5,tepat:15,akhir:45,jenis:'jamaah',on:1},
+  {k:'ngaji_quran',nama:'Ngaji Qur’an',tipe:'jam',mulai:'19:15',tepat:10,akhir:60,jenis:'ngaji',on:1},
+  {k:'ngaji_kitab',nama:'Ngaji Kitab',tipe:'jam',mulai:'20:15',tepat:10,akhir:60,jenis:'ngaji',on:1},
+  {k:'tidur',nama:'Waktu tidur',tipe:'jam',mulai:'22:00',tepat:15,akhir:60,jenis:'',on:1}
+];
+function aqNama(k){const x=AQ_DEF.find(y=>y.k===k);return x?x.nama:k}
+function aqFmt(m){m=Math.round(m);return String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function aqMenit(s){const m=/^(\d{1,2})[:.](\d{2})$/.exec(String(s||'').trim());return m?(+m[1])*60+(+m[2]):null}
+function aqTgl(n){return n.y+'-'+String(n.m).padStart(2,'0')+'-'+String(n.d).padStart(2,'0')}
+function aqTabelHilang(e){return !!e&&(e.code==='42P01'||e.code==='PGRST205'||/does not exist|Could not find the table/i.test(e.message||''))}
+async function aqCfg(){const k=await kontenC();return Array.isArray(k.absen_sesi)&&k.absen_sesi.length?k.absen_sesi:AQ_DEF}
+async function aqSesi(){
+  const k=await kontenC(),cfg=await aqCfg(),t=waktuSholat(k.waktu||{});
+  return cfg.filter(x=>x.on!==0&&x.on!==false).map(x=>({...x,mulai_m:x.tipe==='sholat'?Math.round(t[x.ref]):aqMenit(x.mulai)}))
+    .filter(x=>x.mulai_m!=null&&!isNaN(x.mulai_m)).sort((a,b)=>a.mulai_m-b.mulai_m);
+}
+function aqAktif(sesi,now){
+  const c=sesi.filter(x=>now>=x.mulai_m-5&&now<=x.mulai_m+(+x.akhir||45));
+  return c.length?c.sort((a,b)=>b.mulai_m-a.mulai_m)[0]:null;
+}
+function aqNow(){const n=jkt(new Date());return{n,now:n.h*60+n.mi+n.s/60,tgl:aqTgl(n)}}
+function aqCurDari(sesi,man){const{now}=aqNow();return man?(sesi.find(x=>x.k===man)||null):aqAktif(sesi,now)}
+
+async function aqCatat(santriId,cur){
+  const{n,now,tgl}=aqNow(),s=U.santri.find(x=>x.id==santriId);
+  if(!s)return{ok:false,msg:'Kode tidak dikenal atau bukan santri aktif'};
+  const st=now<=cur.mulai_m+(+cur.tepat||15)?'hadir':'telat';
+  const r=await SB.from('kehadiran').insert({santri_id:santriId,kegiatan:cur.k,tanggal:tgl,status:st});
+  if(r.error){
+    if(r.error.code==='23505')return{ok:false,dup:true,nama:s.nama,msg:'Sudah absen'};
+    if(aqTabelHilang(r.error))return{ok:false,fatal:true,msg:'Tabel kehadiran belum dipasang. Jalankan absen_qr.sql di Supabase.'};
+    return{ok:false,msg:r.error.message};
+  }
+  if(st==='telat'&&cur.jenis&&localStorage.getItem('aq_oto')==='1'){
+    try{
+      await SB.from('pelanggaran').insert({santri_id:santriId,jenis:cur.jenis,ket:cur.nama+' (telat, absen QR)'});
+      notifWaliSantri(santriId,{jenis:'Pelanggaran',judul:JN[cur.jenis]||cur.jenis,pesan:cur.nama+' (telat)',santri_nama:s.nama});
+    }catch(e){}
+  }
+  return{ok:true,status:st,nama:s.nama,jam:String(n.h).padStart(2,'0')+':'+String(n.mi).padStart(2,'0')};
+}
+
+/* ---- pemindai kamera berkelanjutan ---- */
+let AQS=null;
+function aqBip(ok){
+  try{
+    const A=window.AudioContext||window.webkitAudioContext;
+    if(A){AQS=AQS||{};AQS.ac=AQS.ac||new A();const c=AQS.ac,o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=ok?880:300;g.gain.value=.15;o.start();setTimeout(()=>{try{o.stop()}catch(e){}},ok?120:320)}
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate(ok?60:[80,60,80])}catch(e){}
+}
+function aqBanner(tipe,judul,sub){
+  const el=$('aq_hasil');if(!el)return;
+  const w={ok:'#047857',telat:'#b45309',dup:'#1d4ed8',err:'#b91c1c'}[tipe]||'#334155';
+  el.style.background=w;el.innerHTML='<div style="font-size:22px;font-weight:800">'+esc(judul)+'</div><div style="opacity:.9">'+esc(sub||'')+'</div>';
+}
+async function aqProsesKode(kode){
+  if(!AQS||AQS.busy)return;
+  const id=+String(kode).replace(/\D/g,'');
+  AQS.busy=true;
+  try{
+    const{now}=aqNow();
+    const cur=AQS.man?(AQS.sesi.find(x=>x.k===AQS.man)||null):aqAktif(AQS.sesi,now);
+    if(!cur){aqBanner('err','Tidak ada sesi aktif','Pindai dihentikan sementara');aqBip(false);return}
+    const r=await aqCatat(id,cur);
+    if(r.ok){
+      aqBip(true);
+      aqBanner(r.status==='hadir'?'ok':'telat','✔ '+r.nama,(r.status==='hadir'?'Hadir':'TELAT')+' · '+r.jam+' · '+cur.nama);
+      AQS.n[r.status]=(AQS.n[r.status]||0)+1;
+      const lg=$('aq_log');if(lg)lg.insertAdjacentHTML('afterbegin','<div>'+esc(r.jam)+' · '+esc(r.nama)+' · '+(r.status==='hadir'?'Hadir':'Telat')+'</div>');
+    }else if(r.dup){aqBip(false);aqBanner('dup',r.nama,'Sudah absen untuk '+cur.nama)}
+    else{aqBip(false);aqBanner('err','Gagal',r.msg||'');if(r.fatal)aqTutup()}
+    const c=$('aq_cnt');if(c)c.textContent='Hadir '+(AQS.n.hadir||0)+' · Telat '+(AQS.n.telat||0)+' (sesi ini, pindai kali ini)';
+  }finally{if(AQS)AQS.busy=false}
+}
+async function aqMulai(){
+  const sesi=await aqSesi(),cur=aqCurDari(sesi,U.aqMan);
+  if(!cur)return msgBox('Belum ada sesi aktif. Pilih sesi secara manual di bagian atas halaman jika ingin tetap memindai.');
+  if(!window.jsQR){toast('Memuat pemindai QR…');await loadJsQR()}
+  if(!window.jsQR)return msgBox('Pemindai QR belum termuat. Periksa koneksi internet, lalu coba lagi.');
+  if(AQS&&AQS.on)return;
+  const ov=document.createElement('div');ov.id='aq-ov';
+  ov.style.cssText='position:fixed;inset:0;z-index:80;background:#0b1220;display:flex;flex-direction:column;color:#fff';
+  ov.innerHTML=`<div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">${esc(cur.nama)}</b><div style="font-size:12px;opacity:.75">${aqFmt(cur.mulai_m)} · tepat s.d. ${aqFmt(cur.mulai_m+(+cur.tepat||15))} · ditutup ${aqFmt(cur.mulai_m+(+cur.akhir||45))}</div></div><div style="display:flex;gap:8px"><button type="button" class="sec" onclick="aqPutarKamera()" title="Pindah kamera depan/belakang"><i class="fa-solid fa-camera-rotate"></i> Putar</button><button type="button" class="sec" onclick="aqTutup()">Selesai</button></div></div>
+    <video id="aq_v" playsinline muted style="width:100%;height:40%;object-fit:cover;background:#000"></video>
+    <div id="aq_hasil" style="margin:10px;padding:14px;border-radius:14px;background:#334155;text-align:center"><div style="font-size:18px;font-weight:700">Tunjukkan kartu QR ke kamera</div><div style="opacity:.8">Menunggu santri…</div></div>
+    <div id="aq_cnt" class="mu" style="color:#cbd5e1;text-align:center">Hadir 0 · Telat 0 (sesi ini, pindai kali ini)</div>
+    <div id="aq_log" style="flex:1;overflow:auto;padding:8px 16px;font-size:14px;color:#e2e8f0"></div>
+    <div style="padding:10px"><button type="button" class="sec" style="width:100%" onclick="aqManual(true)">Ketik NIS / kode manual</button></div>`;
+  document.body.appendChild(ov);
+  AQS={on:true,busy:false,last:{},n:{hadir:0,telat:0},sesi,man:U.aqMan||null,ac:(AQS&&AQS.ac)||null};
+  try{
+    await aqKamera(localStorage.getItem('aq_kamera')==='user'?'user':'environment');
+    const v=$('aq_v');
+    const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
+    const tick=()=>{
+      if(!AQS||!AQS.on)return;
+      if(v.videoWidth&&!AQS.busy){
+        const sc=Math.min(1,640/v.videoWidth);c.width=Math.round(v.videoWidth*sc);c.height=Math.round(v.videoHeight*sc);
+        x.drawImage(v,0,0,c.width,c.height);
+        const im=x.getImageData(0,0,c.width,c.height),r=jsQR(im.data,im.width,im.height);
+        if(r&&/^PPPAS-\d+$/i.test(r.data.trim())){
+          const kd=r.data.trim().toUpperCase(),t=Date.now();
+          if(!AQS.last[kd]||t-AQS.last[kd]>4000){AQS.last[kd]=t;aqProsesKode(kd)}
+        }
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(e){aqTutup();msgBox('Kamera tidak bisa dibuka: '+e.message)}
+}
+async function aqKamera(mode){
+  const v=$('aq_v');if(!v||!AQS)return;
+  try{AQS.st&&AQS.st.getTracks().forEach(t=>t.stop())}catch(e){}
+  let st;
+  try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:mode}}})}
+  catch(e){st=await navigator.mediaDevices.getUserMedia({video:true})}
+  if(!AQS||!AQS.on){st.getTracks().forEach(t=>t.stop());return}
+  AQS.st=st;AQS.mode=mode;v.srcObject=st;await v.play();
+  v.style.transform=mode==='user'?'scaleX(-1)':'none';   // pratinjau kamera depan dicerminkan; pembacaan QR tidak terpengaruh
+  try{localStorage.setItem('aq_kamera',mode)}catch(e){}
+}
+async function aqPutarKamera(){
+  if(!AQS||!AQS.on)return;
+  const m=AQS.mode==='user'?'environment':'user';
+  try{await aqKamera(m);toast(m==='user'?'Kamera depan':'Kamera belakang')}
+  catch(e){msgBox('Kamera tidak bisa dialihkan: '+(e.message||e))}
+}
+function aqTutup(){
+  if(AQS){AQS.on=false;try{AQS.st&&AQS.st.getTracks().forEach(t=>t.stop())}catch(e){}try{AQS.ac&&AQS.ac.close()}catch(e){}}
+  AQS=null;const o=$('aq-ov');if(o)o.remove();
+  if(U&&U.me&&U.tab==='absenqr')draw();
+}
+function aqManual(dalamPindai){
+  const old=$('aq-man');if(old)old.remove();
+  const ov=document.createElement('div');ov.id='aq-man';ov.className='mdl-ov';ov.style.zIndex=95;document.body.appendChild(ov);
+  ov.innerHTML=`<div class="mdl-box"><h4>Absen manual</h4><label>NIS atau kode (PPPAS-…)</label><input id="aq_mk" style="width:100%" autocomplete="off"><div class="mdl-acts"><button type="button" class="sec" id="aq_mb">Batal</button><button type="button" id="aq_mo">Catat</button></div></div>`;
+  $('aq_mb').onclick=()=>ov.remove();
+  $('aq_mo').onclick=async()=>{
+    const c=($('aq_mk').value||'').trim().toUpperCase().replace(/\s/g,'');
+    const bn=U.santri.find(s=>String(s.nis||'').replace(/\s/g,'')==c),id=bn?bn.id:+c.replace('PPPAS-','');
+    ov.remove();
+    if(!U.santri.some(s=>s.id==id))return msgBox('NIS atau kode tidak dikenal.');
+    if(dalamPindai&&AQS){await aqProsesKode('PPPAS-'+id);return}
+    const sesi=await aqSesi(),cur=aqCurDari(sesi,U.aqMan);
+    if(!cur)return msgBox('Belum ada sesi aktif.');
+    const r=await aqCatat(id,cur);
+    if(r.ok){toast(r.nama+' · '+(r.status==='hadir'?'Hadir':'Telat'));draw()}else msgBox((r.nama?r.nama+': ':'')+r.msg);
+  };
+  setTimeout(()=>{const i=$('aq_mk');if(i)i.focus()},100);
+}
+function aqCari(v){
+  const q=String(v||'').trim().toLowerCase();let n=0;
+  document.querySelectorAll('#aq_belum .aq-row').forEach(r=>{const ok=!q||r.dataset.n.includes(q);r.style.display=ok?'':'none';if(ok)n++});
+  const k=$('aq_kosong');if(k)k.style.display=n?'none':'block';
+  const c=$('aq_cb');if(c)c.textContent=q?(n+' dari '+c.dataset.t):c.dataset.t;
+}
+async function aqHadirManual(id){
+  const sesi=await aqSesi(),cur=aqCurDari(sesi,U.aqMan);
+  if(!cur)return msgBox('Belum ada sesi aktif.');
+  const r=await aqCatat(id,cur);
+  if(r.ok||r.dup){draw()}else msgBox(r.msg);
+}
+function aqHapus(id){
+  uiConfirm('Hapus catatan kehadiran ini?',async()=>{
+    const r=await SB.from('kehadiran').delete().eq('id',id);
+    if(r.error)return msgBox(r.error.message);
+    draw();
+  });
+}
+function aqOto(el){localStorage.setItem('aq_oto',el.checked?'1':'0');toast(el.checked?'Telat akan dicatat otomatis sebagai pelanggaran.':'Telat hanya dicatat sebagai kehadiran.')}
+async function aqCatatBelum(kegiatan,tgl){
+  const sesi=await aqSesi(),cur=sesi.find(x=>x.k===kegiatan);
+  if(!cur||!cur.jenis)return msgBox('Sesi ini tidak terhubung ke jenis pelanggaran.');
+  const r=await SB.from('kehadiran').select('santri_id').eq('tanggal',tgl).eq('kegiatan',kegiatan);
+  const ada=new Set((r.data||[]).map(x=>String(x.santri_id)));
+  const belum=U.santri.filter(s=>!ada.has(String(s.id)));
+  if(!belum.length)return msgBox('Semua santri sudah absen.');
+  uiConfirm('Catat '+belum.length+' santri yang belum absen sebagai pelanggaran "'+(JN[cur.jenis]||cur.jenis)+'" untuk '+cur.nama+'? Ini juga mengirim pemberitahuan ke wali.',async()=>{
+    const rows=belum.map(s=>({santri_id:s.id,jenis:cur.jenis,ket:cur.nama+' (tidak hadir, absen QR)'}));
+    const e=await SB.from('pelanggaran').insert(rows);
+    if(e.error)return msgBox(e.error.message);
+    belum.forEach(s=>notifWaliSantri(s.id,{jenis:'Pelanggaran',judul:JN[cur.jenis]||cur.jenis,pesan:cur.nama+' (tidak hadir)',santri_nama:s.nama}));
+    try{localStorage.setItem('aq_final_'+tgl+'_'+kegiatan,'1')}catch(e2){}
+    toast(rows.length+' catatan pelanggaran tersimpan.');draw();
+  });
+}
+/* ---- pengaturan sesi (admin) ---- */
+async function aqSimpanCfg(){
+  const cfg=(await aqCfg()).map((x,i)=>{
+    const y={...x};
+    y.on=$('aqo'+i)?.checked?1:0;
+    y.nama=($('aqn'+i)?.value||x.nama).trim()||x.nama;
+    if(x.tipe==='jam'){const j=($('aqj'+i)?.value||'').trim();if(aqMenit(j)==null)throw new Error('Jam "'+j+'" pada sesi '+y.nama+' tidak valid (contoh 19:15).');y.mulai=j.replace('.',':')}
+    y.tepat=Math.max(0,+($('aqt'+i)?.value)||0);y.akhir=Math.max(1,+($('aqa'+i)?.value)||45);
+    y.jenis=$('aqk'+i)?.value||'';
+    return y;
+  });
+  await simpanKonten('absen_sesi',cfg);draw();
+}
+async function aqSimpanCfgAman(){try{await aqSimpanCfg()}catch(e){msgBox(e.message)}}
+async function aqTambahSesi(){
+  const cfg=(await aqCfg()).slice();cfg.push({k:'x'+Date.now().toString(36),nama:'Sesi baru',tipe:'jam',mulai:'20:00',tepat:10,akhir:45,jenis:'',on:1});
+  await simpanKonten('absen_sesi',cfg);draw();
+}
+function aqHapusSesi(k){
+  uiConfirm('Hapus sesi ini dari pengaturan? Catatan kehadiran lama tetap tersimpan.',async()=>{
+    const cfg=(await aqCfg()).filter(x=>x.k!==k);await simpanKonten('absen_sesi',cfg);draw();
+  });
+}
+async function aqResetCfg(){uiConfirm('Kembalikan semua sesi ke pengaturan awal?',async()=>{await simpanKonten('absen_sesi',AQ_DEF);draw()})}
+
+R.absenqr=async()=>{
+  const sesi=await aqSesi(),{now,tgl}=aqNow(),man=U.aqMan&&sesi.some(x=>x.k===U.aqMan)?U.aqMan:null;
+  if(U.aqMan&&!man)U.aqMan=null;
+  const cur=aqCurDari(sesi,man),next=cur?null:sesi.find(x=>x.mulai_m-5>now);
+  const isAdm=U.me.role==='admin';
+  let h=`<div class="card"><h3><i class="fa-solid fa-user-check" style="color:#047857"></i> Absen QR mandiri</h3>
+    <div class="mu">Santri menunjukkan kartu QR-nya ke kamera. Kehadiran tercatat otomatis sesuai jam sesi. Letakkan perangkat ini di pintu masjid atau kamar dan awasi saat santri memindai.</div>
+    <label>Sesi</label><select style="width:100%" onchange="U.aqMan=this.value||null;draw()"><option value="">Otomatis (ikuti jam)</option>${sesi.map(x=>`<option value="${esc(x.k)}"${man===x.k?' selected':''}>${esc(x.nama)} · ${aqFmt(x.mulai_m)}</option>`).join('')}</select>`
+    +(cur?`<div style="margin-top:10px;padding:12px;border-radius:12px;background:#ecfdf5;border:1px solid #a7f3d0"><b style="font-size:18px">${esc(cur.nama)}</b>${man?' <span class="badge b1">manual</span>':' <span class="badge b0">sedang berlangsung</span>'}<div class="mu">Mulai ${aqFmt(cur.mulai_m)} · hadir tepat s.d. ${aqFmt(cur.mulai_m+(+cur.tepat||15))} · ditutup ${aqFmt(cur.mulai_m+(+cur.akhir||45))}</div></div>
+       <div class="row" style="margin-top:10px"><button type="button" onclick="aqMulai()"><i class="fa-solid fa-camera"></i> Mulai pemindai</button><button type="button" class="sec" onclick="aqManual(false)">Ketik NIS</button></div>`
+      :`<div style="margin-top:10px;padding:12px;border-radius:12px;background:#f1f5f9"><b>Belum ada sesi aktif</b><div class="mu">${next?'Berikutnya: '+esc(next.nama)+' pukul '+aqFmt(next.mulai_m)+' (dibuka 5 menit sebelumnya).':'Tidak ada sesi lagi hari ini.'} Pilih sesi manual di atas bila perlu.</div></div>`)
+    +`<label class="ck" style="margin-top:10px"><input type="checkbox" ${localStorage.getItem('aq_oto')==='1'?'checked':''} onchange="aqOto(this)"> Catat santri yang <b>telat</b> otomatis sebagai pelanggaran</label></div>`;
+  if(cur){
+    const r=await SB.from('kehadiran').select('*').eq('tanggal',tgl).eq('kegiatan',cur.k).order('waktu',{ascending:false});
+    if(r.error){
+      h+=`<div class="card"><h3>Tabel belum siap</h3><div class="mu">${aqTabelHilang(r.error)?'Jalankan <b>absen_qr.sql</b> sekali di Supabase (SQL Editor) untuk mengaktifkan fitur ini.':esc(r.error.message)}</div></div>`;
+    }else{
+      const rows=r.data||[],ada=new Set(rows.map(x=>String(x.santri_id))),belum=U.santri.filter(s=>!ada.has(String(s.id)));
+      const nm=id=>(U.santri.find(s=>s.id==id)||{}).nama||('#'+id);
+      const hadir=rows.filter(x=>x.status==='hadir').length,telat=rows.length-hadir;
+      const jam=v=>new Date(v).toLocaleTimeString('id-ID',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit'});
+      const final=localStorage.getItem('aq_final_'+tgl+'_'+cur.k)==='1';
+      h+=`<div class="card"><h3>Rekap ${esc(cur.nama)} hari ini</h3>
+        <div class="li"><span>Hadir tepat waktu</span><b style="color:var(--ok)">${hadir}</b></div>
+        <div class="li"><span>Telat</span><b style="color:#b45309">${telat}</b></div>
+        <div class="li"><span>Belum absen</span><b style="color:var(--rd)">${belum.length}</b></div>
+        <div class="li"><span>Total santri aktif</span><b>${U.santri.length}</b></div>
+        ${(cur.jenis&&belum.length)?`<p><button type="button" class="${final?'sec':''}" onclick="aqCatatBelum('${esc(cur.k)}','${tgl}')">${final?'Sudah dicatat. Catat lagi?':'Catat yang belum hadir sebagai pelanggaran'}</button></p><div class="mu">Gunakan setelah sesi ditutup. Wali akan menerima pemberitahuan.</div>`:''}</div>`;
+      h+=`<div class="card"><h3>Sudah absen (${rows.length})</h3>`+(rows.length?rows.map(x=>`<div class="li"><span><b>${esc(nm(x.santri_id))}</b><div class="mu">${jam(x.waktu)}</div></span><span><span class="badge ${x.status==='hadir'?'b0':'b1'}">${x.status==='hadir'?'Hadir':'Telat'}</span>${isAdm?` <button type="button" class="sec" style="padding:4px 9px;font-size:12px" onclick="aqHapus(${x.id})">✕</button>`:''}</span></div>`).join(''):'<div class="mu">Belum ada.</div>')+`</div>`;
+      h+=`<div class="card"><h3>Belum absen (<span id="aq_cb" data-t="${belum.length}">${belum.length}</span>)</h3>`
+        +(belum.length?`<input id="aq_cari" type="search" placeholder="Cari nama atau kamar…" autocomplete="off" style="width:100%" oninput="aqCari(this.value)">
+        <div id="aq_belum" style="max-height:55vh;overflow-y:auto;margin-top:8px;border:1px solid #e2e8f0;border-radius:12px">`
+        +belum.map(s=>`<div class="li aq-row" data-n="${esc((s.nama+' '+(s.kamar||'')).toLowerCase())}" style="padding:8px 12px"><span>${esc(s.nama)} <span class="mu">${esc(s.kamar||'')}</span></span><button type="button" class="sec" style="padding:5px 10px;font-size:12px" onclick="aqHadirManual(${s.id})">Hadir</button></div>`).join('')
+        +`<div id="aq_kosong" class="mu" style="display:none;padding:12px">Tidak ada nama yang cocok.</div></div>`:'<div class="mu">Semua santri sudah absen.</div>')+`</div>`;
+    }
+  }
+  if(isAdm){
+    const cfg=await aqCfg();
+    h+=`<div class="card"><h3>Pengaturan sesi</h3><div class="mu">Sesi sholat mengikuti jam adzan di Kelola konten. Sesi lain memakai jam yang Anda isi. "Tepat" = menit setelah mulai yang masih dihitung hadir; "Tutup" = batas akhir pemindaian.</div>`
+    +cfg.map((x,i)=>`<div style="border-top:1px solid #e2e8f0;margin-top:10px;padding-top:8px">
+      <label class="ck"><input type="checkbox" id="aqo${i}" ${x.on===0||x.on===false?'':'checked'}> <b>Aktif</b></label>
+      <label>Nama sesi</label><input id="aqn${i}" style="width:100%" value="${esc(x.nama)}">
+      ${x.tipe==='jam'?`<label>Jam mulai (HH:MM)</label><input id="aqj${i}" style="width:100%" value="${esc(x.mulai||'')}" placeholder="19:15">`:'<div class="mu" style="margin-top:6px">Mulai: mengikuti waktu adzan</div>'}
+      <div class="row" style="flex-wrap:nowrap"><div style="flex:1"><label>Tepat (menit)</label><input id="aqt${i}" type="number" style="width:100%" value="${+x.tepat||0}"></div><div style="flex:1"><label>Tutup (menit)</label><input id="aqa${i}" type="number" style="width:100%" value="${+x.akhir||45}"></div></div>
+      <label>Jika tidak hadir/telat dicatat sebagai</label><select id="aqk${i}" style="width:100%"><option value="">Tidak dicatat sebagai pelanggaran</option>${Object.entries(JN).map(([k,v])=>`<option value="${k}"${x.jenis===k?' selected':''}>${v}</option>`).join('')}</select>
+      ${x.tipe==='jam'?`<p><button type="button" class="sec" style="padding:5px 10px;font-size:12px" onclick="aqHapusSesi('${esc(x.k)}')">Hapus sesi</button></p>`:''}</div>`).join('')
+    +`<div class="row" style="margin-top:12px"><button type="button" onclick="aqSimpanCfgAman()">Simpan</button><button type="button" class="sec" onclick="aqTambahSesi()">+ Tambah sesi</button><button type="button" class="sec" onclick="aqResetCfg()">Kembalikan awal</button></div></div>`;
+  }
+  return h;
+};
+
 /* ---- Profil / biodata pondok (klik logo di header; admin dapat mengedit) ---- */
 const PP_FIELDS=[['nama','Nama pondok pesantren'],['yayasan','Yayasan'],['pembina','Pembina'],['pengasuh','Pengasuh'],['ketua','Kepala / Ketua pondok'],['berdiri','Tahun berdiri'],['izin','Nomor izin / NSPP'],['alamat','Alamat lengkap','ta'],['gps','Lokasi GPS (lintang, bujur)'],['telp','Telepon / WhatsApp'],['email','Email'],['web','Website'],['tentang','Tentang pondok','ta']];
 const PP_DEF={nama:'PPP. Al-As’adiyah Blega'};
@@ -1742,8 +2011,8 @@ Object.assign(IC,{direktorialumni:'fa-solid fa-users',daftarsantri:'fa-solid fa-
 const TL={direktorialumni:'Direktori Alumni',riwayatsantri:'Riwayat santri',chat:'Obrolan',penggunaaktif:'Pengguna aktif',home:'Menu'};[...TW,...TS,...TA].forEach(t=>TL[t[0]]=t[1]);
 const MN={
  wali:[['Santri Saya',['anak','ringkasan','izin','kesehatan','kartu']],['Keuangan',['saku','tabungan','tagihan']],['Komunikasi & Info',['chat','notif','info','media','struktur']],['Akun',['akun']]],
- pengurus:[['Kegiatan Santri',['absensi','izin','sanksi','kesehatan']],['Keuangan',['kasir','tabungan']],['Data Santri',['daftarsantri','kartu']],['Informasi',['info','media','struktur','wa']],['Akun',['akun']]],
- admin:[['Kegiatan Santri',['absensi','izin','sanksi','kesehatan']],['Keuangan',['kasir','sisacoin','konfirmasi','tagihanadm','tabungan']],['Data Santri',['daftarsantri','riwayatlengkap','kartu','kartuedit','pendaftar','kode','akunwali']],['Laporan',['rekap','top']],['Informasi & Obrolan',['chat','info','media','struktur','strukturedit','wa','konten']],['Pengaturan',['penggunaaktif','pengaturan','keamanan','akun']]],
+ pengurus:[['Kegiatan Santri',['absensi','absenqr','izin','sanksi','kesehatan']],['Keuangan',['kasir','tabungan']],['Data Santri',['daftarsantri','kartu']],['Informasi',['info','media','struktur','wa']],['Akun',['akun']]],
+ admin:[['Kegiatan Santri',['absensi','absenqr','izin','sanksi','kesehatan']],['Keuangan',['kasir','sisacoin','konfirmasi','tagihanadm','tabungan']],['Data Santri',['daftarsantri','riwayatlengkap','kartu','kartuedit','pendaftar','kode','akunwali']],['Laporan',['rekap','top']],['Informasi & Obrolan',['chat','info','media','struktur','strukturedit','wa','konten']],['Pengaturan',['penggunaaktif','pengaturan','keamanan','akun']]],
  alumni:[['Alumni & Santri',['riwayatsantri','direktorialumni']],['Komunikasi & Info',['chat','media','struktur','info']],['Akun',['akun']]]};
 function menuHtml(){
   const role=U.me.role;
@@ -1779,7 +2048,7 @@ function toggleMenuSearch(){
   const render=()=>{
     const q=inp.value.trim().toLowerCase();
     const items=allMenuItems().filter(x=>!q||x.label.toLowerCase().includes(q)||x.k.toLowerCase().includes(q)||x.sec.toLowerCase().includes(q));
-    $('hdr_mq_res').innerHTML=items.length?items.map(x=>`<div class="sg" onclick="U.tab='${x.k}';U.mq='';closeMenuSearch();draw()"><i class="${IC[x.k]||'fa-solid fa-circle'}"></i><span>${esc(x.label)}<div class="mu" style="font-weight:500">${esc(x.sec)}</div></span></div>`).join(''):`<div class="sg mu" style="cursor:default">Tidak ada menu yang cocok</div>`;
+    $('hdr_mq_res').innerHTML=items.length?items.map(x=>`<div class="sg" onclick="U.tab='${x.k}';U.mq='';closeMenuSearch();draw()">${x.k=='tabungan'?`<span style="width:20px;display:inline-flex;justify-content:center;flex:none">${CHEST_SVG(20)}</span>`:`<i class="${IC[x.k]||'fa-solid fa-circle'}"></i>`}<span>${esc(x.label)}<div class="mu" style="font-weight:500">${esc(x.sec)}</div></span></div>`).join(''):`<div class="sg mu" style="cursor:default">Tidak ada menu yang cocok</div>`;
   };
   inp.oninput=render;render();
 }
@@ -2275,6 +2544,7 @@ async function editCoinSantri(id,nama,cur){
 
 /* ---- Admin: Riwayat lengkap per santri (coin, pelanggaran, sanksi, tagihan, izin, kesehatan, tabungan) ---- */
 Object.assign(IC,{riwayatlengkap:'fa-solid fa-clock-rotate-left'});
+Object.assign(IC,{absenqr:'fa-solid fa-user-check'});
 Object.assign(TL,{riwayatlengkap:'Riwayat lengkap'});
 Object.assign(IC,{keamanan:'fa-solid fa-shield-halved'});
 Object.assign(TL,{keamanan:'Keamanan'});
@@ -2295,7 +2565,7 @@ R.riwayatlengkap=async()=>{
   const sid=U.rs,sObj=all.find(x=>x.id==sid)||{};
   const f=U.rf||'semua';
   const q=(t,o)=>Promise.resolve(SB.from(t).select('*').eq('santri_id',sid).order(o,{ascending:false}).limit(300)).then(r=>r.error?[]:(r.data||[])).catch(()=>[]);
-  const[tx,tp,pl,sk,iz,ks,tg,tb]=await Promise.all([q('transaksi','waktu'),q('topup_request','id'),q('pelanggaran','waktu'),q('sanksi_santri','selesai'),q('izin','id'),q('kesehatan','mulai'),q('tagihan','id'),q('tabungan','waktu')]);
+  const[tx,tp,pl,sk,iz,ks,tg,tb,kh]=await Promise.all([q('transaksi','waktu'),q('topup_request','id'),q('pelanggaran','waktu'),q('sanksi_santri','selesai'),q('izin','id'),q('kesehatan','mulai'),q('tagihan','id'),q('tabungan','waktu'),q('kehadiran','waktu')]);
   let sd=null;
   try{const r=await SB.rpc('saldo',{p_santri:sid});if(!r.error&&r.data!=null)sd=Number(r.data)||0}catch(e){}
   let fu='';
@@ -2316,7 +2586,7 @@ R.riwayatlengkap=async()=>{
   const sdTb=tb.reduce((a,x)=>a+(x.tipe==='setor'?1:-1)*(Number(x.jumlah)||0),0);
   const blm=tg.filter(x=>!x.lunas_pada),totBlm=blm.reduce((a,x)=>a+(Number(x.nominal)||0),0);
   const tgl=v=>v?fdt(v):'-';
-  const chips=[['semua','Semua'],['coin','Coin ('+tx.length+')'],['pelanggaran','Pelanggaran ('+pl.length+')'],['sanksi','Sanksi ('+sk.length+')'],['tagihan','Tagihan ('+tg.length+')'],['izin','Izin ('+iz.length+')'],['kesehatan','Kesehatan ('+ks.length+')'],['tabungan','Tabungan ('+tb.length+')']];
+  const chips=[['semua','Semua'],['coin','Coin ('+tx.length+')'],['pelanggaran','Pelanggaran ('+pl.length+')'],['sanksi','Sanksi ('+sk.length+')'],['tagihan','Tagihan ('+tg.length+')'],['izin','Izin ('+iz.length+')'],['kesehatan','Kesehatan ('+ks.length+')'],['tabungan','Tabungan ('+tb.length+')'],['kehadiran','Kehadiran ('+kh.length+')']];
   const sec=(k,judul,body,n)=>(f==='semua'||f===k)?`<div class="card"><h3>${judul} <span class="mu" style="font-weight:500">(${n})</span></h3>${n?body:'<div class="mu">Belum ada data.</div>'}</div>`:'';
   const bio=(l,v)=>v?`<div class="li"><span>${l}</span><b style="text-align:right">${esc(String(v))}</b></div>`:'';
   const status=sObj.alumni?'Alumni':(sObj.aktif===false?'Nonaktif':'Santri aktif');
@@ -2342,6 +2612,7 @@ R.riwayatlengkap=async()=>{
   h+=sec('izin','Izin pulang',iz.map(x=>`<div class="li"><span><b>${esc(x.alasan||'')}</b><div class="mu">Batas kembali: ${tgl(x.batas_kembali)}</div></span><span class="badge ${x.status=='disetujui'||x.status=='kembali'?'b0':x.status=='ditolak'?'b2':'b1'}">${esc(x.status||'')}</span></div>`).join(''),iz.length);
   h+=sec('kesehatan','Kesehatan',ks.map(x=>`<div class="li"><span><b>${esc(x.keluhan||'')}</b><div class="mu">${fd(x.mulai)}${x.status=='sembuh'&&x.tgl_sembuh?' → Sembuh '+fd(x.tgl_sembuh):''}</div></span><span class="badge ${x.status=='sakit'?'b2':'b0'}">${esc(x.status||'')}</span></div>`).join(''),ks.length);
   h+=sec('tabungan','Tabungan',tb.map(x=>`<div class="li"><span>${esc(x.ket||'')}<div class="mu">${tgl(x.waktu)}</div></span><b style="color:${x.tipe=='setor'?'var(--ok)':'var(--rd)'}">${x.tipe=='setor'?'+':'-'}${rp(x.jumlah)}</b></div>`).join(''),tb.length);
+  h+=sec('kehadiran','Kehadiran (absen QR)',kh.map(x=>`<div class="li"><span><b>${esc(aqNama(x.kegiatan))}</b><div class="mu">${fd(String(x.tanggal).slice(0,10))}</div></span><span class="badge ${x.status==='hadir'?'b0':'b1'}">${x.status==='hadir'?'Hadir':'Telat'}</span></div>`).join(''),kh.length);
   return h;
 };
 async function cetakRiwayatSantri(){
