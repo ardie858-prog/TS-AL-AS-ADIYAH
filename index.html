@@ -380,6 +380,17 @@ body.mini #thm{bottom:calc(142px + env(safe-area-inset-bottom,0px))}body.mini #t
 #mrpos{width:100%;padding:0;accent-color:#047857}
 .mrt{display:flex;justify-content:space-between;font-size:11px;color:#64748b}
 </style>
+<style id="fix-v9">
+html,body{min-height:100%}
+body:not(.lgmode) main{min-height:calc(100vh - 200px);min-height:calc(100dvh - 200px)}
+body:not(.lgmode){background-attachment:fixed}
+.skl .card{display:flex;flex-direction:column;gap:10px}
+.skl i{display:block;height:14px;border-radius:8px;width:100%;background:linear-gradient(90deg,rgba(6,95,70,.08) 25%,rgba(6,95,70,.18) 37%,rgba(6,95,70,.08) 63%);background-size:400% 100%;animation:sklm 1.2s ease infinite}
+.skl i.h{height:20px;width:45%}
+@keyframes sklm{0%{background-position:100% 50%}100%{background-position:0 50%}}
+#v{animation:vin .18s ease-out}
+@keyframes vin{from{opacity:.4}to{opacity:1}}
+</style>
 </head>
 <body>
 <header><div class="hd"><div class="brand"><div class="hlogo"><img id="hlogo" alt=""></div><div><div class="bn">SantriTrack</div><div class="bs">PPP. AL-AS’ADIYAH BLEGA</div></div></div><div class="hr"><div class="ub" id="ubw" style="display:none"><span class="ui" id="wi">W</span><span id="who"></span></div><button id="chatbtn" class="bellb" style="display:none" onclick="U.tab='chat';draw()" title="Obrolan"><i class="fa-solid fa-comments"></i><span id="cdot" style="display:none"></span></button><button id="bell" class="bellb" style="display:none" onclick="U.tab='notif';draw()" title="Notifikasi"><i class="fa-solid fa-bell"></i><span id="bdot" style="display:none"></span></button><button id="srch" class="bellb" style="display:none" onclick="toggleMenuSearch()" title="Cari menu"><i class="fa-solid fa-magnifying-glass"></i></button><button id="lo" class="lob" style="display:none"></button></div></div></header>
@@ -595,7 +606,7 @@ async function logout(){
   SB.removeAllChannels();
   clearInterval(U.tk);U.tk=null;
   clearInterval(U._chatPoll);U._chatPoll=null;
-  sessionStorage.removeItem('st_alumni');
+  sessionStorage.removeItem('st_alumni');localStorage.removeItem('st_off_me');
   await SB.auth.signOut();
   U={me:null,tab:'',sid:null,santri:[],allSantri:[],online:{}};
   loginView();
@@ -743,7 +754,7 @@ const hl=$('hlogo');if(!hl.dataset.s){hl.dataset.s=1;hl.onerror=()=>{hl.onerror=
 hl.onclick=()=>bukaProfilPondok();
 hl.title='Profil pondok';
 const ubw=$('ubw');if(ubw){ubw.onclick=()=>lihatProfilPenuh();ubw.title='Lihat foto profil'}
-if(!st&&!isAl){const r=await SB.from('notifikasi').select('id',{count:'exact',head:true}).eq('dibaca',false);updateNotifBadge(r.count||0)}
+if(!st&&!isAl){SB.from('notifikasi').select('id',{count:'exact',head:true}).eq('dibaca',false).then(r=>updateNotifBadge(r.count||0)).catch(()=>{})}
 $('tabs').innerHTML=T.map(t=>`<button class="${U.tab==t[0]?'on':''}" onclick="U.tab='${t[0]}';draw()"><i class="${IC[t[0]]||'fa-solid fa-circle'}"></i> ${t[1]}${t[0]=='notif'&&U.unread?` <b style="background:var(--rd);color:#fff;border-radius:99px;padding:0 6px;font-size:12px">${U.unread}</b>`:''}</button>`).join('');
 if(!st&&!isAl&&!U.sid&&U.tab!='anak'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran'){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
 let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
@@ -755,7 +766,7 @@ const BN=isAl
   ?[['home','Beranda','fa-solid fa-house'],['riwayatsantri','Santri','fa-solid fa-children'],['chat','Obrolan','fa-solid fa-comments'],['akun','Akun','fa-solid fa-circle-user']]
   :[['home','Beranda','fa-solid fa-house'],['info','Info','fa-solid fa-bullhorn'],U.me.role==='admin'?['chat','Obrolan','fa-solid fa-comments']:(st?['wa','Antrian WA','fa-brands fa-whatsapp']:['notif','Notifikasi','fa-solid fa-bell']),['akun','Akun','fa-solid fa-circle-user']];
 $('bn').innerHTML=BN.map(b=>`<button class="${U.tab==b[0]?'on':''}" onclick="U.tab='${b[0]}';draw()"><i class="${b[2]}"></i>${b[1]}${b[0]=='notif'&&U.unread?`<b class="mb" style="top:0;right:4px">${U.unread}</b>`:''}</button>`).join('');
-$('v').innerHTML=pg+sel+'<p class="mu">Memuat…</p>';
+$('v').innerHTML=pg+sel+'<div class="skl"><div class="card"><i class="h"></i><i></i><i style="width:70%"></i></div><div class="card"><i class="h"></i><i></i><i style="width:55%"></i></div></div>';
 try{const _h=await R[U.tab]();if(!U||!U.me)return;$('v').innerHTML=pg+sel+_h}catch(e){if(!U||!U.me)return;kmCatatError('Halaman '+U.tab+': '+(e&&e.message),U.tab);$('v').innerHTML=pg+sel+`<div class="card">Gagal memuat: ${esc(e.message)}</div>`}
 document.querySelectorAll('.qrbox').forEach(e=>{if(window.QRCode){e.innerHTML='';new QRCode(e,{text:e.dataset.c,width:256,height:256})}});const q=$('qr');if(q&&window.QRCode){q.innerHTML='';new QRCode(q,{text:'PPPAS-'+U.sid,width:150,height:150})}
 if(U.tab==='chat'){const cm=$('chat_msgs');if(cm)cm.scrollTop=cm.scrollHeight}
@@ -2406,7 +2417,7 @@ async function hapusTtd(){uiConfirm('Hapus tanda tangan dari kartu?',async()=>{c
 
 const KATI={Sholat:'mosque',Mengaji:'book-quran',Sekolah:'school',Makan:'utensils',Lainnya:'clock'};
 function harianHtml(a){return `<div class="card"><h3><i class="fa-solid fa-clock" style="color:#059669"></i> Jadwal harian pondok</h3>`+(a.length?['Siang','Malam'].map(s=>{const r=a.filter(x=>x.sesi==s).sort((x,y)=>String(x.jam).localeCompare(String(y.jam)));return r.length?`<div class="mu" style="margin:10px 0 0;font-weight:600"><i class="fa-solid fa-${s=='Siang'?'sun':'moon'}"></i> ${s}</div>`+r.map(x=>`<div class="li"><span><i class="fa-solid fa-${KATI[x.kat]||'clock'}" style="color:#059669;width:18px"></i> <b>${esc(x.nama)}</b></span><span class="badge">${esc(x.jam||'')}</span></div>`).join(''):''}).join(''):emp)+'</div>'}
-async function kontenC(){if(!U._kc||Date.now()-(U._kt||0)>3e5){U._kc=await getKonten();U._kt=Date.now()}return U._kc}
+async function kontenC(){if(!U._kc||Date.now()-(U._kt||0)>3e5){U._kc=await getKonten();U._kt=Date.now();try{localStorage.setItem('st_off_waktu',JSON.stringify(U._kc.waktu||{}))}catch(e){}}return U._kc}
 function jkt(d){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(d),o={};p.forEach(x=>o[x.type]=x.value);return{y:+o.year,m:+o.month,d:+o.day,h:+o.hour%24,mi:+o.minute,s:+o.second}}
 function hitungSholat(y,m,d,lat,lon,kor){const R=Math.PI/180,tz=7,fix=(a,b)=>{a=a-b*Math.floor(a/b);return a<0?a+b:a};
 const D=Date.UTC(y,m-1,d,12-tz)/864e5+2440587.5-2451545.0,g=fix(357.529+0.98560028*D,360),q=fix(280.459+0.98564736*D,360),L=fix(q+1.915*Math.sin(g*R)+0.020*Math.sin(2*g*R),360),e=23.439-0.00000036*D;
@@ -2982,7 +2993,7 @@ function startRealtimePresence(){
   if(U._presCh){try{SB.removeChannel(U._presCh)}catch(e){}U._presCh=null}
   if(U._notifCh){try{SB.removeChannel(U._notifCh)}catch(e){}U._notifCh=null}
   U._rtReady=false;
-  U._rtConnecting=true;
+  U._rtConnecting=true;U._rtT=Date.now();
 
   const ch=SB.channel('santritrack-online',{
     config:{
@@ -2997,7 +3008,8 @@ function startRealtimePresence(){
       on[k]={id:k,nama:info.nama||k,role:info.role||'',is_utama:!!info.is_utama,at:info.at||''};
     });
     U.online=on;
-    if(U.tab==='penggunaaktif'||U.tab==='akun'||U.tab==='chat'){
+    if(U.tab==='penggunaaktif'){if(window.paRefresh)paRefresh()}
+    else if(U.tab==='akun'||U.tab==='chat'){
       const el=$('online_refresh');if(el)el.click();
     }
   });
@@ -3094,13 +3106,13 @@ R.penggunaaktif=async()=>{
     list.unshift({id:String(U.me.id),nama:U.me.nama,role:U.me.role,is_utama:isAdminUtama(),at:new Date().toISOString()});
   }
   const roleLbl=x=>x.role==='admin'?(x.is_utama?'Admin Utama':'Anggota Admin · Di bawah Admin Utama'):(x.role==='pengurus'?'Pengurus':x.role==='alumni'?'Alumni':'Wali Santri');
-  return `<div class="card"><h3><i class="fa-solid fa-signal" style="color:#059669"></i> Pengguna Sedang Aktif (${list.length})</h3>
+  return `<div id="pa_wrap"><div class="card"><h3><i class="fa-solid fa-signal" style="color:#059669"></i> Pengguna Sedang Aktif (${list.length})</h3>
     <div class="mu" style="margin-bottom:8px">Menampilkan pengguna yang sedang membuka aplikasi secara langsung (termasuk anggota admin).</div>
-    <button type="button" id="online_refresh" class="sec" style="padding:6px 12px;font-size:12px" onclick="draw()"><i class="fa-solid fa-rotate"></i> Segarkan</button>
+    <button type="button" id="online_refresh" class="sec" style="padding:6px 12px;font-size:12px" onclick="paRefresh(true)"><i class="fa-solid fa-rotate"></i> Segarkan</button>
   </div>
   <div class="card">
     ${list.map(x=>`<div class="li"><span><b>${esc(x.nama)}</b> <span class="ondot"></span><div class="mu">${esc(roleLbl(x))}</div></span>${String(x.id)!==String(U.me.id)?`<button type="button" class="sec" style="padding:6px 10px;font-size:12px" onclick="bukaChatDengan('${esc(x.id)}','${esc(x.nama)}','${esc(x.role)}')"><i class="fa-solid fa-comments"></i> Chat</button>`:'<span class="badge b0">Anda</span>'}</div>`).join('')}
-  </div>`;
+  </div></div>`;
 };
 
 /* ===== Obrolan Langsung (Chat), VN, Gambar 24 Jam, Panggilan Suara & Video Call ===== */
@@ -4064,11 +4076,59 @@ R.pengaturan=async()=>{
   </div>`;
 };
 
-boot();
+/* ===== MODE OFFLINE =====
+   Tanpa internet: Dzikir (hitungan per akun) dan Jadwal Sholat tetap bisa dipakai.
+   Fitur yang butuh data (santri, absensi, obrolan, dll) menunggu koneksi kembali. */
+const isNetErr=e=>/failed to fetch|networkerror|load failed|network request|fetch/i.test(String((e&&e.message)||e||''));
+function offBanner(show){
+  let b=$('offb');
+  if(!b){b=document.createElement('div');b.id='offb';b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9999;background:#92400e;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:5px 8px;display:none';b.textContent='Offline · data santri butuh internet. Dzikir & jadwal sholat tetap jalan.';document.body.appendChild(b)}
+  b.style.display=show?'block':'none';
+}
+async function offlineView(){
+  if(document.readyState!=='complete')await new Promise(r=>window.addEventListener('load',r,{once:true}));
+  let me=null;try{me=JSON.parse(localStorage.getItem('st_off_me')||'null')}catch(e){}
+  if(!U)U={};
+  U.me=me&&me.id?me:{id:'tamu',nama:'Tamu',role:'wali'};U.off=1;U.tab='dzikir';U.santri=U.santri||[];U.allSantri=U.allSantri||[];U.online=U.online||{};
+  document.body.classList.remove('lgmode');
+  const bn=$('bn');if(bn)bn.innerHTML='';
+  let w={};try{w=JSON.parse(localStorage.getItem('st_off_waktu')||'{}')||{}}catch(e){}
+  let jd='';
+  try{
+    const t=waktuSholat(w);
+    jd='<div class="card"><h3><i class="fa-solid fa-mosque"></i> Jadwal sholat hari ini</h3><div class="mu" id="offcd" style="margin-bottom:8px"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'+
+      NS.map((n,i)=>'<div style="text-align:center;padding:8px 4px;border-radius:12px;background:rgba(16,120,90,.08)"><div class="mu" style="font-size:11px">'+n+'</div><b>'+String(Math.floor(t[i]/60)%24).padStart(2,'0')+':'+String(Math.round(t[i]%60)%60).padStart(2,'0')+'</b></div>').join('')+
+      '</div></div>';
+    U._offT=t;
+  }catch(e){}
+  const dz=(typeof R!=='undefined'&&R.dzikir)?await R.dzikir():'';
+  $('v').innerHTML='<div class="card" style="text-align:center"><h3 style="margin:0 0 4px"><i class="fa-solid fa-wifi" style="opacity:.5"></i> Mode Offline</h3><div class="mu">Tidak ada koneksi internet. Data santri, absensi, dan obrolan akan tersedia setelah online kembali.</div><p style="margin:10px 0 0"><button type="button" onclick="location.reload()"><i class="fa-solid fa-rotate"></i> Coba sambung kembali</button></p></div>'+jd+dz;
+  clearInterval(U._offTk);
+  const tk=()=>{const e=$('offcd');if(e&&U._offT)e.textContent=cdText(U._offT).txt;if(U.off&&$('offcd')===null)clearInterval(U._offTk)};
+  tk();U._offTk=setInterval(tk,1000);
+}
+async function bootSafe(){
+  if(!navigator.onLine)return offlineView();
+  try{
+    await boot();
+    if(U&&U.me&&U.me.id){try{localStorage.setItem('st_off_me',JSON.stringify({id:U.me.id,nama:U.me.nama,role:U.me.role}))}catch(e){}}
+  }catch(e){
+    if(!navigator.onLine||isNetErr(e))return offlineView();
+    throw e;
+  }
+}
+window.addEventListener('offline',()=>{offBanner(true)});
+window.addEventListener('online',()=>{offBanner(false);if(U&&U.off)location.reload()});
+if(!navigator.onLine)offBanner(true);
+
+bootSafe();
 
 /* ---- PWA: daftarkan service worker (hanya di HTTPS / localhost) ---- */
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
-  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{});
+    navigator.serviceWorker.ready.then(()=>{if(!localStorage.getItem('st_sw_ok')){localStorage.setItem('st_sw_ok','1');setTimeout(()=>{try{toast('Aplikasi siap dipakai offline.')}catch(e){}},2500)}}).catch(()=>{});
+  });
 }
 </script>
 <script id="tema-islami-3d-js">
@@ -4358,6 +4418,28 @@ try{
  R.konten=async function(){var k=await getKonten();var sec=edSec('hadis','Hadis di beranda (depan masjid)','Tampil di gambar masjid pada beranda, berganti tiap hari dan bisa diketuk untuk berikutnya. Kosongkan semua baris untuk memakai hadis bawaan.',Array.isArray(k.hadis)?k.hadis:[]);sec=sec.replace('onclick="edAdd(\'hadis\')">+ Tambah baris</button>','onclick="edAdd(\'hadis\')">+ Tambah baris</button> <button type="button" class="sec" onclick="hdMuat()">Muat hadis bawaan</button>');return sec+await _rk2()};
  var _sk=window.simpanKonten;if(typeof _sk==='function')window.simpanKonten=async function(key){var r=await _sk.apply(this,arguments);if(key==='hadis')qLoad();return r};
 }catch(e){console.warn('Menu ibadah belum terpasang:',e)}
+})();
+</script>
+<script id="fix-v9-js">
+/* Penjaga status online: sambung ulang & daftar ulang kehadiran saat layar menyala / internet kembali / berkala */
+(function(){
+  function me(){return U&&U.me&&U.me.id&&!U.off}
+  function tr(){
+    if(!me()||!navigator.onLine)return;
+    var ch=U._presCh;
+    if(!ch||(ch.state!=='joined'&&!U._rtConnecting)||(U._rtConnecting&&Date.now()-(U._rtT||0)>12000)){try{startRealtimePresence()}catch(e){}return}
+    if(ch.state==='joined'){try{ch.track({id:String(U.me.id),nama:U.me.nama,role:U.me.role,is_utama:isAdminUtama(),at:new Date().toISOString()})}catch(e){}}
+  }
+  setInterval(tr,20000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(tr,300)});
+  window.addEventListener('focus',function(){setTimeout(tr,300)});
+  window.addEventListener('online',function(){setTimeout(tr,1000)});
+  window.paRefresh=async function(manual){
+    var w=$('pa_wrap');if(!w||!U||U.tab!=='penggunaaktif')return;
+    if(manual)tr();
+    try{var h=await R.penggunaaktif();var t=document.createElement('div');t.innerHTML=h;var n=t.querySelector('#pa_wrap');if(n&&$('pa_wrap'))$('pa_wrap').innerHTML=n.innerHTML}catch(e){}
+  };
+  setInterval(function(){if(U&&U.tab==='penggunaaktif'&&!document.hidden)paRefresh()},4000);
 })();
 </script>
 </body>
