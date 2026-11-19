@@ -736,7 +736,8 @@ const isAl=U.me.role==='alumni';
 const st=U.me.role!='wali'&&!isAl;
 const TAL=[['home','Beranda'],['riwayatsantri','Riwayat santri'],['direktorialumni','Direktori Alumni'],['chat','Obrolan'],['media','Profil & jadwal'],['struktur','Struktur'],['info','Info & agenda'],['akun','Akun']];
 const T=isAl?TAL:(st?(U.me.role=='admin'?TA:TS):TW);
-if(!st&&!isAl&&!U.sid)U.tab='anak';
+const NOSID=new Set(['home','anak','chat','akun','dzikir','murottal','quran','info','media','struktur','notif']);
+if(!st&&!isAl&&!U.sid&&!NOSID.has(U.tab))U.tab='anak';
 if(U.tab!=='riwayatsantri')U.alsid=null;
 if(U.tab!=='riwayatlengkap'){U.rs=null;U.rf='semua'}
 const RL={wali:'Wali',pengurus:'Pengurus',admin:isAdminUtama()?'Admin Utama':'Anggota Admin',alumni:'Alumni'};
@@ -756,7 +757,7 @@ hl.title='Profil pondok';
 const ubw=$('ubw');if(ubw){ubw.onclick=()=>lihatProfilPenuh();ubw.title='Lihat foto profil'}
 if(!st&&!isAl){SB.from('notifikasi').select('id',{count:'exact',head:true}).eq('dibaca',false).then(r=>updateNotifBadge(r.count||0)).catch(()=>{})}
 $('tabs').innerHTML=T.map(t=>`<button class="${U.tab==t[0]?'on':''}" onclick="U.tab='${t[0]}';draw()"><i class="${IC[t[0]]||'fa-solid fa-circle'}"></i> ${t[1]}${t[0]=='notif'&&U.unread?` <b style="background:var(--rd);color:#fff;border-radius:99px;padding:0 6px;font-size:12px">${U.unread}</b>`:''}</button>`).join('');
-if(!st&&!isAl&&!U.sid&&U.tab!='anak'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran'){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
+if(!st&&!isAl&&!U.sid&&!NOSID.has(U.tab)){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
 let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
 const noPgSearch=new Set(['dzikir','murottal','quran','pengaturan','absenqr','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
 const showPgSearch=!noPgSearch.has(U.tab);
