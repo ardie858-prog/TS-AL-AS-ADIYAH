@@ -275,6 +275,111 @@ main{padding-bottom:96px}
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<style id="tema-islami-3d">
+/* ===== TEMA ISLAMI 3D · langit, musim & cuaca otomatis ===== */
+:root{--sk1:#2c8fe6;--sk2:#c4e8fb;--gnd:#dff2ea;--sheet:rgba(245,250,247,.97);--m1:#fffdf5;--m2:#d6d0b8;--m3:#cfe3ea;--gh:#fde68a;--gl:#b8860b;--ch:#fff;--cl:#c9dcec;--wc:#2f5a50;--wo:.35;--st:0;--hd1:#064e3b;--hd2:#065f46;--navbg:rgba(255,255,255,.88);--navtx:#64748b}
+html{background:#0b2a22}
+body,body.lgmode{background:var(--gnd);transition:background 2s}
+.pat{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23047857' stroke-opacity='.08'%3E%3Crect x='14' y='14' width='36' height='36'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3C/g%3E%3C/svg%3E")}
+header{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%23fcd34d' stroke-opacity='.16'%3E%3Crect x='10' y='10' width='28' height='28'/%3E%3Crect x='10' y='10' width='28' height='28' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(90deg,var(--hd1),var(--hd2),var(--hd1))!important;border-bottom:2px solid rgba(212,175,55,.6)!important;transition:background 2s}
+/* hero = jendela langit */
+#hero{position:relative;height:200px;overflow:hidden;background:linear-gradient(var(--sk1),var(--sk2));perspective:700px;isolation:isolate;transition:height .5s}
+body.sub #hero{height:116px}body.sub #greet,body.sub #chips{display:none}
+body.nohero:not(.lgmode) #hero{display:none}
+body.lgmode #hero{position:fixed;inset:0;height:auto;z-index:-1}
+body.lgmode #greet,body.lgmode #chips{display:none}
+#hero>*{position:absolute;pointer-events:none}
+.hl{inset:0;--d:0;transform:translate3d(calc(var(--px,0)*var(--d)*1px),calc(var(--py,0)*var(--d)*.4px),0);transition:transform .2s linear}
+#stars{opacity:var(--st);transition:opacity 2s}
+#stars i{position:absolute;border-radius:50%;background:#fff;animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.25}}
+#sun{width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;background:radial-gradient(circle,#fffbe6 0 28%,#ffe27a 40%,rgba(255,196,70,.4) 60%,transparent 72%);transition:left 2s,top 2s,opacity 2s}
+#moon{width:44px;height:44px;margin:-22px 0 0 -22px;filter:drop-shadow(0 0 9px rgba(255,248,200,.75));transition:left 2s,top 2s,opacity 2s}
+.cd{position:absolute;left:0;width:150px;animation:drift linear infinite;filter:drop-shadow(0 6px 5px rgba(0,30,60,.12));transition:opacity 2s}
+@keyframes drift{from{transform:translateX(-170px)}to{transform:translateX(100vw)}}
+.sk{top:auto;left:0;right:0;bottom:0;width:100%;height:66%}
+body.lgmode .sk{height:42%;max-height:360px}
+#rain{inset:0;width:100%;height:100%}
+#flash{inset:0;background:#dfe9ff;opacity:0;transition:opacity .25s}#flash.fl{opacity:.26;transition:none}
+#fog{inset:0;background:linear-gradient(transparent 20%,rgba(220,228,234,.75));opacity:0;transition:opacity 2s}
+#greet{left:16px;top:12px;color:#fff;text-shadow:0 2px 8px rgba(0,30,40,.5);font-weight:800;font-size:19px;line-height:1.15}
+#greet small{display:block;font-size:12px;font-weight:600;opacity:.92}
+#chips{left:16px;top:62px;display:flex;gap:6px;flex-wrap:wrap}
+#chips span{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:4px 10px;text-shadow:0 1px 3px rgba(0,0,0,.35);box-shadow:0 3px 8px rgba(0,30,40,.2)}
+/* lembar konten naik dari cakrawala */
+main{position:relative;z-index:1;background-color:var(--sheet);border-radius:26px 26px 0 0;margin-top:-22px!important;box-shadow:0 -6px 18px rgba(4,60,45,.18),inset 0 2px 0 rgba(212,175,55,.55);padding-bottom:116px;transition:background-color 2s}
+main{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23047857' stroke-opacity='.07'%3E%3Crect x='14' y='14' width='36' height='36'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3C/g%3E%3C/svg%3E")}
+body.sub main,body.nohero main{margin-top:-18px!important}
+body.nohero:not(.lgmode) main{margin-top:0!important;border-radius:0}
+body.lgmode main{background:none!important;box-shadow:none;border-radius:0;margin-top:0!important}
+body.lgmode .lgw{background:none!important}body.lgmode .orb{display:none}
+/* kartu & menu 3D */
+.card,.mcard{box-shadow:inset 0 1px 0 #fff,0 2px 0 rgba(4,120,87,.08),0 12px 22px -10px rgba(6,78,59,.32)!important;border-color:rgba(212,175,55,.28)!important}
+.mhd{border-bottom:2px solid transparent!important;border-image:linear-gradient(90deg,#047857,#d4af37,#047857) 1}
+.mgrid{perspective:600px}
+.mi{background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.62),transparent 46%),linear-gradient(160deg,#34d399,#047857 62%,#064e3b)!important;border:1px solid rgba(253,224,71,.65);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.2),0 5px 0 #064e3b,0 11px 14px rgba(4,60,45,.38)!important;transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .12s,box-shadow .12s}
+.mi>i,.mi>svg{text-shadow:0 2px 2px rgba(0,0,0,.4);transform:translateZ(14px);filter:drop-shadow(0 2px 1px rgba(0,0,0,.3))}
+.mt:active .mi{transform:translateY(5px)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 0 #064e3b,0 3px 5px rgba(4,60,45,.35)!important}
+.mt{transition:transform .15s}.mt:hover .mi{filter:brightness(1.08)}
+.lgc{box-shadow:inset 0 1px 0 #fff,0 0 0 1px rgba(212,175,55,.45),0 30px 50px -14px rgba(0,20,15,.5)!important;transform:perspective(900px) rotateX(var(--lrx,0deg)) rotateY(var(--lry,0deg));transition:transform .2s}
+.lglogo .disc{animation:coin 9s ease-in-out infinite}
+@keyframes coin{0%,100%{transform:rotateY(-16deg)}50%{transform:rotateY(16deg)}}
+.tabs button,button{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 3px 0 rgba(6,78,59,.35),0 6px 10px -3px rgba(0,0,0,.25)}
+button.sec{box-shadow:0 2px 0 #cbd5e1,0 5px 8px -3px rgba(0,0,0,.12)}
+button:active{transform:translateY(2px)}
+#bn{left:10px!important;right:10px!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;padding:6px 0!important;border-radius:22px;border:1px solid rgba(212,175,55,.5)!important;background:var(--navbg)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 16px 28px -8px rgba(4,60,45,.5)!important;transition:background 2s}
+#bn button,#bn button:hover{color:var(--navtx)}#bn button.on{color:#059669}
+#bn button.on i{transform:translateY(-3px) scale(1.16);filter:drop-shadow(0 4px 3px rgba(4,120,87,.45))}
+body.night #bn button.on{color:#6ee7b7}
+/* kontrol tema */
+#thm{position:fixed;right:12px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:60;width:40px;height:40px;border-radius:50%;padding:0;background:linear-gradient(160deg,#fde68a,#d4af37);color:#064e3b;border:1px solid #fff8}
+body.lgmode #thm{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#thp{position:fixed;right:12px;bottom:calc(132px + env(safe-area-inset-bottom,0px));z-index:61;width:min(290px,calc(100vw - 24px));background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border:1px solid rgba(212,175,55,.6);border-radius:16px;padding:12px;box-shadow:0 18px 36px rgba(0,0,0,.35);display:none;color:#0f172a;font-size:12px}
+body.lgmode #thp{bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+#thp.on{display:block}#thp b{display:block;margin:8px 0 5px;font-size:11px;color:#065f46}#thp b:first-child{margin-top:0}
+#thp div{display:flex;gap:5px;flex-wrap:wrap}
+#thp button{padding:6px 10px;font-size:12px;border-radius:99px;background:#f1f5f9;color:#334155;box-shadow:none;border:1px solid #e2e8f0}
+#thp button.on{background:#047857;color:#fff;border-color:#047857}
+@media(prefers-reduced-motion:reduce){#hero *,.lglogo .disc{animation:none!important;transition:none!important}}
+@media print{#hero,#thm,#thp{display:none!important}body,body.lgmode{background:#fff!important}main{background:none!important;margin:0!important;border-radius:0!important;box-shadow:none!important}}
+</style>
+<style id="tema-ibadah">
+#hero{height:236px}body.sub #hero{height:116px}
+#qt{left:12px;right:12px;bottom:32px;max-width:520px;margin:0 auto;pointer-events:auto!important;cursor:pointer;text-align:center;padding:8px 12px 7px;border-radius:14px;background:rgba(3,40,31,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:1px solid rgba(253,224,71,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 20px rgba(0,20,15,.45);color:#fff;transform:translate3d(calc(var(--px,0)*9px),calc(var(--py,0)*3px),0);transition:opacity .35s}
+#qt.o{opacity:0}
+#qt .qa{font:700 17px/1.65 Amiri,serif;color:#fde68a;direction:rtl}
+#qt .qi{font-size:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#qt .qs{font-size:10.5px;opacity:.85;margin-top:3px;font-weight:700;color:#fde68a}
+body.sub #qt,body.lgmode #qt{display:none}
+/* dzikir */
+.dz{text-align:center}
+.dzchips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}.dzchips::-webkit-scrollbar{display:none}
+.dzchips button{white-space:nowrap;padding:7px 12px;font-size:12px;border-radius:99px;background:#f1f5f9;color:#334155;box-shadow:none;border:1px solid #e2e8f0}
+.dzchips button.on{background:#047857;color:#fff;border-color:#047857}
+.dzar{font:700 30px/1.8 Amiri,serif;color:#064e3b;direction:rtl;margin-top:4px}
+.dzlt{font-weight:800;color:#0f172a}
+.dzwrap{position:relative;width:224px;height:224px;margin:12px auto 18px}
+.dzwrap svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+#dzb{position:absolute;left:18px;top:18px;width:188px;height:188px;border-radius:50%;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:radial-gradient(circle at 32% 24%,rgba(255,255,255,.55),transparent 42%),linear-gradient(160deg,#34d399,#047857 60%,#064e3b);border:2px solid #fcd34d;box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -8px 0 rgba(0,0,0,.18),0 9px 0 #064e3b,0 18px 26px rgba(4,60,45,.45);color:#fff;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform .08s,box-shadow .08s}
+#dzb:active,#dzb.p{transform:translateY(8px);box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 0 rgba(0,0,0,.18),0 1px 0 #064e3b,0 6px 10px rgba(4,60,45,.4)}
+#dzn{font-size:54px;font-weight:800;line-height:1;text-shadow:0 3px 3px rgba(0,0,0,.35)}
+#dzb small{font-size:11px;opacity:.9;font-weight:700}
+.dzrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+/* murottal */
+#mrbar{position:fixed;left:10px;right:10px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:46;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:16px;background:linear-gradient(90deg,#064e3b,#065f46);color:#fff;border:1px solid rgba(253,224,71,.55);box-shadow:0 12px 24px rgba(0,30,20,.4)}
+body.mini #mrbar{display:flex}body.lgmode #mrbar{display:none!important}
+#mrbar b{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#mrbar small{display:block;font-weight:500;opacity:.8;font-size:11px}
+#mrbar button{background:rgba(255,255,255,.16);box-shadow:none;padding:8px 12px;border-radius:99px}
+body.mini #thm{bottom:calc(142px + env(safe-area-inset-bottom,0px))}body.mini #thp{bottom:calc(188px + env(safe-area-inset-bottom,0px))}
+.mrw{display:flex;align-items:center;gap:12px;padding:9px 6px;border-top:1px solid #f1f5f9;cursor:pointer;font-size:14px}
+.mrw.on{background:#d1fae5;font-weight:700}
+.mrn{flex:none;width:28px;height:28px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#065f46;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #fcd34d;transform:rotate(45deg);border-radius:6px}.mrn span{transform:rotate(-45deg)}
+#mrlist{max-height:50vh;overflow-y:auto;margin-top:8px}
+.mrc{display:flex;gap:10px;justify-content:center;align-items:center;margin:10px 0}
+.mrc button{width:46px;height:46px;border-radius:50%;padding:0}.mrc #mrpp{width:60px;height:60px;font-size:20px}
+#mrpos{width:100%;padding:0;accent-color:#047857}
+.mrt{display:flex;justify-content:space-between;font-size:11px;color:#64748b}
+</style>
 </head>
 <body>
 <header><div class="hd"><div class="brand"><div class="hlogo"><img id="hlogo" alt=""></div><div><div class="bn">SantriTrack</div><div class="bs">PPP. AL-AS’ADIYAH BLEGA</div></div></div><div class="hr"><div class="ub" id="ubw" style="display:none"><span class="ui" id="wi">W</span><span id="who"></span></div><button id="chatbtn" class="bellb" style="display:none" onclick="U.tab='chat';draw()" title="Obrolan"><i class="fa-solid fa-comments"></i><span id="cdot" style="display:none"></span></button><button id="bell" class="bellb" style="display:none" onclick="U.tab='notif';draw()" title="Notifikasi"><i class="fa-solid fa-bell"></i><span id="bdot" style="display:none"></span></button><button id="srch" class="bellb" style="display:none" onclick="toggleMenuSearch()" title="Cari menu"><i class="fa-solid fa-magnifying-glass"></i></button><button id="lo" class="lob" style="display:none"></button></div></div></header>
@@ -640,9 +745,9 @@ hl.title='Profil pondok';
 const ubw=$('ubw');if(ubw){ubw.onclick=()=>lihatProfilPenuh();ubw.title='Lihat foto profil'}
 if(!st&&!isAl){const r=await SB.from('notifikasi').select('id',{count:'exact',head:true}).eq('dibaca',false);updateNotifBadge(r.count||0)}
 $('tabs').innerHTML=T.map(t=>`<button class="${U.tab==t[0]?'on':''}" onclick="U.tab='${t[0]}';draw()"><i class="${IC[t[0]]||'fa-solid fa-circle'}"></i> ${t[1]}${t[0]=='notif'&&U.unread?` <b style="background:var(--rd);color:#fff;border-radius:99px;padding:0 6px;font-size:12px">${U.unread}</b>`:''}</button>`).join('');
-if(!st&&!isAl&&!U.sid&&U.tab!='anak'&&U.tab!='chat'&&U.tab!='akun'){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
-let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
-const noPgSearch=new Set(['pengaturan','absenqr','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
+if(!st&&!isAl&&!U.sid&&U.tab!='anak'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran'){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
+let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
+const noPgSearch=new Set(['dzikir','murottal','quran','pengaturan','absenqr','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
 const showPgSearch=!noPgSearch.has(U.tab);
 if(!showPgSearch){U.pqShow=false;U.pq=''}
 const pg=U.tab=='home'?'':`<div class="pghd noprint"><button class="sec" onclick="U.tab='home';draw()"><i class="fa-solid fa-chevron-left"></i> Menu</button><b>${TL[U.tab]||''}</b>${showPgSearch?`<button type="button" class="pg-search ${U.pqShow?'on':''}" onclick="togglePageSearch()" title="Cari di halaman ini"><i class="fa-solid fa-magnifying-glass"></i></button>`:''}</div>${showPgSearch?`<div class="pg-sbar noprint ${U.pqShow?'show':''}" id="pg-sbar"><input id="pg_q" placeholder="Cari di halaman ini…" value="${esc(U.pq||'')}" oninput="U.pq=this.value;filterPageContent(this.value)" autocomplete="off">${U.pq?`<button type="button" class="sec" onclick="U.pq='';filterPageContent('');const i=$('pg_q');if(i)i.value=''">Reset</button>`:''}</div>`:''}`;
@@ -2009,11 +2114,13 @@ return edTxt('profil','Motto, visi &amp; misi','Tampil di menu Profil &amp; jadw
 /* ===== Menu kotak ikon, daftar santri aktif/alumni, kartu santri, scan QR kamera ===== */
 Object.assign(IC,{direktorialumni:'fa-solid fa-users',daftarsantri:'fa-solid fa-users',kartu:'fa-solid fa-id-card',kartuedit:'fa-solid fa-id-card-clip',home:'fa-solid fa-house',riwayatsantri:'fa-solid fa-children',chat:'fa-solid fa-comments',penggunaaktif:'fa-solid fa-signal'});
 const TL={direktorialumni:'Direktori Alumni',riwayatsantri:'Riwayat santri',chat:'Obrolan',penggunaaktif:'Pengguna aktif',home:'Menu'};[...TW,...TS,...TA].forEach(t=>TL[t[0]]=t[1]);
+const EXT={quran:'https://quran.nu.or.id'};
+function goTab(k){if(EXT[k]){window.open(EXT[k],'_blank','noopener');return}U.tab=k;U.mq='';draw()}
 const MN={
- wali:[['Santri Saya',['anak','ringkasan','izin','kesehatan','kartu']],['Keuangan',['saku','tabungan','tagihan']],['Komunikasi & Info',['chat','notif','info','media','struktur']],['Akun',['akun']]],
- pengurus:[['Kegiatan Santri',['absensi','absenqr','izin','sanksi','kesehatan']],['Keuangan',['kasir','tabungan']],['Data Santri',['daftarsantri','kartu']],['Informasi',['info','media','struktur','wa']],['Akun',['akun']]],
- admin:[['Kegiatan Santri',['absensi','absenqr','izin','sanksi','kesehatan']],['Keuangan',['kasir','sisacoin','konfirmasi','tagihanadm','tabungan']],['Data Santri',['daftarsantri','riwayatlengkap','kartu','kartuedit','pendaftar','kode','akunwali']],['Laporan',['rekap','top']],['Informasi & Obrolan',['chat','info','media','struktur','strukturedit','wa','konten']],['Pengaturan',['penggunaaktif','pengaturan','keamanan','akun']]],
- alumni:[['Alumni & Santri',['riwayatsantri','direktorialumni']],['Komunikasi & Info',['chat','media','struktur','info']],['Akun',['akun']]]};
+ wali:[['Ibadah',['dzikir','murottal','quran']],['Santri Saya',['anak','ringkasan','izin','kesehatan','kartu']],['Keuangan',['saku','tabungan','tagihan']],['Komunikasi & Info',['chat','notif','info','media','struktur']],['Akun',['akun']]],
+ pengurus:[['Ibadah',['dzikir','murottal','quran']],['Kegiatan Santri',['absensi','absenqr','izin','sanksi','kesehatan']],['Keuangan',['kasir','tabungan']],['Data Santri',['daftarsantri','kartu']],['Informasi',['info','media','struktur','wa']],['Akun',['akun']]],
+ admin:[['Ibadah',['dzikir','murottal','quran']],['Kegiatan Santri',['absensi','absenqr','izin','sanksi','kesehatan']],['Keuangan',['kasir','sisacoin','konfirmasi','tagihanadm','tabungan']],['Data Santri',['daftarsantri','riwayatlengkap','kartu','kartuedit','pendaftar','kode','akunwali']],['Laporan',['rekap','top']],['Informasi & Obrolan',['chat','info','media','struktur','strukturedit','wa','konten']],['Pengaturan',['penggunaaktif','pengaturan','keamanan','akun']]],
+ alumni:[['Ibadah',['dzikir','murottal','quran']],['Alumni & Santri',['riwayatsantri','direktorialumni']],['Komunikasi & Info',['chat','media','struktur','info']],['Akun',['akun']]]};
 function menuHtml(){
   const role=U.me.role;
   const isAl=role==='alumni';
@@ -2025,7 +2132,7 @@ function menuHtml(){
     let it=ks.filter(k=>allow.has(k));
     if(q) it=it.filter(k=>(TL[k]||k).toLowerCase().includes(q)||k.toLowerCase().includes(q)||sec.toLowerCase().includes(q));
     if(!it.length)return;
-    html+=`<div class="mcard"><div class="mhd">${sec}</div><div class="mgrid">${it.map(k=>`<button class="mt" onclick="U.tab='${k}';U.mq='';draw()"><span class="mi">${k=='tabungan'?CHEST_SVG(26):`<i class="${IC[k]||'fa-solid fa-circle'}"></i>`}${k=='notif'&&U.unread?`<b class="mb">${U.unread}</b>`:''}${k=='konfirmasi'&&U.pend?`<b class="mb">${U.pend}</b>`:''}</span><span class="ml">${TL[k]||k}</span></button>`).join('')}</div></div>`;
+    html+=`<div class="mcard"><div class="mhd">${sec}</div><div class="mgrid">${it.map(k=>`<button class="mt" onclick="goTab('${k}')"><span class="mi">${k=='tabungan'?CHEST_SVG(26):`<i class="${IC[k]||'fa-solid fa-circle'}"></i>`}${k=='notif'&&U.unread?`<b class="mb">${U.unread}</b>`:''}${k=='konfirmasi'&&U.pend?`<b class="mb">${U.pend}</b>`:''}</span><span class="ml">${TL[k]||k}</span></button>`).join('')}</div></div>`;
   });
   if(q&&!html) html=`<div class="card"><div class="mu">Tidak ada menu yang cocok dengan “${esc(U.mq)}”.</div></div>`;
   return html;
@@ -2048,7 +2155,7 @@ function toggleMenuSearch(){
   const render=()=>{
     const q=inp.value.trim().toLowerCase();
     const items=allMenuItems().filter(x=>!q||x.label.toLowerCase().includes(q)||x.k.toLowerCase().includes(q)||x.sec.toLowerCase().includes(q));
-    $('hdr_mq_res').innerHTML=items.length?items.map(x=>`<div class="sg" onclick="U.tab='${x.k}';U.mq='';closeMenuSearch();draw()">${x.k=='tabungan'?`<span style="width:20px;display:inline-flex;justify-content:center;flex:none">${CHEST_SVG(20)}</span>`:`<i class="${IC[x.k]||'fa-solid fa-circle'}"></i>`}<span>${esc(x.label)}<div class="mu" style="font-weight:500">${esc(x.sec)}</div></span></div>`).join(''):`<div class="sg mu" style="cursor:default">Tidak ada menu yang cocok</div>`;
+    $('hdr_mq_res').innerHTML=items.length?items.map(x=>`<div class="sg" onclick="closeMenuSearch();goTab('${x.k}')">${x.k=='tabungan'?`<span style="width:20px;display:inline-flex;justify-content:center;flex:none">${CHEST_SVG(20)}</span>`:`<i class="${IC[x.k]||'fa-solid fa-circle'}"></i>`}<span>${esc(x.label)}<div class="mu" style="font-weight:500">${esc(x.sec)}</div></span></div>`).join(''):`<div class="sg mu" style="cursor:default">Tidak ada menu yang cocok</div>`;
   };
   inp.oninput=render;render();
 }
@@ -3963,6 +4070,295 @@ boot();
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
 }
+</script>
+<script id="tema-islami-3d-js">
+(function(){
+'use strict';
+var D=document,R=D.documentElement,B=D.body,PI=Math.PI,RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var LAT=-7.03,LON=112.75; /* Blega, Bangkalan */
+function ls(k){try{return localStorage.getItem(k)}catch(e){return null}}function ss(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function hx(h){return[1,3,5].map(function(i){return parseInt(h.substr(i,2),16)})}
+function mix(a,b,t){a=hx(a);b=hx(b);return'#'+a.map(function(v,i){return Math.round(v+(b[i]-v)*t).toString(16).padStart(2,'0')}).join('')}
+function cl(v,a,b){return Math.max(a,Math.min(b,v))}
+var S={t:ls('st_t')||'auto',w:ls('st_w')||'auto',m:ls('st_m')!=='0'};
+var seed=function(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return function(){h^=h<<13;h^=h>>>17;h^=h<<5;return((h>>>0)%1e5)/1e5}};
+
+/* ---------- Skyline masjid (SVG 3 lapis) ---------- */
+function dome(x,y,w,h,f){f=f||'url(#gd)';return'<path d="M'+(x-w)+' '+y+'C'+(x-w)+' '+(y-h*.55)+' '+(x-w*.35)+' '+(y-h*.7)+' '+x+' '+(y-h)+'C'+(x+w*.35)+' '+(y-h*.7)+' '+(x+w)+' '+(y-h*.55)+' '+(x+w)+' '+y+'Z" fill="'+f+'"/><path d="M'+x+' '+(y-h)+'v-12" stroke="var(--gl)" stroke-width="1.6"/><path d="M'+(x+2)+' '+(y-h-20)+'A6 6 0 1 0 '+(x+2)+' '+(y-h-8)+'A4.6 4.6 0 1 1 '+(x+2)+' '+(y-h-20)+'Z" fill="url(#gd)"/>'}
+function mnr(x,top,s){s=s||1;return'<rect x="'+(x-9*s)+'" y="'+(top+46)+'" width="'+18*s+'" height="'+(200-top-46)+'" fill="url(#wl)"/><rect x="'+(x-14*s)+'" y="'+(top+42)+'" width="'+28*s+'" height="6" fill="var(--m2)"/><rect x="'+(x-6*s)+'" y="'+(top+4)+'" width="'+12*s+'" height="40" fill="url(#wl)"/>'+dome(x,top+4,8*s,24*s)+'<path d="M'+(x-3)+' '+(top+58)+'v10a3 3 0 0 0 6 0v-10z M'+(x-3)+' '+(top+90)+'v10a3 3 0 0 0 6 0v-10z" style="fill:var(--wc);opacity:var(--wo)"/>'}
+function win(x,y,w){w=w||6;return'<path d="M'+(x-w)+' '+(y+24)+'V'+(y+w)+'a'+w+' '+w+' 0 0 1 '+w*2+' 0V'+(y+24)+'Z" style="fill:var(--wc);opacity:var(--wo)"/>'}
+function palm(x,top,s){var f='';[-75,-40,-10,20,55,85].forEach(function(a){f+='<path d="M0 0Q22 -16 44 6" transform="rotate('+a+')" fill="none" stroke="var(--m2)" stroke-width="4" stroke-linecap="round"/>'});return'<path d="M'+x+' 200Q'+(x+9)+' '+(200+top)/2+' '+(x+2)+' '+top+'" stroke="var(--m2)" stroke-width="5" fill="none"/><g transform="translate('+(x+2)+' '+top+') scale('+s+')">'+f+'</g>'}
+function sky(){
+ var far='<defs><radialGradient id="gd" cx=".35" cy=".3" r=".8"><stop offset="0" style="stop-color:var(--gh)"/><stop offset="1" style="stop-color:var(--gl)"/></radialGradient><linearGradient id="wl" x2="1"><stop offset="0" style="stop-color:var(--m1)"/><stop offset="1" style="stop-color:var(--m2)"/></linearGradient></defs><g style="fill:var(--m3)"><path d="M0 200V150h60V165h40V140h50V200ZM300 200V160h50V150h40V200ZM610 200V155h50V135h40V160h60V200ZM870 200V150h50V165h80V200Z"/><path d="M180 140a22 22 0 0 1 44 0ZM680 135a20 20 0 0 1 40 0Z"/></g>';
+ var mid='<g style="fill:var(--m2);opacity:.9"><rect x="70" y="150" width="90" height="50"/><path d="M80 150a35 38 0 0 1 70 0Z"/><rect x="60" y="100" width="9" height="100"/><rect x="840" y="110" width="9" height="90"/><rect x="800" y="160" width="110" height="40"/><path d="M820 160a30 32 0 0 1 60 0Z"/></g>'+palm(22,118,1)+palm(962,108,1.15);
+ var n='<rect x="300" y="150" width="400" height="50" fill="url(#wl)"/><rect x="380" y="130" width="240" height="70" fill="url(#wl)"/><rect x="430" y="108" width="140" height="92" fill="url(#wl)"/>'+dome(500,108,60,70)+dome(400,130,24,34)+dome(600,130,24,34)+dome(338,150,22,28)+dome(662,150,22,28)+mnr(250,60)+mnr(750,60)+mnr(172,110,.8)+mnr(828,110,.8)+win(330,160)+win(366,160)+win(418,150)+win(460,150)+win(540,150)+win(582,150)+win(634,160)+win(670,160)+'<path d="M488 200V176a12 12 0 0 1 24 0V200Z" style="fill:var(--wc);opacity:var(--wo)"/><rect x="0" y="196" width="1000" height="4" style="fill:var(--m2)"/>';
+ return[['8',far],['16',mid],['28',n]].map(function(l){return'<svg class="hl sk" style="--d:'+l[0]+'" viewBox="0 0 1000 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">'+l[1]+'</svg>'}).join('')}
+
+/* ---------- Bangun hero ---------- */
+var hero=D.createElement('section');hero.id='hero';hero.setAttribute('aria-hidden','true');
+hero.innerHTML='<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="cg" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ch)"/><stop offset="1" style="stop-color:var(--cl)"/></linearGradient><symbol id="cld" viewBox="0 0 200 90"><g fill="url(#cg)"><circle cx="55" cy="55" r="28"/><circle cx="90" cy="38" r="34"/><circle cx="130" cy="50" r="30"/><circle cx="160" cy="62" r="20"/><rect x="30" y="58" width="150" height="24" rx="12"/></g></symbol></defs></svg>'
++'<div id="stars" class="hl" style="--d:4"></div><div id="sun" class="hl" style="--d:10"></div><svg id="moon" class="hl" style="--d:10" viewBox="0 0 40 40"></svg><div id="clouds" class="hl" style="--d:14"></div>'+sky()+'<div id="fog"></div><canvas id="rain"></canvas><div id="flash"></div><div id="greet"></div><div id="chips"></div>';
+var hdr=D.querySelector('header');hdr.parentNode.insertBefore(hero,hdr.nextSibling);
+var st=D.getElementById('stars'),r0=seed('stars');for(var i=0;i<46;i++){var e=D.createElement('i'),z=r0()*1.8+.8;e.style.cssText='left:'+r0()*100+'%;top:'+r0()*58+'%;width:'+z+'px;height:'+z+'px;animation-delay:-'+r0()*3+'s';st.appendChild(e)}
+
+/* ---------- Posisi matahari (rumus astronomi ringkas) ---------- */
+function sun(ms){var n=ms/864e5+2440587.5-2451545,L=(280.46+.9856474*n)%360,g=(357.528+.9856003*n)*PI/180,lam=(L+1.915*Math.sin(g)+.02*Math.sin(2*g))*PI/180,ep=23.439*PI/180,dec=Math.asin(Math.sin(ep)*Math.sin(lam)),ra=Math.atan2(Math.cos(ep)*Math.sin(lam),Math.cos(lam)),gm=(18.697374558+24.06570982441908*n)%24,H=((gm*15+LON)*PI/180-ra)%(2*PI);if(H>PI)H-=2*PI;if(H<-PI)H+=2*PI;var la=LAT*PI/180,el=Math.asin(Math.sin(la)*Math.sin(dec)+Math.cos(la)*Math.cos(dec)*Math.cos(H))*180/PI;return{el:el,H:H}}
+var FIX={pagi:{el:12,H:-1.1},siang:{el:55,H:0},sore:{el:3,H:1.35},malam:{el:-30,H:.6}};
+
+/* ---------- Palet langit per ketinggian matahari ---------- */
+var KF=[[-14,'#050d1f','#13304d','#0b1d19','#243f4d','#16303a','#c9a24a','#7a5a14','#667791','#2b3850','#ffd36e',1,1,'#052e24','#064037','rgba(222,232,227,.96)','rgba(9,30,26,.88)','#9fb5aa'],
+[-3,'#27306e','#f08a5d','#16302a','#8a8fa8','#4b5878','#f3c969','#9a6a14','#f6c7a8','#a2819a','#ffd36e',.7,.35,'#064e3b','#065f46','rgba(205,220,212,.95)','rgba(240,246,243,.9)','#64748b'],
+[6,'#4f86cc','#ffcf9a','#cfe6da','#fff0d6','#d8b98f','#ffe08a','#b8860b','#fff4e6','#f1c9a8','#7a5a3a',.3,0,'#064e3b','#065f46','rgba(240,247,243,.97)','rgba(255,255,255,.88)','#64748b'],
+[25,'#2c8fe6','#c4e8fb','#dff2ea','#fffdf5','#d6d0b8','#fde68a','#b8860b','#ffffff','#c9dcec','#2f5a50',.35,0,'#064e3b','#065f46','rgba(245,250,247,.97)','rgba(255,255,255,.88)','#64748b']];
+var HEX=[1,2,3,4,5,6,7,8,9,10,13,14],NUM=[11,12];
+function pal(e){var a=KF[0],b=KF[0],t=0;if(e>=KF[3][0])a=b=KF[3];else if(e>KF[0][0]){for(var i=0;i<3;i++)if(e<=KF[i+1][0]){a=KF[i];b=KF[i+1];t=(e-a[0])/(b[0]-a[0]);break}}
+ var o=[];HEX.forEach(function(k){o[k]=mix(a[k],b[k],t)});NUM.forEach(function(k){o[k]=a[k]+(b[k]-a[k])*t});[15,16,17].forEach(function(k){o[k]=t<.5?a[k]:b[k]});return o}
+
+/* ---------- Musim (Indonesia) & Ramadan ---------- */
+function musim(m){return m>=6&&m<=9?'k':(m===12||m<=3)?'h':'p'}
+var MN={k:'Musim Kemarau',h:'Musim Hujan',p:'Pancaroba'};
+var ram=0;try{ram=+new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{month:'numeric'}).formatToParts(new Date()).filter(function(p){return p.type==='month'})[0].value===9}catch(e){}
+
+/* ---------- Cuaca (Open-Meteo, cadangan: peluang musiman) ---------- */
+var WX={w:'part',c:40,tmp:null};
+function wmap(c,cc){return c>=95?'storm':(c>=51&&c<=67)||(c>=80&&c<=82)?'rain':(c===45||c===48)?'fog':(c===3||cc>70)?'cloud':(c>=1||cc>30)?'part':'clear'}
+function fallback(){var d=new Date(),m=d.getMonth()+1,s=musim(m),r=seed(d.toDateString()+Math.floor(d.getHours()/4))(),p={h:[.22,.38,.22],p:[.12,.3,.3],k:[.04,.12,.3]}[s],w=r<p[0]?'rain':r<p[0]+p[1]?'cloud':r<p[0]+p[1]+p[2]?'part':'clear';WX={w:w,c:{rain:90,cloud:80,part:45,clear:12}[w],tmp:null}}
+function getWx(){var c=ls('st_wx');try{c=JSON.parse(c);if(c&&Date.now()-c.t<18e5){WX=c.v;return}}catch(e){}
+ fallback();
+ if(!window.fetch)return;
+ fetch('https://api.open-meteo.com/v1/forecast?latitude='+LAT+'&longitude='+LON+'&current=temperature_2m,weather_code,cloud_cover&timezone=auto').then(function(r){return r.json()}).then(function(j){var c=j.current;WX={w:wmap(c.weather_code,c.cloud_cover),c:c.cloud_cover,tmp:Math.round(c.temperature_2m)};ss('st_wx',JSON.stringify({t:Date.now(),v:WX}));apply()}).catch(function(){})}
+
+/* ---------- Awan ---------- */
+var cKey='';
+function clouds(n,key){if(key===cKey)return;cKey=key;var h='',r=seed('c'+n);for(var i=0;i<n;i++){var s=.55+r()*1.1,dur=(70+r()*90)/Math.max(s,.6);h+='<svg class="cd" viewBox="0 0 200 90" style="top:'+(r()*38+2)+'%;width:'+(150*s)+'px;animation-duration:'+dur+'s;animation-delay:-'+r()*dur+'s;opacity:'+(.72+r()*.28)+'"><use href="#cld"/></svg>'}D.getElementById('clouds').innerHTML=h}
+
+/* ---------- Hujan & petir ---------- */
+var cv=D.getElementById('rain'),cx=cv.getContext('2d'),drops=[],raf=0,last=0,fT=0;
+function fit(){cv.width=hero.clientWidth;cv.height=hero.clientHeight}
+function rloop(t){raf=requestAnimationFrame(rloop);if(t-last<33||D.hidden)return;if(cv.width!==hero.clientWidth||cv.height!==hero.clientHeight)fit();last=t;cx.clearRect(0,0,cv.width,cv.height);cx.strokeStyle='rgba(205,225,245,.6)';cx.lineWidth=1;cx.beginPath();for(var i=0;i<drops.length;i++){var d=drops[i];d.y+=d.v;d.x-=d.v*.2;if(d.y>cv.height){d.y=-20;d.x=Math.random()*cv.width*1.25}cx.moveTo(d.x,d.y);cx.lineTo(d.x+d.l*.2,d.y-d.l)}cx.stroke()}
+function setRain(k){clearTimeout(fT);if(RM||!k){cancelAnimationFrame(raf);raf=0;cx.clearRect(0,0,cv.width,cv.height);drops=[];return}
+ fit();var n=Math.round((k==='storm'?190:110)*Math.max(1,cv.width/420));drops=[];for(var i=0;i<n;i++)drops.push({x:Math.random()*cv.width*1.25,y:Math.random()*cv.height,v:9+Math.random()*8,l:10+Math.random()*12});if(!raf)raf=requestAnimationFrame(rloop);
+ if(k==='storm')(function f(){fT=setTimeout(function(){var el=D.getElementById('flash');el.classList.add('fl');setTimeout(function(){el.classList.remove('fl');setTimeout(function(){el.classList.add('fl');setTimeout(function(){el.classList.remove('fl')},90)},120)},90);f()},7000+Math.random()*9000)})()}
+
+/* ---------- Bulan sesuai fase (kalender Hijriah) ---------- */
+function moonSvg(p){var k=Math.cos(2*PI*p),rx=(Math.abs(k)*16).toFixed(2),w=p<.5,c=k>0,d=w?'M20 4A16 16 0 0 1 20 36A'+rx+' 16 0 0 '+(c?0:1)+' 20 4Z':'M20 4A16 16 0 0 0 20 36A'+rx+' 16 0 0 '+(c?1:0)+' 20 4Z';return'<g transform="rotate(-24 20 20)"><circle cx="20" cy="20" r="16" fill="#cfd8e6" opacity=".16"/><path d="'+d+'" fill="#fff6d0"/></g>'}
+var phase=((Date.now()/864e5+2440587.5-2451550.1)/29.530588853%1+1)%1;
+D.getElementById('moon').innerHTML=moonSvg(phase);
+
+/* ---------- Terapkan tema ---------- */
+function apply(){
+ var now=new Date(),sp=sun(now.getTime()),fx=FIX[S.t];if(fx)sp=fx;var e=sp.el,p=pal(e),w=S.w==='auto'?WX.w:S.w,m=now.getMonth()+1,s=musim(m),night=cl((-e+2)/12,0,1);
+ var g={clear:0,part:.14,cloud:.5,fog:.55,rain:.72,storm:.88}[w]+(s==='h'?.06:0);
+ var greyHi=mix('#7f8c99','#0b1220',night),greyLo=mix('#b4bcc4','#101a2a',night);
+ var sk1=mix(p[1],greyHi,g),sk2=mix(p[2],greyLo,g);if(s==='k'&&w==='clear')sk2=mix(sk2,'#f6d9a0',.14);
+ var cH=mix(p[8],mix('#9aa5b1','#2a3342',night),g),cL=mix(p[9],mix('#5b6672','#161d2a',night),g);
+ var rs=R.style,set=function(k,v){rs.setProperty(k,v)};
+ set('--sk1',sk1);set('--sk2',sk2);set('--gnd',p[3]);set('--m1',mix(p[4],greyLo,g*.3));set('--m2',mix(p[5],greyHi,g*.25));set('--m3',mix(sk2,p[5],.38));set('--gh',p[6]);set('--gl',p[7]);set('--ch',cH);set('--cl',cL);set('--wc',p[10]);set('--wo',p[11]);set('--st',(p[12]*(1-g*.8)).toFixed(2));set('--hd1',p[13]);set('--hd2',p[14]);set('--sheet',p[15]);set('--navbg',p[16]);set('--navtx',p[17]);
+ B.classList.toggle('night',e<-3);
+ var tc=D.querySelector('meta[name=theme-color]');if(tc)tc.content=p[13];
+ /* benda langit */
+ var sunEl=D.getElementById('sun'),mo=D.getElementById('moon'),hn=function(h){h%=2*PI;if(h>PI)h-=2*PI;if(h<-PI)h+=2*PI;return h};
+ var sx=50+hn(sp.H)/(PI/2)*42,sy=72-cl(e,-6,75)/75*62;sunEl.style.left=cl(sx,6,94)+'%';sunEl.style.top=sy+'%';sunEl.style.opacity=(cl((e+5)/8,0,1)*(1-g*.75)).toFixed(2);
+ var mx=50+hn(sp.H+PI)/(PI/2)*42,my=72-cl(-e,-6,75)/75*62;mo.style.left=cl(mx,8,92)+'%';mo.style.top=my+'%';mo.style.opacity=(cl((-e-2)/8,0,1)*(1-g*.7)).toFixed(2);
+ /* awan, hujan, kabut */
+ var base={k:3,p:5,h:6}[s],cn={clear:Math.max(2,base-3),part:base+2,cloud:base+6,fog:base+3,rain:base+8,storm:base+9}[w];clouds(cn,w+cn);
+ D.getElementById('fog').style.opacity=w==='fog'?1:0;
+ var rk=w==='rain'||w==='storm'?w:'';if(rk!==(apply.rk||'')){apply.rk=rk;setRain(rk)}
+ /* teks sapaan & chip */
+ var h=({pagi:8,siang:12,sore:16,malam:20})[S.t]||now.getHours(),sal=h<11?'pagi':h<15?'siang':h<18?'sore':'malam';
+ D.getElementById('greet').innerHTML='Assalamu’alaikum<small>Selamat '+sal+'</small>';
+ var nm={clear:[e<-3?'fa-moon':'fa-sun','Cerah'],part:[e<-3?'fa-cloud-moon':'fa-cloud-sun','Cerah berawan'],cloud:['fa-cloud','Mendung'],rain:['fa-cloud-rain','Hujan'],storm:['fa-cloud-bolt','Hujan petir'],fog:['fa-smog','Berkabut']}[w];
+ D.getElementById('chips').innerHTML='<span><i class="fa-solid '+nm[0]+'"></i> '+nm[1]+(WX.tmp!=null&&S.w==='auto'?' · '+WX.tmp+'°C':'')+'</span><span><i class="fa-solid fa-leaf"></i> '+MN[s]+'</span>'+(ram?'<span><i class="fa-solid fa-moon"></i> Ramadan Mubarak</span>':'');
+}
+
+/* ---------- Pengaturan manual ---------- */
+var btn=D.createElement('button');btn.id='thm';btn.type='button';btn.title='Tema langit';btn.setAttribute('aria-label','Tema langit');btn.innerHTML='<i class="fa-solid fa-cloud-sun"></i>';
+var pan=D.createElement('div');pan.id='thp';
+function row(k,list,cur){return list.map(function(o){return'<button type="button" data-k="'+k+'" data-v="'+o[0]+'" class="'+(cur===o[0]?'on':'')+'">'+o[1]+'</button>'}).join('')}
+function panel(){pan.innerHTML='<b>Waktu</b><div>'+row('t',[['auto','Otomatis'],['pagi','Pagi'],['siang','Siang'],['sore','Sore'],['malam','Malam']],S.t)+'</div><b>Cuaca</b><div>'+row('w',[['auto','Otomatis'],['clear','Cerah'],['cloud','Mendung'],['rain','Hujan'],['storm','Petir']],S.w)+'</div><b>Efek gerak 3D</b><div>'+row('m',[['1','Hidup'],['0','Mati']],S.m?'1':'0')+'</div>'}
+btn.onclick=function(){panel();pan.classList.toggle('on')};
+pan.onclick=function(ev){var b=ev.target.closest('button');if(!b)return;var k=b.dataset.k,v=b.dataset.v;if(k==='m'){S.m=v==='1';ss('st_m',v)}else{S[k]=v;ss('st_'+k,v)}panel();apply()};
+D.addEventListener('click',function(ev){if(!pan.contains(ev.target)&&ev.target!==btn&&!btn.contains(ev.target))pan.classList.remove('on')});
+B.appendChild(btn);B.appendChild(pan);
+
+/* ---------- Parallax 3D (pointer, gyro) & tilt ikon ---------- */
+var raf2=0,tx=0,ty=0;
+function par(x,y){if(!S.m||RM)return;tx=x;ty=y;if(!raf2)raf2=requestAnimationFrame(function(){raf2=0;hero.style.setProperty('--px',tx.toFixed(2));hero.style.setProperty('--py',ty.toFixed(2))})}
+addEventListener('pointermove',function(ev){par((ev.clientX/innerWidth-.5)*2,(ev.clientY/innerHeight-.5)*2);if(!S.m||RM||ev.pointerType!=='mouse')return;var t=ev.target.closest&&ev.target.closest('.mt'),l=ev.target.closest&&ev.target.closest('.lgc');if(t){var i=t.querySelector('.mi'),r=i.getBoundingClientRect();i.style.setProperty('--ry',((ev.clientX-r.left)/r.width-.5)*30+'deg');i.style.setProperty('--rx',-((ev.clientY-r.top)/r.height-.5)*30+'deg')}
+ if(l){var q=l.getBoundingClientRect();l.style.setProperty('--lry',((ev.clientX-q.left)/q.width-.5)*6+'deg');l.style.setProperty('--lrx',-((ev.clientY-q.top)/q.height-.5)*6+'deg')}},{passive:true});
+D.addEventListener('pointerout',function(ev){var t=ev.target.closest&&ev.target.closest('.mt,.lgc');if(t){var i=t.classList.contains('mt')?t.querySelector('.mi'):t;if(i){i.style.removeProperty('--rx');i.style.removeProperty('--ry');i.style.removeProperty('--lrx');i.style.removeProperty('--lry')}}});
+addEventListener('deviceorientation',function(ev){if(ev.gamma!=null)par(cl(ev.gamma/25,-1,1),cl((ev.beta-45)/25,-1,1))},{passive:true});
+
+/* ---------- Mode hero mengikuti halaman ---------- */
+var v=D.getElementById('v');
+function view(){B.classList.toggle('nohero',!!v.querySelector('.chat-wrap,.doc'));B.classList.toggle('sub',!!v.querySelector('.pghd'))}
+new MutationObserver(function(){requestAnimationFrame(view)}).observe(v,{childList:true});view();
+addEventListener('resize',function(){if(raf)setRain(apply.rk)});
+
+getWx();apply();setInterval(apply,6e4);setInterval(getWx,18e5);
+})();
+</script>
+<script id="tema-ibadah-js">
+(function(){
+'use strict';
+var D=document,B=D.body,$=function(i){return D.getElementById(i)};
+function ls(k){try{return localStorage.getItem(k)}catch(e){return null}}function ss(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function toast_(m){try{if(typeof toast==='function')toast(m)}catch(e){}}
+
+/* ===== Kutipan harian di depan masjid (berganti tiap hari) ===== */
+var Q=[
+['إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ','Sesungguhnya setiap amal tergantung pada niatnya.','HR. Bukhari & Muslim'],
+['','Senyummu di hadapan saudaramu adalah sedekah.','HR. Tirmidzi'],
+['خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ','Sebaik-baik kalian adalah yang belajar Al-Qur’an dan mengajarkannya.','HR. Bukhari'],
+['','Barangsiapa menempuh jalan untuk mencari ilmu, Allah mudahkan baginya jalan menuju surga.','HR. Muslim'],
+['','Tidak sempurna iman seseorang hingga ia mencintai untuk saudaranya apa yang ia cintai untuk dirinya.','HR. Bukhari & Muslim'],
+['الطُّهُورُ شَطْرُ الإِيمَانِ','Bersuci adalah separuh dari iman.','HR. Muslim'],
+['','Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya.','HR. Ahmad'],
+['فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ','Barangsiapa beriman kepada Allah dan hari akhir, hendaklah berkata baik atau diam.','HR. Bukhari & Muslim'],
+['الدِّينُ النَّصِيحَةُ','Agama itu nasihat.','HR. Muslim'],
+['','Dua nikmat yang banyak membuat manusia tertipu: kesehatan dan waktu luang.','HR. Bukhari'],
+['','Orang kuat bukanlah yang menang bergulat, tetapi yang mampu menahan diri ketika marah.','HR. Bukhari & Muslim'],
+['','Allah tidak melihat rupa dan harta kalian, tetapi melihat hati dan amal kalian.','HR. Muslim'],
+['','Amal yang paling dicintai Allah adalah yang terus-menerus meski sedikit.','HR. Bukhari & Muslim'],
+['','Barangsiapa tidak menyayangi, ia tidak akan disayangi.','HR. Bukhari & Muslim'],
+['','Jagalah (perintah) Allah, niscaya Allah menjagamu.','HR. Tirmidzi'],
+['','Hendaklah kalian jujur, karena kejujuran menuntun kepada kebaikan, dan kebaikan menuntun ke surga.','HR. Bukhari & Muslim'],
+['','Muslim sejati adalah yang orang muslim lain selamat dari lisan dan tangannya.','HR. Bukhari & Muslim'],
+['','Mudahkanlah dan jangan mempersulit, berilah kabar gembira dan jangan membuat orang lari.','HR. Bukhari & Muslim'],
+['','Barangsiapa yang Allah kehendaki kebaikan baginya, Allah pahamkan ia dalam agama.','HR. Bukhari & Muslim'],
+['أَسْتَغْفِرُ اللهَ (٣×) اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ','Dzikir setelah salam: istighfar 3×, lalu “Ya Allah, Engkau As-Salam dan dari-Mu keselamatan.”','HR. Muslim'],
+['سُبْحَانَ اللهِ ٣٣ · الْحَمْدُ لِلَّهِ ٣٣ · اللهُ أَكْبَرُ ٣٣','Dzikir setelah salat: tasbih, tahmid, takbir masing-masing 33×, digenapkan menjadi 100 dengan tahlil.','HR. Muslim'],
+['','Dzikir setelah salat fardu: membaca Ayat Kursi. Tidak ada yang menghalanginya masuk surga selain kematian.','HR. An-Nasa’i'],
+['اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ','Ya Allah, bantulah aku untuk berdzikir kepada-Mu, bersyukur kepada-Mu, dan beribadah dengan baik.','HR. Abu Dawud & An-Nasa’i'],
+['قُلْ هُوَ اللهُ أَحَدٌ · قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ · قُلْ أَعُوذُ بِرَبِّ النَّاسِ','Dzikir setelah salat: membaca Al-Ikhlas, Al-Falaq, dan An-Nas.','HR. Abu Dawud & Tirmidzi'],
+['سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','Dua kalimat ringan di lisan, berat di timbangan, dicintai Ar-Rahman.','HR. Bukhari & Muslim'],
+['لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','Kalimat ini adalah salah satu perbendaharaan surga.','HR. Bukhari & Muslim'],
+['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ','Ya Tuhan kami, berilah kami kebaikan di dunia dan di akhirat, dan lindungilah kami dari azab neraka.','QS. Al-Baqarah: 201'],
+['حَسْبُنَا اللهُ وَنِعْمَ الْوَكِيلُ','Cukuplah Allah bagi kami, dan Dia sebaik-baik pelindung.','QS. Ali ‘Imran: 173'],
+['لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ','Dzikir setelah salat: tiada tuhan selain Allah semata, milik-Nya segala kerajaan dan pujian, Dia Mahakuasa atas segala sesuatu.','HR. Bukhari & Muslim'],
+['اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ وَلَا مُعْطِيَ لِمَا مَنَعْتَ','Ya Allah, tiada yang dapat menghalangi apa yang Engkau beri, dan tiada yang dapat memberi apa yang Engkau halangi.','HR. Bukhari & Muslim'],
+['رَبِّ زِدْنِي عِلْمًا','Ya Tuhanku, tambahkanlah ilmu kepadaku.','QS. Thaha: 114']];
+var qi=0,qc=null,qFor=null,qh=$('hero'),qt=D.createElement('div');qt.id='qt';qt.title='Ketuk untuk kutipan lainnya';
+function qDay(){var n=new Date(),d=Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(n.getFullYear(),0,0))/864e5);return(d*7+n.getFullYear())%QL().length}
+function QL(){return qc&&qc.length?qc:Q}
+function he(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function qShow(){var q=QL()[qi]||QL()[0];qt.innerHTML=(q[0]?'<div class="qa">'+he(q[0])+'</div>':'')+'<div class="qi">'+he(q[1])+'</div><div class="qs">'+he(q[2])+'</div>'}
+function qSet(v){qc=Array.isArray(v)?v.filter(function(x){return x&&x.arti}).map(function(x){return[x.arab||'',x.arti,x.sumber||'']}):null;qi=qDay();qShow()}
+function qLoad(){try{if(typeof SB==='undefined')return;SB.from('konten').select('nilai').eq('kunci','hadis').maybeSingle().then(function(r){qSet(r&&r.data&&r.data.nilai)}).catch(function(){})}catch(e){}}
+function qCheck(){var id=(typeof U!=='undefined'&&U&&U.me)?U.me.id:null;if(id&&id!==qFor){qFor=id;qLoad()}}
+if(qh){qi=qDay();qShow();qLoad();qh.appendChild(qt);qt.onclick=function(){qt.classList.add('o');setTimeout(function(){qi=(qi+1)%QL().length;qShow();qt.classList.remove('o')},300)}}
+
+/* ===== Suara (WebAudio, tanpa file) ===== */
+var AC;function ac(){if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(C)AC=new C()}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function note(f,t,d,v,ty){var a=ac();if(!a)return;var o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t;o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v,s+.012);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g);g.connect(a.destination);o.start(s);o.stop(s+d+.05)}
+function bell(f,t,d,v){note(f,t,d||.9,v||.22);note(f*2.76,t,(d||.9)*.4,(v||.22)*.3)}
+var SND={
+ tick:function(){note(880,0,.07,.07,'triangle')},
+ 33:function(){bell(784,0);bell(1047,.18,1.1)},
+ 41:function(){bell(698,0);bell(932,.14);bell(698,.28,1.1)},
+ 100:function(){[659,784,1047,1319].forEach(function(f,i){bell(f,i*.16,1)})},
+ 500:function(){[523,659,784,1047,1319,1568].forEach(function(f,i){bell(f,i*.14,1.1)})},
+ 1000:function(){[523,659,784,1047,784,1047,1319,1568].forEach(function(f,i){bell(f,i*.15,1.3,.26)});[523,659,784,1047].forEach(function(f){bell(f,1.4,2,.15)})}};
+var VIB={33:[80,60,80],41:[60,40,60,40,120],100:[100,60,100,60,100],500:[120,60,120,60,120,60,200],1000:[200,80,200,80,200,80,400]};
+
+/* ===== Dzikir ===== */
+var DZ=[['sub','سُبْحَانَ اللهِ','Subhanallah','Maha Suci Allah'],['ham','الْحَمْدُ لِلَّهِ','Alhamdulillah','Segala puji bagi Allah'],['akb','اللهُ أَكْبَرُ','Allahu Akbar','Allah Maha Besar'],['lai','لَا إِلَهَ إِلَّا اللهُ','Laa ilaaha illallah','Tiada tuhan selain Allah'],['ist','أَسْتَغْفِرُ اللهَ','Astaghfirullah','Aku memohon ampun kepada Allah'],['hwl','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','Laa hawla wa laa quwwata illaa billaah','Tiada daya dan kekuatan kecuali dengan pertolongan Allah'],['sho','اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ','Allahumma shalli ‘ala sayyidina Muhammad','Ya Allah, limpahkan shalawat kepada junjungan kami Muhammad'],['sbh','سُبْحَانَ اللهِ وَبِحَمْدِهِ','Subhanallahi wa bihamdih','Maha Suci Allah dan dengan memuji-Nya']];
+var MS=[33,41,100,500,1000],C=2*Math.PI*102;
+var ZD={n:0,id:'sub',t:33,snd:1,vib:1,day:'',tot:0},Z={};
+/* Data dzikir disimpan per akun (kunci memakai id akun), jadi tiap akun punya hitungan, target, dan pengaturan sendiri */
+function zKey(){return'st_dz_'+((typeof U!=='undefined'&&U&&U.me&&U.me.id)?U.me.id:'tamu')}
+function zLoad(){var k=zKey();if(Z._k===k)return;var o={};for(var a in ZD)o[a]=ZD[a];try{var z0=JSON.parse(ls(k));if(z0)for(var b in z0)if(b!=='_k')o[b]=z0[b]}catch(e){}o._k=k;Z=o}
+zLoad();
+function today(){return new Date().toISOString().slice(0,10)}
+function zSave(){ss(Z._k||zKey(),JSON.stringify(Z))}
+function zp(){return Z.n?((Z.n-1)%Z.t+1)/Z.t:0}
+function zUi(){var n=$('dzn');if(!n)return;n.textContent=Z.n;$('dzr').style.strokeDashoffset=C*(1-zp());$('dzt').textContent=Z.tot;$('dzlap').textContent=Z.n>=Z.t?'Putaran ke-'+Math.ceil(Z.n/Z.t):'Target '+Z.t}
+window.stDz={
+ tap:function(){zLoad();var a=ac();if(Z.day!==today()){Z.day=today();Z.tot=0}Z.n++;Z.tot++;
+  var m=Z.n%100,hit=Z.n%1000===0?1000:Z.n%500===0?500:m===0?100:m===33?33:m===41?41:0;
+  if(Z.snd){if(hit)SND[hit]();else SND.tick()}
+  if(Z.vib&&navigator.vibrate)navigator.vibrate(hit?VIB[hit]:12);
+  if(hit)toast_(Z.n+' kali — Alhamdulillah'+(Z.n===Z.t?', target tercapai':''));
+  var b=$('dzb');if(b){b.classList.add('p');setTimeout(function(){b.classList.remove('p')},70)}zUi();zSave()},
+ pick:function(id){Z.id=id;zSave();rerender()},
+ tgt:function(t){Z.t=t;zSave();rerender()},
+ reset:function(){Z.n=0;zSave();zUi()},
+ snd:function(){Z.snd=Z.snd?0:1;if(Z.snd){ac();SND[33]()}zSave();rerender()},
+ vib:function(){Z.vib=Z.vib?0:1;if(Z.vib&&navigator.vibrate)navigator.vibrate(40);zSave();rerender()}};
+function rerender(){var e=D.querySelector('.dz');if(e)e.outerHTML=dzHtml()}
+function dzHtml(){zLoad();if(Z.day!==today()){Z.day=today();Z.tot=0}var d=DZ.filter(function(x){return x[0]===Z.id})[0]||DZ[0];
+ return'<div class="card dz"><div class="dzchips">'+DZ.map(function(x){return'<button type="button" class="'+(x[0]===Z.id?'on':'')+'" onclick="stDz.pick(\''+x[0]+'\')">'+x[2].split(' ').slice(0,2).join(' ')+'</button>'}).join('')+'</div>'
+ +'<div class="dzar">'+d[1]+'</div><div class="dzlt">'+d[2]+'</div><div class="mu">'+d[3]+'</div>'
+ +'<div class="dzwrap"><svg viewBox="0 0 224 224"><circle cx="112" cy="112" r="102" fill="none" stroke="#d1fae5" stroke-width="9"/><circle id="dzr" cx="112" cy="112" r="102" fill="none" stroke="#d4af37" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" style="stroke-dashoffset:'+(C*(1-zp())).toFixed(1)+';transition:stroke-dashoffset .2s"/></svg>'
+ +'<button id="dzb" type="button" onclick="stDz.tap()" aria-label="Hitung dzikir"><span id="dzn">'+Z.n+'</span><small id="dzlap">'+(Z.n>=Z.t?'Putaran ke-'+Math.ceil(Z.n/Z.t):'Target '+Z.t)+'</small></button></div>'
+ +'<div class="dzchips" style="justify-content:center">'+MS.map(function(t){return'<button type="button" class="'+(t===Z.t?'on':'')+'" onclick="stDz.tgt('+t+')">'+t+'×</button>'}).join('')+'</div>'
+ +'<div class="dzrow"><button type="button" class="sec" onclick="stDz.reset()"><i class="fa-solid fa-rotate-left"></i> Ulang</button><button type="button" class="sec" onclick="stDz.snd()"><i class="fa-solid '+(Z.snd?'fa-volume-high':'fa-volume-xmark')+'"></i> Suara '+(Z.snd?'hidup':'mati')+'</button><button type="button" class="sec" onclick="stDz.vib()"><i class="fa-solid fa-mobile-screen"></i> Getar '+(Z.vib?'hidup':'mati')+'</button></div>'
+ +'<p class="mu" style="margin:12px 0 0">Dzikir hari ini: <b id="dzt">'+Z.tot+'</b> · Nada lonceng berbeda di hitungan 33, 41, dan 100, berulang tiap putaran 100 (133, 141, 200, dst). Fanfare khusus di 500 dan 1000.</p></div>'}
+
+/* ===== Murottal ===== */
+var SR='Al-Fatihah|Al-Baqarah|Ali ‘Imran|An-Nisa’|Al-Ma’idah|Al-An’am|Al-A’raf|Al-Anfal|At-Taubah|Yunus|Hud|Yusuf|Ar-Ra’d|Ibrahim|Al-Hijr|An-Nahl|Al-Isra’|Al-Kahfi|Maryam|Thaha|Al-Anbiya’|Al-Hajj|Al-Mu’minun|An-Nur|Al-Furqan|Asy-Syu’ara’|An-Naml|Al-Qashash|Al-‘Ankabut|Ar-Rum|Luqman|As-Sajdah|Al-Ahzab|Saba’|Fathir|Yasin|Ash-Shaffat|Shad|Az-Zumar|Ghafir|Fushshilat|Asy-Syura|Az-Zukhruf|Ad-Dukhan|Al-Jatsiyah|Al-Ahqaf|Muhammad|Al-Fath|Al-Hujurat|Qaf|Adz-Dzariyat|Ath-Thur|An-Najm|Al-Qamar|Ar-Rahman|Al-Waqi’ah|Al-Hadid|Al-Mujadilah|Al-Hasyr|Al-Mumtahanah|Ash-Shaff|Al-Jumu’ah|Al-Munafiqun|At-Taghabun|Ath-Thalaq|At-Tahrim|Al-Mulk|Al-Qalam|Al-Haqqah|Al-Ma’arij|Nuh|Al-Jinn|Al-Muzzammil|Al-Muddatstsir|Al-Qiyamah|Al-Insan|Al-Mursalat|An-Naba’|An-Nazi’at|‘Abasa|At-Takwir|Al-Infithar|Al-Muthaffifin|Al-Insyiqaq|Al-Buruj|Ath-Thariq|Al-A’la|Al-Ghasyiyah|Al-Fajr|Al-Balad|Asy-Syams|Al-Lail|Adh-Dhuha|Al-Insyirah|At-Tin|Al-‘Alaq|Al-Qadr|Al-Bayyinah|Az-Zalzalah|Al-‘Adiyat|Al-Qari’ah|At-Takatsur|Al-‘Ashr|Al-Humazah|Al-Fil|Quraisy|Al-Ma’un|Al-Kautsar|Al-Kafirun|An-Nashr|Al-Lahab|Al-Ikhlas|Al-Falaq|An-Nas'.split('|');
+/* Sumber audio (bisa diganti). {n} = nomor surah 3 digit; sumber ke-2 dipakai bila ke-1 gagal */
+var QR={afs:['Mishary Alafasy',['https://server8.mp3quran.net/afs/{n}.mp3','https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/{n}.mp3']],
+ sds:['Abdurrahman As-Sudais',['https://server11.mp3quran.net/sds/{n}.mp3','https://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/{n}.mp3']],
+ mah:['Maher Al-Muaiqly',['https://server12.mp3quran.net/maher/{n}.mp3']],
+ hus:['Mahmoud Al-Husary',['https://server13.mp3quran.net/husr/{n}.mp3','https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree_iza3a/{n}.mp3']]};
+var AU=new Audio();AU.preload='none';
+var P={q:ls('st_mq')||'afs',n:0,auto:ls('st_ma')!=='0',src:0};
+function pad(n){return('00'+n).slice(-3)}
+function fmt(s){if(!isFinite(s))return'0:00';var m=Math.floor(s/60);return m+':'+('0'+Math.floor(s%60)).slice(-2)}
+function mPlay(n,keep){if(n<1||n>114)return;P.n=n;if(!keep)P.src=0;var u=QR[P.q][1][P.src].replace('{n}',pad(n));AU.src=u;var pr=AU.play();if(pr&&pr.catch)pr.catch(function(){});meta();mUi();}
+function meta(){try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:'Surah '+SR[P.n-1],artist:QR[P.q][0],album:'SantriTrack · Murottal'});['play','pause','previoustrack','nexttrack'].forEach(function(a){var f={play:function(){AU.play()},pause:function(){AU.pause()},previoustrack:function(){stMr.prev()},nexttrack:function(){stMr.next()}}[a];navigator.mediaSession.setActionHandler(a,f)})}}catch(e){}}
+AU.addEventListener('error',function(){if(!P.n)return;var l=QR[P.q][1];if(P.src+1<l.length){P.src++;mPlay(P.n,true)}else{toast_('Murottal gagal dimuat. Periksa koneksi internet.');mUi()}});
+AU.addEventListener('ended',function(){if(P.auto&&P.n<114)mPlay(P.n+1)});
+AU.addEventListener('play',function(){mUi()});AU.addEventListener('pause',function(){mUi()});
+AU.addEventListener('timeupdate',function(){var p=$('mrpos');if(p&&!p.dataset.d){p.max=AU.duration||100;p.value=AU.currentTime}var a=$('mrt1'),b=$('mrt2');if(a){a.textContent=fmt(AU.currentTime);b.textContent=fmt(AU.duration)}});
+function mUi(){var pl=P.n&&!AU.paused,ic=pl?'fa-pause':'fa-play';
+ var pp=$('mrpp');if(pp)pp.innerHTML='<i class="fa-solid '+ic+'"></i>';
+ var nm=$('mrnow');if(nm)nm.innerHTML=P.n?'Surah '+SR[P.n-1]+'<div class="mu">'+QR[P.q][0]+'</div>':'Pilih surah untuk diputar';
+ D.querySelectorAll('.mrw').forEach(function(r){r.classList.toggle('on',+r.dataset.n===P.n)});
+ var bar=$('mrbar');if(!bar)return;var onPage=!!$('mrpage');
+ B.classList.toggle('mini',!!P.n&&!onPage&&!B.classList.contains('lgmode'));
+ bar.querySelector('b').innerHTML=P.n?'Surah '+SR[P.n-1]+'<small>'+QR[P.q][0]+'</small>':'';
+ bar.querySelector('#mbpp').innerHTML='<i class="fa-solid '+ic+'"></i>';
+ if(B.classList.contains('lgmode')&&!AU.paused)AU.pause()}
+window.stMr={play:mPlay,
+ toggle:function(){if(!P.n)return mPlay(1);AU.paused?AU.play():AU.pause()},
+ next:function(){if(P.n<114)mPlay(P.n+1)},prev:function(){if(AU.currentTime>4||P.n<2)AU.currentTime=0;else mPlay(P.n-1)},
+ seek:function(v){AU.currentTime=+v},
+ qari:function(v){P.q=v;ss('st_mq',v);if(P.n)mPlay(P.n);else mUi()},
+ auto:function(v){P.auto=!!v;ss('st_ma',v?'1':'0')},
+ stop:function(){AU.pause();AU.removeAttribute('src');AU.load();P.n=0;mUi()},
+ find:function(q){q=q.toLowerCase().trim();D.querySelectorAll('.mrw').forEach(function(r){r.style.display=!q||r.textContent.toLowerCase().indexOf(q)>-1||r.dataset.n===q?'':'none'})}};
+function mrHtml(){return'<div class="card" id="mrpage"><label for="mrq">Qari</label><select id="mrq" onchange="stMr.qari(this.value)">'+Object.keys(QR).map(function(k){return'<option value="'+k+'"'+(k===P.q?' selected':'')+'>'+QR[k][0]+'</option>'}).join('')+'</select>'
+ +'<div style="text-align:center;margin-top:14px;font-weight:800;font-size:17px;color:#064e3b" id="mrnow"></div>'
+ +'<div class="mrc"><button type="button" class="sec" onclick="stMr.prev()" aria-label="Sebelumnya"><i class="fa-solid fa-backward-step"></i></button><button type="button" id="mrpp" onclick="stMr.toggle()" aria-label="Putar/jeda"><i class="fa-solid fa-play"></i></button><button type="button" class="sec" onclick="stMr.next()" aria-label="Berikutnya"><i class="fa-solid fa-forward-step"></i></button></div>'
+ +'<input id="mrpos" type="range" min="0" max="100" value="0" step="1" oninput="this.dataset.d=1;mrt1.textContent=stMrF(this.value)" onchange="stMr.seek(this.value);delete this.dataset.d"><div class="mrt"><span id="mrt1">0:00</span><span id="mrt2">0:00</span></div>'
+ +'<label class="ck"><input type="checkbox" '+(P.auto?'checked':'')+' onchange="stMr.auto(this.checked)"> Putar surah berikutnya otomatis</label></div>'
+ +'<div class="card"><input id="mrs" type="search" placeholder="Cari surah… (nama atau nomor)" style="width:100%" oninput="stMr.find(this.value)"><div id="mrlist">'+SR.map(function(s,i){return'<div class="mrw'+(P.n===i+1?' on':'')+'" data-n="'+(i+1)+'" onclick="stMr.play('+(i+1)+')"><span class="mrn"><span>'+(i+1)+'</span></span><span>'+s+'</span></div>'}).join('')+'</div></div>'}
+window.stMrF=fmt;
+
+/* ===== Mini player ===== */
+var bar=D.createElement('div');bar.id='mrbar';bar.innerHTML='<i class="fa-solid fa-book-quran"></i><b></b><button type="button" id="mbpp" onclick="stMr.toggle()" aria-label="Putar/jeda"></button><button type="button" onclick="stMr.next()" aria-label="Berikutnya"><i class="fa-solid fa-forward-step"></i></button><button type="button" onclick="stMr.stop()" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>';B.appendChild(bar);
+var v=$('v');if(v)new MutationObserver(function(){requestAnimationFrame(function(){mUi();zUi();qCheck()})}).observe(v,{childList:true});
+new MutationObserver(function(){mUi()}).observe(B,{attributes:true,attributeFilter:['class']});
+
+/* ===== Daftarkan ke menu aplikasi ===== */
+try{
+ var it=[['dzikir','Dzikir'],['murottal','Murottal'],['quran','Al-Qur’an']];
+ [TW,TS,TA].forEach(function(a){it.forEach(function(i){a.push(i)})});
+ it.forEach(function(i){TL[i[0]]=i[1]});
+ IC.dzikir='fa-solid fa-hands-praying';IC.murottal='fa-solid fa-book-quran';IC.quran='fa-solid fa-book-open';
+ R.dzikir=async function(){return dzHtml()};
+ R.murottal=async function(){return mrHtml()};
+ R.quran=async function(){return'<div class="card" style="text-align:center"><div class="dzar">القرآن الكريم</div><div class="dzlt">Al-Qur’an Digital</div><div class="mu" style="margin:6px 0 14px">Baca Al-Qur’an lengkap dari situs resmi quran.nu.or.id (butuh internet).</div><button type="button" onclick="window.open(\''+EXT.quran+'\',\'_blank\',\'noopener\')"><i class="fa-solid fa-book-open"></i> Buka Al-Qur’an</button></div>'};
+ /* Editor hadis beranda di Kelola konten */
+ EDC.hadis=[['arab','Teks Arab (boleh kosong)','text'],['arti','Terjemahan / isi hadis','text'],['sumber','Sumber (contoh: HR. Bukhari)','text']];MAIN.hadis='arti';
+ window.hdMuat=function(){var h=$('ed-hadis');if(!h)return;h.innerHTML='';Q.forEach(function(q){h.insertAdjacentHTML('beforeend',edRow('hadis',{arab:q[0],arti:q[1],sumber:q[2]}))})};
+ var _rk2=R.konten;
+ R.konten=async function(){var k=await getKonten();var sec=edSec('hadis','Hadis di beranda (depan masjid)','Tampil di gambar masjid pada beranda, berganti tiap hari dan bisa diketuk untuk berikutnya. Kosongkan semua baris untuk memakai hadis bawaan.',Array.isArray(k.hadis)?k.hadis:[]);sec=sec.replace('onclick="edAdd(\'hadis\')">+ Tambah baris</button>','onclick="edAdd(\'hadis\')">+ Tambah baris</button> <button type="button" class="sec" onclick="hdMuat()">Muat hadis bawaan</button>');return sec+await _rk2()};
+ var _sk=window.simpanKonten;if(typeof _sk==='function')window.simpanKonten=async function(key){var r=await _sk.apply(this,arguments);if(key==='hadis')qLoad();return r};
+}catch(e){console.warn('Menu ibadah belum terpasang:',e)}
+})();
 </script>
 </body>
 </html>
