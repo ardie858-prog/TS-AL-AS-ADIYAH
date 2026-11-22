@@ -7530,7 +7530,7 @@ showHi();
       else if (k === 'ArrowDown' || k === 's') this.slide();
     },
     update: function (dt) {
-      var r = this, spd = r.v = Math.min(24, 11 + M.score * 0.6), k, rw;
+      var r = this, spd = r.v = Math.min(10, 5 + M.score * 0.1), k, rw;
       r.off += spd * dt; r.ph += dt * (8 + spd * 0.25);
       r.px += (r.lane - r.px) * Math.min(1, dt * 14);
       if (r.jy > 0 || r.jv > 0) { r.jv -= 10 * dt; r.jy += r.jv * dt; if (r.jy <= 0) { r.jy = 0; r.jv = 0; } }
@@ -7891,15 +7891,15 @@ showHi();
       c.fillStyle = g; c.fillRect(0, 0, W, H);
       c.save(); rr(c, s.ox - 4, s.oy - 4, s.cols * cl + 8, s.rows * cl + 8, 14); c.fillStyle = '#bbf7d0'; c.fill(); c.clip();
       for (y = 0; y < s.rows; y++) for (x = 0; x < s.cols; x++) {
-        c.fillStyle = (x + y) % 2 ? '#86efac' : '#a7f3d0'; c.fillRect(s.ox + x * cl, s.oy + y * cl, cl, cl);
+        c.fillStyle = (x + y) % 2 ? '#008050' : '#0b8000'; c.fillRect(s.ox + x * cl, s.oy + y * cl, cl, cl);
       }
       for (k = 0; k < s.foods.length; k++) {
         var f = s.foods[k], p = s.cellXY(f.x, f.y);
         disc(p.x, p.y, cl * 0.47 + Math.sin(M.t * 4 + k) * 1.2, f.i, f.h);
       }
       for (k = s.sn.length - 1; k >= 0; k--) {
-        var sg = s.sn[k], q = s.cellXY(sg.x, sg.y), pad = k === 0 ? 1 : 2.5;
-        c.fillStyle = k === 0 ? '#15803d' : (k % 2 ? '#22c55e' : '#16a34a');
+  var sg = s.sn[k], q = s.cellXY(sg.x, sg.y), pad = k === 0 ? 1 : 2.5;
+        c.fillStyle = 'hsl(' + ((k * 25 + M.t * 150) % 360) + ', 95%, ' + (k === 0 ? '60%' : '50%') + ')';
         rr(c, q.x - cl / 2 + pad, q.y - cl / 2 + pad, cl - pad * 2, cl - pad * 2, cl * 0.32); c.fill();
       }
       var hd = s.cellXY(s.sn[0].x, s.sn[0].y), dx = s.dir.x, dy = s.dir.y, ex = -dy, ey = dx;
