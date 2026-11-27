@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
+<script>window.__instalEv=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__instalEv=e});</script>
 <meta name="theme-color" content="#1f5c40">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -169,7 +170,7 @@ main{padding-bottom:96px}
 .kbd .korn2{top:7.65em}
 .kbd .kph{left:1.4em;top:8.6em;width:20.6em;bottom:.35em;overflow:hidden}.kph b{display:block;color:#e3c25b;font-size:.95em;line-height:1.2;margin-bottom:.2em;letter-spacing:0}.kph ol{margin:0;padding-left:1.3em;font-size:.63em;line-height:1.25;letter-spacing:0}.kph li{margin-bottom:.14em}
 .kbd .kpg{left:22.6em;right:1.2em;top:8.7em;bottom:.5em;border-left:.08em solid rgba(255,255,255,.6);display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding-left:.5em}
-.kpg .tt{font-size:.8em;font-weight:600;line-height:1.25;letter-spacing:0}.kpg .ttd{width:100%;height:3em;background-position:center;background-size:contain;background-repeat:no-repeat}.kpg .nm{font-size:.8em;line-height:1.2;border-top:.08em solid #fff;padding-top:.15em;width:92%;letter-spacing:0}
+.kpg .tt{font-size:.8em;font-weight:600;line-height:1.25;letter-spacing:0}.kpg .ttd{width:100%;height:3em;flex:1 1 3em;min-height:0;margin:.15em 0;background-position:center;background-size:contain;background-repeat:no-repeat}.kpg .nm{font-size:.8em;line-height:1.2;border-top:.08em solid #fff;padding-top:.15em;width:92%;letter-spacing:0}
 /* ===== Struktur organisasi ===== */
 .stg{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
 .stc{width:118px;text-align:center}.stb{width:150px}
@@ -268,6 +269,8 @@ main{padding-bottom:96px}
 }
 .rl-ph{display:none}
 @media print{body.print-only .rl-ph{display:block!important;text-align:center;border-bottom:2px solid #065f46;padding-bottom:8px;margin-bottom:10px}}
+.absen-box{max-height:55vh;overflow-y:auto;margin:10px 0;border:1px solid #cbd5e1;border-radius:12px;padding:0 10px;background:#fff}.absen-box label.ck:first-child{border-top:0}
+#bn button.senter.nyala i{color:#eab308;filter:drop-shadow(0 0 6px #facc15)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -393,7 +396,7 @@ body:not(.lgmode){background-attachment:fixed}
 </style>
 </head>
 <body>
-<header><div class="hd"><div class="brand"><div class="hlogo"><img id="hlogo" alt=""></div><div><div class="bn">SantriTrack</div><div class="bs">PPP. AL-AS’ADIYAH BLEGA</div></div></div><div class="hr"><div class="ub" id="ubw" style="display:none"><span class="ui" id="wi">W</span><span id="who"></span></div><button id="chatbtn" class="bellb" style="display:none" onclick="U.tab='chat';draw()" title="Obrolan"><i class="fa-solid fa-comments"></i><span id="cdot" style="display:none"></span></button><button id="bell" class="bellb" style="display:none" onclick="U.tab='notif';draw()" title="Notifikasi"><i class="fa-solid fa-bell"></i><span id="bdot" style="display:none"></span></button><button id="srch" class="bellb" style="display:none" onclick="toggleMenuSearch()" title="Cari menu"><i class="fa-solid fa-magnifying-glass"></i></button><button id="lo" class="lob" style="display:none"></button></div></div></header>
+<header><div class="hd"><div class="brand"><div class="hlogo"><img id="hlogo" alt=""></div><div><div class="bn">SantriTrack</div><div class="bs">PPP. AL-AS’ADIYAH BLEGA</div></div></div><div class="hr"><button id="instbtn" type="button" class="bellb" onclick="pasangAplikasi()" title="Instal aplikasi"><i class="fa-solid fa-download"></i></button><div class="ub" id="ubw" style="display:none"><span class="ui" id="wi">W</span><span id="who"></span></div><button id="chatbtn" class="bellb" style="display:none" onclick="U.tab='chat';draw()" title="Obrolan"><i class="fa-solid fa-comments"></i><span id="cdot" style="display:none"></span></button><button id="bell" class="bellb" style="display:none" onclick="U.tab='notif';draw()" title="Notifikasi"><i class="fa-solid fa-bell"></i><span id="bdot" style="display:none"></span></button><button id="srch" class="bellb" style="display:none" onclick="toggleMenuSearch()" title="Cari menu"><i class="fa-solid fa-magnifying-glass"></i></button><button id="lo" class="lob" style="display:none"></button></div></div></header>
 <main><div class="tabs" id="tabs"></div><div id="v"></div></main>
 <nav id="bn"></nav>
 <div id="sv" style="display:none;position:fixed;inset:0;z-index:50;background:#000;color:#fff;flex-direction:column"></div>
@@ -736,7 +739,7 @@ const isAl=U.me.role==='alumni';
 const st=U.me.role!='wali'&&!isAl;
 const TAL=[['home','Beranda'],['riwayatsantri','Riwayat santri'],['direktorialumni','Direktori Alumni'],['chat','Obrolan'],['media','Profil & jadwal'],['struktur','Struktur'],['info','Info & agenda'],['akun','Akun']];
 const T=isAl?TAL:(st?(U.me.role=='admin'?TA:TS):TW);
-const NOSID=new Set(['home','anak','chat','akun','dzikir','murottal','quran','ngaji','info','media','struktur','notif']);
+const NOSID=new Set(['twibbon','home','anak','chat','akun','dzikir','murottal','quran','ngaji','info','media','struktur','notif']);
 if(!st&&!isAl&&!U.sid&&!NOSID.has(U.tab))U.tab='anak';
 if(U.tab!=='riwayatsantri')U.alsid=null;
 if(U.tab!=='riwayatlengkap'){U.rs=null;U.rf='semua'}
@@ -752,14 +755,15 @@ const canChat=U.me.role==='admin'||U.me.role==='pengurus'||U.me.role==='wali'||i
 const cb=$('chatbtn');if(cb)cb.style.display=canChat?'':'none';
 $('bell').style.display=(st||isAl)?'none':'';
 const hl=$('hlogo');if(!hl.dataset.s){hl.dataset.s=1;hl.onerror=()=>{hl.onerror=null;hl.src=LOGO_DEF};hl.src=LOGO_URL()}
-hl.onclick=()=>bukaProfilPondok();
-hl.title='Profil pondok';
+const nm=document.querySelector('.brand .bn');if(nm){const bx=nm.parentElement;bx.style.cursor='pointer';bx.onclick=()=>bukaProfilPondok();bx.title='Profil pondok'}
+hl.parentElement.style.cursor='default';
 const ubw=$('ubw');if(ubw){ubw.onclick=()=>lihatProfilPenuh();ubw.title='Lihat foto profil'}
 if(!st&&!isAl){SB.from('notifikasi').select('id',{count:'exact',head:true}).eq('dibaca',false).then(r=>updateNotifBadge(r.count||0)).catch(()=>{})}
 $('tabs').innerHTML=T.map(t=>`<button class="${U.tab==t[0]?'on':''}" onclick="U.tab='${t[0]}';draw()"><i class="${IC[t[0]]||'fa-solid fa-circle'}"></i> ${t[1]}${t[0]=='notif'&&U.unread?` <b style="background:var(--rd);color:#fff;border-radius:99px;padding:0 6px;font-size:12px">${U.unread}</b>`:''}</button>`).join('');
 if(!st&&!isAl&&!U.sid&&!NOSID.has(U.tab)){$('v').innerHTML='<div class="card">Belum ada santri aktif yang terhubung ke akun ini. Hubungi pengurus.</div>';return}
-let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran'&&U.tab!='ngaji')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
-const noPgSearch=new Set(['dzikir','murottal','quran','ngaji','pengaturan','absenqr','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
+let sel='';if(!st&&!isAl&&U.santri.length>1&&U.tab!='home'&&U.tab!='chat'&&U.tab!='akun'&&U.tab!='dzikir'&&U.tab!='murottal'&&U.tab!='quran'&&U.tab!='ngaji'&&U.tab!='twibbon')sel=`<div class="card"><select onchange="U.sid=+this.value;draw()">${U.santri.map(s=>`<option value="${s.id}" ${s.id==U.sid?'selected':''}>${esc(s.nama)}</option>`).join('')}</select></div>`;
+if(U._pqTab!==U.tab){U.pqShow=false;U.pq='';U._pqTab=U.tab}
+const noPgSearch=new Set(['home','twibbon','dzikir','murottal','quran','ngaji','pengaturan','absenqr','konten','strukturedit','struktur','media','info','pendaftar','kartuedit','kasir','chat']);
 const showPgSearch=!noPgSearch.has(U.tab);
 if(!showPgSearch){U.pqShow=false;U.pq=''}
 const pg=U.tab=='home'?'':`<div class="pghd noprint"><button class="sec" onclick="U.tab='home';draw()"><i class="fa-solid fa-chevron-left"></i> Menu</button><b>${TL[U.tab]||''}</b>${showPgSearch?`<button type="button" class="pg-search ${U.pqShow?'on':''}" onclick="togglePageSearch()" title="Cari di halaman ini"><i class="fa-solid fa-magnifying-glass"></i></button>`:''}</div>${showPgSearch?`<div class="pg-sbar noprint ${U.pqShow?'show':''}" id="pg-sbar"><input id="pg_q" placeholder="Cari di halaman ini…" value="${esc(U.pq||'')}" oninput="U.pq=this.value;filterPageContent(this.value)" autocomplete="off">${U.pq?`<button type="button" class="sec" onclick="U.pq='';filterPageContent('');const i=$('pg_q');if(i)i.value=''">Reset</button>`:''}</div>`:''}`;
@@ -767,6 +771,7 @@ const BN=isAl
   ?[['home','Beranda','fa-solid fa-house'],['riwayatsantri','Santri','fa-solid fa-children'],['chat','Obrolan','fa-solid fa-comments'],['akun','Akun','fa-solid fa-circle-user']]
   :[['home','Beranda','fa-solid fa-house'],['info','Info','fa-solid fa-bullhorn'],U.me.role==='admin'?['chat','Obrolan','fa-solid fa-comments']:(st?['wa','Antrian WA','fa-brands fa-whatsapp']:['notif','Notifikasi','fa-solid fa-bell']),['akun','Akun','fa-solid fa-circle-user']];
 $('bn').innerHTML=BN.map(b=>`<button class="${U.tab==b[0]?'on':''}" onclick="U.tab='${b[0]}';draw()"><i class="${b[2]}"></i>${b[1]}${b[0]=='notif'&&U.unread?`<b class="mb" style="top:0;right:4px">${U.unread}</b>`:''}</button>`).join('');
+pasangSenter();
 $('v').innerHTML=pg+sel+'<div class="skl"><div class="card"><i class="h"></i><i></i><i style="width:70%"></i></div><div class="card"><i class="h"></i><i></i><i style="width:55%"></i></div></div>';
 try{const _h=await R[U.tab]();if(!U||!U.me)return;$('v').innerHTML=pg+sel+_h}catch(e){if(!U||!U.me)return;kmCatatError('Halaman '+U.tab+': '+(e&&e.message),U.tab);$('v').innerHTML=pg+sel+`<div class="card">Gagal memuat: ${esc(e.message)}</div>`}
 document.querySelectorAll('.qrbox').forEach(e=>{if(window.QRCode){e.innerHTML='';new QRCode(e,{text:e.dataset.c,width:256,height:256})}});const q=$('qr');if(q&&window.QRCode){q.innerHTML='';new QRCode(q,{text:'PPPAS-'+U.sid,width:150,height:150})}
@@ -791,7 +796,7 @@ R.riwayatsantri=async()=>{
   if(!aktif.length)return '<div class="card"><div class="mu">Belum ada data santri aktif.</div></div>';
   if(!U.alsid||!aktif.some(x=>x.id==U.alsid)){
     return `<div class="card"><h3><i class="fa-solid fa-children" style="color:#047857"></i> Riwayat Santri Aktif</h3>
-      <div class="mu" style="margin-bottom:8px">Ketuk nama santri untuk melihat riwayat kegiatan, pelanggaran, sanksi, izin, dan kesehatannya (data saldo coin, tabungan, dan tagihan tidak ditampilkan).</div></div>
+      </div>
       <div class="card"><h3>Daftar santri aktif (${aktif.length})</h3>`+aktif.map(x=>`<div class="li" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px" onclick="U.alsid=${x.id};draw()"><b>${esc(x.nama)}</b><i class="fa-solid fa-chevron-right" style="color:#94a3b8"></i></div>`).join('')+'</div>';
   }
   const sid=U.alsid;
@@ -872,7 +877,7 @@ async function kembali(id){const{data,error}=await SB.rpc('santri_kembali',{p_iz
 R.info0=async()=>{const[a,b]=(await Promise.all([SB.from('acara').select('*').gte('waktu',new Date(Date.now()-864e5).toISOString()).order('waktu').limit(20),SB.from('pengumuman').select('*').order('waktu',{ascending:false}).limit(10)])).map(ok),td=new Date(new Date().toISOString().slice(0,10));
 return '<div class="card"><h3>Pemberitahuan</h3>'+(b.length?b.map(x=>`<div class="li"><span><b>${esc(x.judul)}</b><div>${esc(x.isi)}</div><div class="mu">${fdt(x.waktu)}</div></span></div>`).join(''):'<div class="mu">Belum ada pemberitahuan.</div>')+'</div><div class="card"><h3>Agenda acara</h3>'+(a.length?a.map(x=>{const d=Math.round((new Date(x.waktu.slice(0,10))-td)/864e5);return `<div class="li"><span><b>${esc(x.judul)}</b> <span class="badge">${esc(x.jenis)}</span><div class="mu">${fdt(x.waktu)}${x.lokasi?' · '+esc(x.lokasi):''}</div></span><span class="badge ${d<=3?'b2':'b1'}">${d<=0?'Hari ini':'H-'+d}</span></div>`}).join(''):'<div class="mu">Belum ada agenda.</div>')+'</div>'};
 
-R.absensi=async()=>`<div class="card"><h3>Absensi kegiatan</h3><select id="kg">${KG.map((k,i)=>`<option value="${i}">${k[0]}</option>`).join('')}</select><p class="mu">Centang santri yang telat/tidak hadir. Yang tidak dicentang dianggap hadir.</p>${U.santri.map(s=>`<label class="ck"><input type="checkbox" class="cb" value="${s.id}"> ${esc(s.nama)} <span class="mu">${esc(s.kamar||'')}</span></label>`).join('')}<p><button onclick="absen()">Simpan absensi</button></p></div><div class="card"><h3>Catat pelanggaran lain</h3><label>Santri</label><select id="ps" style="width:100%">${U.santri.map(s=>`<option value="${s.id}">${esc(s.nama)}</option>`).join('')}</select><div class="srwrap"><button type="button" class="sec srbtn" onclick="srOpen('ps','Cari santri untuk catat pelanggaran')"><i class="fa-solid fa-magnifying-glass"></i> Cari santri…</button></div><label>Jenis</label><select id="pj" style="width:100%">${Object.entries(JN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><label>Keterangan</label><textarea id="pk" rows="2" style="width:100%"></textarea><p><button onclick="catat()">Simpan</button></p></div>`;
+R.absensi=async()=>`<div class="card"><h3>Absensi kegiatan</h3><select id="kg">${KG.map((k,i)=>`<option value="${i}">${k[0]}</option>`).join('')}</select><div class="absen-box">${U.santri.map(s=>`<label class="ck"><input type="checkbox" class="cb" value="${s.id}"> ${esc(s.nama)} <span class="mu">${esc(s.kamar||'')}</span></label>`).join('')}</div><p><button onclick="absen()">Simpan absensi</button></p></div><div class="card"><h3>Catat pelanggaran lain</h3><label>Santri</label><select id="ps" style="width:100%">${U.santri.map(s=>`<option value="${s.id}">${esc(s.nama)}</option>`).join('')}</select><div class="srwrap"><button type="button" class="sec srbtn" onclick="srOpen('ps','Cari santri untuk catat pelanggaran')"><i class="fa-solid fa-magnifying-glass"></i> Cari santri…</button></div><label>Jenis</label><select id="pj" style="width:100%">${Object.entries(JN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><label>Keterangan</label><textarea id="pk" rows="2" style="width:100%"></textarea><p><button onclick="catat()">Simpan</button></p></div>`;
 async function absen(){const k=KG[+$('kg').value],r=[...document.querySelectorAll('.cb:checked')].map(c=>({santri_id:+c.value,jenis:k[1],ket:k[0]}));if(!r.length)return msgBox('Tidak ada yang dicentang.');const{error}=await SB.from('pelanggaran').insert(r);if(error)return msgBox(error.message);r.forEach(x=>{const nm=(U.santri.find(s=>s.id==x.santri_id)||{}).nama||'';notifWaliSantri(x.santri_id,{jenis:'Pelanggaran',judul:JN[x.jenis]||x.jenis,pesan:k[0],santri_nama:nm})});toast(r.length+' catatan tersimpan.');draw()}
 async function catat(){const sid=+$('ps').value,j=$('pj').value,ket=$('pk').value.trim()||'-';const{error}=await SB.from('pelanggaran').insert({santri_id:sid,jenis:j,ket});if(error)return msgBox(error.message);const nm=(U.santri.find(s=>s.id==sid)||{}).nama||'';notifWaliSantri(sid,{jenis:'Pelanggaran',judul:JN[j]||j,pesan:ket,santri_nama:nm});toast('Tersimpan.');draw()}
 
@@ -902,7 +907,7 @@ const filtSantri=U.santri;
 const tot=t.filter(x=>!x.lunas_pada).reduce((a,x)=>a+x.nominal,0),td=new Date().toISOString().slice(0,10);
 
 return `<div class="card"><h3><i class="fa-solid fa-file-invoice-dollar" style="color:#059669"></i> Buat tagihan santri aktif</h3>
-<div class="mu" style="margin-bottom:8px">Tagihan hanya berlaku untuk santri aktif (data alumni otomatis dikecualikan).</div>
+
 <label>Untuk</label><select id="ts" style="width:100%"><option value="0">Semua santri aktif (${U.santri.length})</option>${filtSantri.map(s=>`<option value="${s.id}">${esc(s.nama)}${s.nis?' ('+esc(s.nis)+')':''}</option>`).join('')}</select>
 <div class="srwrap"><button type="button" class="sec srbtn" onclick="srOpen('ts','Cari santri untuk tagihan')"><i class="fa-solid fa-magnifying-glass"></i> Cari santri…</button></div>
 <label>Jenis</label><select id="tj" style="width:100%">${TJ.map(j=>`<option>${j}</option>`).join('')}</select>
@@ -924,7 +929,7 @@ const cn=(s,j)=>p.filter(x=>x.santri_id==s&&x.jenis==j).length,su=(s,f)=>t.filte
 const rows=U.santri.map(s=>[s.nama,cn(s.id,'jamaah'),cn(s.id,'ngaji'),cn(s.id,'hp'),cn(s.id,'kembali'),su(s.id,x=>x.tipe=='topup'),su(s.id,x=>x.tipe!='topup'),tg(s.id)]);
 const tot=[ 'Total',...[1,2,3,4,5,6,7].map(i=>rows.reduce((q,r)=>q+r[i],0))];
 const row=(r,b)=>`<tr${b?' style="font-weight:700"':''}><td>${esc(r[0])}</td>${[1,2,3,4].map(i=>`<td>${r[i]}</td>`).join('')}${[5,6].map(i=>`<td>${coin(r[i])}</td>`).join('')}<td>${rp(r[7])}</td></tr>`;
-return `<div class="card noprint"><h3>Rekap bulanan</h3><div class="row"><input type="month" value="${b}" onchange="U.bln=this.value;draw()"><button onclick="cetakHalaman()">Cetak / simpan PDF</button></div></div><div class="card print-rekap"><h3>PPP. AL-AS’ADIYAH · Rekap ${b}</h3><table><tr><th>Santri</th><th>Jamaah</th><th>Ngaji</th><th>HP</th><th>Kembali</th><th>Coin masuk</th><th>Coin keluar</th><th>Tagihan belum lunas</th></tr>${rows.map(r=>row(r)).join('')}${row(tot,1)}</table><p class="mu">Kolom Jamaah–Kembali = jumlah pelanggaran bulan ini. Keluar = belanja + bayar tagihan.</p></div>`};
+return `<div class="card noprint"><h3>Rekap bulanan</h3><div class="row"><input type="month" value="${b}" onchange="U.bln=this.value;draw()"><button onclick="cetakHalaman()">Cetak / simpan PDF</button></div></div><div class="card print-rekap"><h3>PPP. AL-AS’ADIYAH · Rekap ${b}</h3><table><tr><th>Santri</th><th>Jamaah</th><th>Ngaji</th><th>HP</th><th>Kembali</th><th>Coin masuk</th><th>Coin keluar</th><th>Tagihan belum lunas</th></tr>${rows.map(r=>row(r)).join('')}${row(tot,1)}</table></div>`};
 
 /* ---- Story ---- */
 const SV={i:0,t:null};
@@ -981,7 +986,7 @@ return h};
 /* ---- Antrian WhatsApp ---- */
 R.wa=async()=>{const t=ok(await SB.from('wa_antrian').select('*,santri(nama)').order('id',{ascending:false}).limit(60)),w=t.filter(x=>x.status=='menunggu'),d=t.filter(x=>x.status!='menunggu');
 const it=(x,p)=>`<div class="li"><span><b>${esc(x.santri?.nama||'Semua wali')}</b> · ${esc(x.jenis)}<div style="white-space:pre-wrap">${esc(x.pesan)}</div><div class="mu">${esc(x.nomor)} · ${ago(x.dibuat)}</div>${p?`<div style="margin-top:6px"><button onclick="kirimWA(${x.id})">Kirim via WhatsApp</button> <button class="sec" onclick="hapusWA(${x.id})">Hapus</button></div>`:''}</span><span class="badge ${p?'b1':'b0'}">${x.status}</span></div>`;
-return `<div class="card"><h3>Menunggu dikirim (${w.length})</h3><div class="mu">Ketuk “Kirim via WhatsApp”: WhatsApp terbuka dengan pesan siap kirim, tinggal tekan kirim.</div>${w.map(x=>it(x,1)).join('')||'<div class="mu">Tidak ada antrian.</div>'}</div><div class="card"><h3>Sudah terkirim</h3>${d.map(x=>it(x,0)).join('')||'<div class="mu">Belum ada.</div>'}</div>`};
+return `<div class="card"><h3>Menunggu dikirim (${w.length})</h3>${w.map(x=>it(x,1)).join('')||'<div class="mu">Tidak ada antrian.</div>'}</div><div class="card"><h3>Sudah terkirim</h3>${d.map(x=>it(x,0)).join('')||'<div class="mu">Belum ada.</div>'}</div>`};
 async function kirimWA(id){const{data:x,error}=await SB.from('wa_antrian').select('*').eq('id',id).single();if(error)return msgBox(error.message);window.open('https://wa.me/'+x.nomor+'?text='+encodeURIComponent(x.pesan),'_blank');await SB.from('wa_antrian').update({status:'terkirim',dikirim:new Date().toISOString()}).eq('id',id);draw()}
 async function hapusWA(id){uiConfirm('Hapus pesan ini dari antrian?',async()=>{await SB.from('wa_antrian').delete().eq('id',id);draw()})}
 
@@ -1219,18 +1224,18 @@ R.keamanan=async()=>{
   const u=U._kmUji,lbl={bahaya:['b2','Bahaya'],waspada:['b1','Waspada'],aman:['b0','Aman'],info:['b1','Info']};
   const urut={bahaya:0,waspada:1,info:2,aman:3};
   const cnt=k=>u?u.hasil.filter(x=>x.t===k).length:0;
-  h+=`<div class="card"><h3>Uji keamanan otomatis</h3><div class="mu">Aplikasi bertindak sebagai orang luar (tanpa login) dan mencoba membaca data Anda. Semua yang berhasil dibaca ditandai.</div>
+  h+=`<div class="card"><h3>Uji keamanan otomatis</h3>
     <div class="row" style="margin-top:10px"><button type="button" onclick="ujiKeamanan()"><i class="fa-solid fa-magnifying-glass-chart"></i> Jalankan uji</button><button type="button" class="sec" onclick="ujiTulisKeamanan()">Uji tulis</button></div>`
     +(u?`<div class="mu" style="margin-top:10px">Hasil ${fdt(u.waktu)}: <b style="color:var(--rd)">${cnt('bahaya')} bahaya</b> · <b>${cnt('waspada')} waspada</b> · <b style="color:var(--ok)">${cnt('aman')} aman</b></div>`
     +u.hasil.slice().sort((a,b)=>urut[a.t]-urut[b.t]).map(x=>`<div class="li" style="align-items:flex-start"><span><b>${esc(x.j)}</b>${x.k?`<div class="mu">${esc(x.k)}</div>`:''}</span><span class="badge ${lbl[x.t][0]}">${lbl[x.t][1]}</span></div>`).join(''):'')+`</div>`;
   // kunci login
   h+=`<div class="card"><h3>Login terkunci / gagal (${kunci.length})</h3>`+(!st.kunci?'<div class="mu">Aktif setelah keamanan.sql dipasang.</div>':(kunci.length?kunci.map(x=>{const lock=x.terkunci_sampai&&new Date(x.terkunci_sampai)>new Date();return `<div class="li"><span><b>${esc(x.kunci)}</b><div class="mu">${x.jumlah}x salah · ${fdt(x.terakhir)}${lock?' · dikunci sampai '+fdt(x.terkunci_sampai):''}</div></span>${lock?`<button type="button" class="sec" style="padding:6px 10px;font-size:12px" data-k="${esc(x.kunci)}" onclick="kmBukaKunci(this.dataset.k)">Buka kunci</button>`:'<span class="badge b1">Dipantau</span>'}</div>`}).join(''):'<div class="mu">Tidak ada percobaan gagal tercatat.</div>'))+`</div>`;
   // reset alumni
-  h+=`<div class="card"><h3>Reset sandi alumni</h3><div class="mu">Untuk alumni yang lupa sandi. Setelah direset, alumni membuat sandi baru saat masuk berikutnya.</div><label>NIS alumni</label><input id="km_nis" style="width:100%" inputmode="numeric" placeholder="Contoh: 20110001"><p><button type="button" onclick="kmResetAlumni()">Reset sandi</button></p></div>`;
+  h+=`<div class="card"><h3>Reset sandi alumni</h3><label>NIS alumni</label><input id="km_nis" style="width:100%" inputmode="numeric" placeholder="Contoh: 20110001"><p><button type="button" onclick="kmResetAlumni()">Reset sandi</button></p></div>`;
   // sandi wali tersimpan
   let swN=0;
   try{const r=await SB.from('profiles').select('id',{count:'exact',head:true}).not('sandi_wali','is',null);if(!r.error)swN=r.count||0}catch(e){}
-  h+=`<div class="card"><h3>Sandi wali tersimpan</h3><div class="mu">Aplikasi versi lama menyimpan sandi wali dalam bentuk yang bisa dibaca. Itu berbahaya jika data bocor. Sekarang sandi tidak lagi disimpan.</div>
+  h+=`<div class="card"><h3>Sandi wali tersimpan</h3>
     <div class="li"><span>Akun dengan sandi tersimpan di profil</span><b style="color:${swN?'var(--rd)':'var(--ok)'}">${swN}</b></div>
     <p><button type="button" onclick="bersihkanSandiWali()"><i class="fa-solid fa-broom"></i> Hapus semua sandi tersimpan</button></p></div>`;
   // cadangan: memakai fitur "Cadangan & pemulihan data otomatis" di Pengaturan
@@ -1248,10 +1253,10 @@ R.keamanan=async()=>{
     <p><button type="button" class="sec" onclick="U.tab='pengaturan';draw()"><i class="fa-solid fa-database"></i> Buka Cadangan &amp; pemulihan</button></p></div>`;
   // verifikasi dua langkah
   let mf=[];try{mf=await mfaFaktor()}catch(e){}
-  h+=`<div class="card"><h3>Verifikasi dua langkah (akun ini)</h3><div class="mu">Selain sandi, login admin meminta 6 angka dari aplikasi autentikator di HP. Pencuri sandi tetap tidak bisa masuk.</div>
+  h+=`<div class="card"><h3>Verifikasi dua langkah (akun ini)</h3>
     <div class="li"><span>Status</span><span class="badge ${mf.length?'b0':'b1'}">${mf.length?'Aktif':'Belum aktif'}</span></div>
     <p>${mf.length?`<button type="button" class="sec" onclick="mfaNonaktifkan('${esc(mf[0].id)}')">Nonaktifkan</button>`:`<button type="button" onclick="mfaAktifkan()"><i class="fa-solid fa-mobile-screen"></i> Aktifkan</button>`}</p>
-    <div class="mu">Hanya berlaku untuk akun yang mengaktifkannya. Pastikan ada admin cadangan sebelum mengaktifkan.</div></div>`;
+    </div>`;
   // audit database
   const A=U._audit;let aItems=[],aFn=0;
   if(A){
@@ -1264,12 +1269,12 @@ R.keamanan=async()=>{
     (d.fungsi_anon||[]).forEach(f=>{aFn++;if(f.mengubah)aItems.push([f.ada_cek?'info':'bahaya','Fungsi '+f.nama+' bisa dipanggil tanpa login dan mengubah data',f.ada_cek?'Ada pengecekan hak di dalamnya.':'Pengecekan hak tidak terdeteksi. Periksa isi fungsi.'])});
   }
   const sevL={bahaya:['b2','Bahaya'],waspada:['b1','Waspada'],info:['b0','Info']},sevU={bahaya:0,waspada:1,info:2};
-  h+=`<div class="card"><h3>Audit database</h3><div class="mu">Memeriksa aturan akses di database: tabel tanpa RLS, aturan yang terbuka untuk umum, dan fungsi yang bisa dipanggil tanpa login.</div>
+  h+=`<div class="card"><h3>Audit database</h3>
     <p><button type="button" onclick="jalankanAudit()"><i class="fa-solid fa-clipboard-check"></i> Jalankan audit</button></p>`
     +(A?`<div class="mu">Hasil ${fdt(A.waktu)} · ${aFn} fungsi publik diperiksa</div>`+(aItems.length?aItems.sort((x,y)=>sevU[x[0]]-sevU[y[0]]).map(x=>`<div class="li" style="align-items:flex-start"><span><b>${esc(x[1])}</b><div class="mu" style="word-break:break-word">${esc(x[2])}</div></span><span class="badge ${sevL[x[0]][0]}">${sevL[x[0]][1]}</span></div>`).join(''):'<div class="mu">Tidak ada temuan.</div>'):'')+`</div>`;
   // catatan kesalahan aplikasi
   let errs=[];try{errs=JSON.parse(localStorage.getItem('st_err')||'[]')}catch(e){}
-  h+=`<div class="card"><h3>Kesalahan aplikasi terbaru (${errs.length})</h3><div class="mu">Dicatat otomatis di HP ini. Berguna untuk dilaporkan jika ada layar kosong atau fitur macet.</div>`
+  h+=`<div class="card"><h3>Kesalahan aplikasi terbaru (${errs.length})</h3>`
     +(errs.length?errs.slice(0,10).map(x=>`<div class="li" style="align-items:flex-start"><span style="word-break:break-word"><b>${esc(x.m)}</b><div class="mu">${fdt(new Date(x.t).toISOString())} · ${esc(x.u)}${x.h?' · '+esc(x.h):''}</div></span></div>`).join('')+`<p><button type="button" class="sec" onclick="kmHapusError()">Hapus catatan</button></p>`:'<div class="mu" style="margin-top:6px">Belum ada kesalahan tercatat.</div>')+`</div>`;
   // log
   const chips=[['semua','Semua'],['INSERT','Tambah'],['UPDATE','Ubah'],['DELETE','Hapus']];
@@ -1344,8 +1349,8 @@ function mfaMintaKode(){
     if(!f)return res(false);
     const old=$('mfa-ov');if(old)old.remove();
     const ov=document.createElement('div');ov.id='mfa-ov';ov.className='mdl-ov';document.body.appendChild(ov);
-    ov.innerHTML=`<div class="mdl-box"><h4>Verifikasi dua langkah</h4><p>Masukkan 6 angka dari aplikasi autentikator di HP Anda.</p>
-      <input id="mfa_kode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="width:100%;text-align:center;font-size:24px;letter-spacing:.3em">
+    ov.innerHTML=`<div class="mdl-box"><h4>Verifikasi dua langkah</h4>
+      <input id="mfa_kode" placeholder="6 angka" inputmode="numeric" maxlength="6" autocomplete="one-time-code" style="width:100%;text-align:center;font-size:24px;letter-spacing:.3em">
       <div id="mfa_err" class="mu" style="color:var(--rd);min-height:20px;margin-top:6px"></div>
       <div class="mdl-acts"><button type="button" class="sec" id="mfa_batal">Batal</button><button type="button" id="mfa_ok">Verifikasi</button></div></div>`;
     $('mfa_batal').onclick=()=>{ov.remove();res(false)};
@@ -1376,11 +1381,11 @@ async function mfaAktifkan(){
   const old=$('mfa-ov');if(old)old.remove();
   const ov=document.createElement('div');ov.id='mfa-ov';ov.className='mdl-ov';document.body.appendChild(ov);
   ov.innerHTML=`<div class="mdl-box" style="max-height:90vh;overflow:auto;text-align:center"><h4>Aktifkan verifikasi dua langkah</h4>
-    <p class="mu">1. Buka aplikasi autentikator (Google Authenticator / Microsoft Authenticator), pilih tambah akun, lalu pindai kode QR ini.</p>
+    
     <img id="mfa_qr" alt="QR" style="width:200px;height:200px;background:#fff;margin:6px auto">
     <p class="mu">Atau ketik kunci manual:<br><b id="mfa_secret" style="font-family:monospace;word-break:break-all"></b></p>
-    <p class="mu">2. Masukkan 6 angka yang tampil di aplikasi:</p>
-    <input id="mfa_kode" inputmode="numeric" maxlength="6" style="width:100%;text-align:center;font-size:22px;letter-spacing:.3em">
+    
+    <input id="mfa_kode" placeholder="6 angka" inputmode="numeric" maxlength="6" style="width:100%;text-align:center;font-size:22px;letter-spacing:.3em">
     <div id="mfa_err" class="mu" style="color:var(--rd);min-height:20px;margin-top:6px"></div>
     <div class="mu" style="color:var(--rd)">Penting: jika HP hilang dan tidak ada admin lain, akun ini bisa terkunci. Pastikan ada admin cadangan.</div>
     <div class="mdl-acts"><button type="button" class="sec" id="mfa_batal">Batal</button><button type="button" id="mfa_ok">Aktifkan</button></div></div>`;
@@ -1457,6 +1462,16 @@ async function aqCatat(santriId,cur){
   return{ok:true,status:st,nama:s.nama,jam:String(n.h).padStart(2,'0')+':'+String(n.mi).padStart(2,'0')};
 }
 
+/* ---- kamera otomatis: buka saat jam sesi, tutup saat sesi berakhir ---- */
+let AQ_OFF=0;
+setInterval(async()=>{
+  try{
+    if(!U||!U.me||U.tab!=='absenqr'){return}
+    const sesi=await aqSesi(),{now}=aqNow(),act=U.aqMan?(sesi.find(x=>x.k===U.aqMan)||null):aqAktif(sesi,now);
+    if(act){if(!(AQS&&AQS.on)&&!AQ_OFF&&!$('aq-man'))aqMulai()}
+    else{AQ_OFF=0;if(AQS&&AQS.on&&!U.aqMan){aqTutup();toast('Sesi absen berakhir, kamera dimatikan')}}
+  }catch(e){}
+},15000);
 /* ---- pemindai kamera berkelanjutan ---- */
 let AQS=null;
 function aqBip(ok){
@@ -1476,6 +1491,20 @@ async function aqProsesKode(kode){
   const id=+String(kode).replace(/\D/g,'');
   AQS.busy=true;
   try{
+    try{
+      const iz=await SB.from('izin').select('id,status,batas_kembali').eq('santri_id',id).in('status',['disetujui','keluar']).order('id',{ascending:false}).limit(1);
+      const z=iz&&iz.data&&iz.data[0],sn=U.santri.find(x=>x.id==id);
+      if(z&&sn){
+        const jm=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'}).replace('.',':');
+        if(z.status==='disetujui'){
+          const u=await SB.from('izin').update({status:'keluar',waktu_keluar:new Date().toISOString()}).eq('id',z.id);
+          if(!u.error){aqBip(true);aqBanner('dup','➜ '+sn.nama,'KELUAR · '+jm+' · batas kembali '+new Date(z.batas_kembali).toLocaleString('id-ID',{timeZone:'Asia/Jakarta'}));const lg=$('aq_log');if(lg)lg.insertAdjacentHTML('afterbegin','<div>'+esc(jm)+' · '+esc(sn.nama)+' · Keluar</div>');return}
+        }else{
+          const k=await SB.rpc('santri_kembali',{p_izin:z.id});
+          if(!k.error){aqBip(true);aqBanner(k.data>0?'telat':'ok','✔ '+sn.nama,'MASUK (kembali) · '+jm+(k.data>0?' · telat '+k.data+' menit':' · tepat waktu'));const lg=$('aq_log');if(lg)lg.insertAdjacentHTML('afterbegin','<div>'+esc(jm)+' · '+esc(sn.nama)+' · Masuk'+(k.data>0?' (telat '+k.data+' mnt)':'')+'</div>');return}
+        }
+      }
+    }catch(e){}
     const{now}=aqNow();
     const cur=AQS.man?(AQS.sesi.find(x=>x.k===AQS.man)||null):aqAktif(AQS.sesi,now);
     if(!cur){aqBanner('err','Tidak ada sesi aktif','Pindai dihentikan sementara');aqBip(false);return}
@@ -1497,12 +1526,12 @@ async function aqMulai(){
   if(!window.jsQR)return msgBox('Pemindai QR belum termuat. Periksa koneksi internet, lalu coba lagi.');
   if(AQS&&AQS.on)return;
   const ov=document.createElement('div');ov.id='aq-ov';
-  ov.style.cssText='position:fixed;inset:0;z-index:80;background:#0b1220;display:flex;flex-direction:column;color:#fff';
-  ov.innerHTML=`<div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">${esc(cur.nama)}</b><div style="font-size:12px;opacity:.75">${aqFmt(cur.mulai_m)} · tepat s.d. ${aqFmt(cur.mulai_m+(+cur.tepat||15))} · ditutup ${aqFmt(cur.mulai_m+(+cur.akhir||45))}</div></div><div style="display:flex;gap:8px"><button type="button" class="sec" onclick="aqPutarKamera()" title="Pindah kamera depan/belakang"><i class="fa-solid fa-camera-rotate"></i> Putar</button><button type="button" class="sec" onclick="aqTutup()">Selesai</button></div></div>
+  ov.style.cssText='position:fixed;inset:0;z-index:80;background:#fff;display:flex;flex-direction:column;color:#0f172a';
+  ov.innerHTML=`<div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:17px">${esc(cur.nama)}</b><div style="font-size:12px;opacity:.75">${aqFmt(cur.mulai_m)} · tepat s.d. ${aqFmt(cur.mulai_m+(+cur.tepat||15))} · ditutup ${aqFmt(cur.mulai_m+(+cur.akhir||45))}</div></div><div style="display:flex;gap:8px"><button type="button" class="sec tbl-flash" onclick="toggleFlash(AQS&&AQS.st,this)" title="Lampu"><i class="fa-solid fa-bolt"></i> Lampu</button><button type="button" class="sec" onclick="aqPutarKamera()" title="Pindah kamera depan/belakang"><i class="fa-solid fa-camera-rotate"></i> Putar</button><button type="button" class="sec" onclick="AQ_OFF=1;aqTutup()">Selesai</button></div></div>
     <video id="aq_v" playsinline muted style="width:100%;height:40%;object-fit:cover;background:#000"></video>
-    <div id="aq_hasil" style="margin:10px;padding:14px;border-radius:14px;background:#334155;text-align:center"><div style="font-size:18px;font-weight:700">Tunjukkan kartu QR ke kamera</div><div style="opacity:.8">Menunggu santri…</div></div>
-    <div id="aq_cnt" class="mu" style="color:#cbd5e1;text-align:center">Hadir 0 · Telat 0 (sesi ini, pindai kali ini)</div>
-    <div id="aq_log" style="flex:1;overflow:auto;padding:8px 16px;font-size:14px;color:#e2e8f0"></div>
+    <div id="aq_hasil" style="margin:10px;padding:14px;border-radius:14px;background:#334155;color:#fff;text-align:center"><div style="opacity:.8">Menunggu santri…</div></div>
+    <div id="aq_cnt" class="mu" style="color:#475569;text-align:center">Hadir 0 · Telat 0 (sesi ini, pindai kali ini)</div>
+    <div id="aq_log" style="flex:1;overflow:auto;padding:8px 16px;font-size:14px;color:#1e293b"></div>
     <div style="padding:10px"><button type="button" class="sec" style="width:100%" onclick="aqManual(true)">Ketik NIS / kode manual</button></div>`;
   document.body.appendChild(ov);
   AQS={on:true,busy:false,last:{},n:{hadir:0,telat:0},sesi,man:U.aqMan||null,ac:(AQS&&AQS.ac)||null};
@@ -1533,7 +1562,7 @@ async function aqKamera(mode){
   try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:mode}}})}
   catch(e){st=await navigator.mediaDevices.getUserMedia({video:true})}
   if(!AQS||!AQS.on){st.getTracks().forEach(t=>t.stop());return}
-  AQS.st=st;AQS.mode=mode;v.srcObject=st;await v.play();
+  AQS.st=st;AQS.mode=mode;resetFlash();v.srcObject=st;await v.play();
   v.style.transform=mode==='user'?'scaleX(-1)':'none';   // pratinjau kamera depan dicerminkan; pembacaan QR tidak terpengaruh
   try{localStorage.setItem('aq_kamera',mode)}catch(e){}
 }
@@ -1633,11 +1662,11 @@ R.absenqr=async()=>{
   const cur=aqCurDari(sesi,man),next=cur?null:sesi.find(x=>x.mulai_m-5>now);
   const isAdm=U.me.role==='admin';
   let h=`<div class="card"><h3><i class="fa-solid fa-user-check" style="color:#047857"></i> Absen QR mandiri</h3>
-    <div class="mu">Santri menunjukkan kartu QR-nya ke kamera. Kehadiran tercatat otomatis sesuai jam sesi. Letakkan perangkat ini di pintu masjid atau kamar dan awasi saat santri memindai.</div>
+    
     <label>Sesi</label><select style="width:100%" onchange="U.aqMan=this.value||null;draw()"><option value="">Otomatis (ikuti jam)</option>${sesi.map(x=>`<option value="${esc(x.k)}"${man===x.k?' selected':''}>${esc(x.nama)} · ${aqFmt(x.mulai_m)}</option>`).join('')}</select>`
     +(cur?`<div style="margin-top:10px;padding:12px;border-radius:12px;background:#ecfdf5;border:1px solid #a7f3d0"><b style="font-size:18px">${esc(cur.nama)}</b>${man?' <span class="badge b1">manual</span>':' <span class="badge b0">sedang berlangsung</span>'}<div class="mu">Mulai ${aqFmt(cur.mulai_m)} · hadir tepat s.d. ${aqFmt(cur.mulai_m+(+cur.tepat||15))} · ditutup ${aqFmt(cur.mulai_m+(+cur.akhir||45))}</div></div>
        <div class="row" style="margin-top:10px"><button type="button" onclick="aqMulai()"><i class="fa-solid fa-camera"></i> Mulai pemindai</button><button type="button" class="sec" onclick="aqManual(false)">Ketik NIS</button></div>`
-      :`<div style="margin-top:10px;padding:12px;border-radius:12px;background:#f1f5f9"><b>Belum ada sesi aktif</b><div class="mu">${next?'Berikutnya: '+esc(next.nama)+' pukul '+aqFmt(next.mulai_m)+' (dibuka 5 menit sebelumnya).':'Tidak ada sesi lagi hari ini.'} Pilih sesi manual di atas bila perlu.</div></div>`)
+      :`<div style="margin-top:10px;padding:12px;border-radius:12px;background:#f1f5f9"><b>Belum ada sesi aktif</b><div class="mu">${next?'Berikutnya: '+esc(next.nama)+' pukul '+aqFmt(next.mulai_m)+' (dibuka 5 menit sebelumnya).':'Tidak ada sesi lagi hari ini.'}</div></div>`)
     +`<label class="ck" style="margin-top:10px"><input type="checkbox" ${localStorage.getItem('aq_oto')==='1'?'checked':''} onchange="aqOto(this)"> Catat santri yang <b>telat</b> otomatis sebagai pelanggaran</label></div>`;
   if(cur){
     const r=await SB.from('kehadiran').select('*').eq('tanggal',tgl).eq('kegiatan',cur.k).order('waktu',{ascending:false});
@@ -1654,7 +1683,7 @@ R.absenqr=async()=>{
         <div class="li"><span>Telat</span><b style="color:#b45309">${telat}</b></div>
         <div class="li"><span>Belum absen</span><b style="color:var(--rd)">${belum.length}</b></div>
         <div class="li"><span>Total santri aktif</span><b>${U.santri.length}</b></div>
-        ${(cur.jenis&&belum.length)?`<p><button type="button" class="${final?'sec':''}" onclick="aqCatatBelum('${esc(cur.k)}','${tgl}')">${final?'Sudah dicatat. Catat lagi?':'Catat yang belum hadir sebagai pelanggaran'}</button></p><div class="mu">Gunakan setelah sesi ditutup. Wali akan menerima pemberitahuan.</div>`:''}</div>`;
+        ${(cur.jenis&&belum.length)?`<p><button type="button" class="${final?'sec':''}" onclick="aqCatatBelum('${esc(cur.k)}','${tgl}')">${final?'Sudah dicatat. Catat lagi?':'Catat yang belum hadir sebagai pelanggaran'}</button></p>`:''}</div>`;
       h+=`<div class="card"><h3>Sudah absen (${rows.length})</h3>`+(rows.length?rows.map(x=>`<div class="li"><span><b>${esc(nm(x.santri_id))}</b><div class="mu">${jam(x.waktu)}</div></span><span><span class="badge ${x.status==='hadir'?'b0':'b1'}">${x.status==='hadir'?'Hadir':'Telat'}</span>${isAdm?` <button type="button" class="sec" style="padding:4px 9px;font-size:12px" onclick="aqHapus(${x.id})">✕</button>`:''}</span></div>`).join(''):'<div class="mu">Belum ada.</div>')+`</div>`;
       h+=`<div class="card"><h3>Belum absen (<span id="aq_cb" data-t="${belum.length}">${belum.length}</span>)</h3>`
         +(belum.length?`<input id="aq_cari" type="search" placeholder="Cari nama atau kamar…" autocomplete="off" style="width:100%" oninput="aqCari(this.value)">
@@ -1665,7 +1694,7 @@ R.absenqr=async()=>{
   }
   if(isAdm){
     const cfg=await aqCfg();
-    h+=`<div class="card"><h3>Pengaturan sesi</h3><div class="mu">Sesi sholat mengikuti jam adzan di Kelola konten. Sesi lain memakai jam yang Anda isi. "Tepat" = menit setelah mulai yang masih dihitung hadir; "Tutup" = batas akhir pemindaian.</div>`
+    h+=`<div class="card"><h3>Pengaturan sesi</h3>`
     +cfg.map((x,i)=>`<div style="border-top:1px solid #e2e8f0;margin-top:10px;padding-top:8px">
       <label class="ck"><input type="checkbox" id="aqo${i}" ${x.on===0||x.on===false?'':'checked'}> <b>Aktif</b></label>
       <label>Nama sesi</label><input id="aqn${i}" style="width:100%" value="${esc(x.nama)}">
@@ -1697,7 +1726,7 @@ async function bukaProfilPondok(mode){
   const box='class="mdl-box" style="width:100%;max-width:440px;max-height:88vh;overflow:auto;text-align:left"';
   if(mode==='edit'&&isAdm){
     ov.innerHTML=`<div ${box}><h4>Edit biodata pondok</h4>${PP_FIELDS.map(f=>`<label>${f[1]}</label>${f[2]==='ta'?`<textarea id="pp_${f[0]}" rows="3" style="width:100%">${esc(d[f[0]]||'')}</textarea>`:`<input id="pp_${f[0]}" style="width:100%" value="${esc(d[f[0]]||'')}">`}`).join('')}
-      <div class="mu" style="margin-top:4px">Contoh GPS: -7.0456, 112.7123 (salin dari Google Maps → tekan lama pada lokasi).</div>
+      
       <div class="row" style="margin-top:8px"><button type="button" class="sec" onclick="ppGpsSaya()"><i class="fa-solid fa-location-crosshairs"></i> Pakai lokasi saya</button></div>
       <div class="mdl-acts"><button type="button" class="sec" onclick="bukaProfilPondok()">Batal</button><button type="button" onclick="ppSimpan()">Simpan</button></div></div>`;
     return;
@@ -1713,7 +1742,7 @@ async function bukaProfilPondok(mode){
     <div style="font-size:18px;font-weight:800">${esc(d.nama||'')}</div>${d.yayasan?`<div class="mu">${esc(d.yayasan)}</div>`:''}</div>
     <div style="margin-top:10px">${row('Pembina',esc(d.pembina||''))}${row('Pengasuh',esc(d.pengasuh||''))}${row('Kepala / Ketua',esc(d.ketua||''))}${row('Tahun berdiri',esc(d.berdiri||''))}${row('Nomor izin / NSPP',esc(d.izin||''))}${row('Alamat',esc(d.alamat||''))}${row('Lokasi GPS',esc(gps))}${row('Telepon / WA',esc(d.telp||''))}${row('Email',d.email?`<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`:'')}${row('Website',web?`<a href="${esc(web)}" target="_blank" rel="noopener">${esc(d.web)}</a>`:'')}</div>
     ${d.tentang?`<div style="margin-top:10px"><b>Tentang</b><div class="mu" style="white-space:pre-line;margin-top:4px">${esc(d.tentang)}</div></div>`:''}
-    ${(!d.pembina&&!d.alamat&&!gps&&!d.telp)?`<div class="mu" style="margin-top:10px">${isAdm?'Biodata pondok belum diisi. Tekan Edit untuk mengisi.':'Biodata pondok belum diisi oleh admin.'}</div>`:''}
+    ${(!d.pembina&&!d.alamat&&!gps&&!d.telp)?`<div class="mu" style="margin-top:10px">${isAdm?'Biodata pondok belum diisi.':'Biodata pondok belum diisi oleh admin.'}</div>`:''}
     ${acts?`<div class="row" style="margin-top:12px;justify-content:center">${acts}</div>`:''}
     <div class="mdl-acts" style="flex-wrap:wrap"><button type="button" class="sec" onclick="document.getElementById('pp-ov').remove();bukaStoryDariLogo()"><i class="fa-solid fa-circle-play"></i> Story</button>${isAdm?`<button type="button" class="sec" onclick="bukaProfilPondok('edit')"><i class="fa-solid fa-pen"></i> Edit</button>`:''}<button type="button" onclick="document.getElementById('pp-ov').remove()">Tutup</button></div></div>`;
 }
@@ -1753,13 +1782,13 @@ R.anak=async()=>{
       <div style="font-size:19px;font-weight:800;color:#0f172a">${esc(s.nama)}</div><span class="badge ${s.alumni?'b1':s.aktif===false?'b2':'b0'}" style="display:inline-block">${st}</span></div>
       <h3 style="margin-top:14px">Biodata</h3>${bioRowsHtml(s)||'<div class="mu">Biodata belum diisi.</div>'}</div>`;
   }).join('');
-  return `<div class="card"><h3>Anak saya</h3>${U.santri.length?'<div class="mu">Foto dan biodata ananda yang terhubung dengan akun Anda.</div>':'<div class="mu">Belum ada santri aktif yang terhubung. Masukkan kode dari pondok di bawah.</div>'}</div>${kartu}<div class="card"><h3>Tambah anak dengan kode</h3><label>Kode santri</label><input id="kd" style="width:100%;text-transform:uppercase" placeholder="XXXX-XXXX"><p><button onclick="tambahAnak()">Tambahkan</button></p></div>`;
+  return `<div class="card"><h3>Anak saya</h3>${U.santri.length?'':'<div class="mu">Belum ada santri aktif yang terhubung.</div>'}</div>${kartu}<div class="card"><h3>Tambah anak dengan kode</h3><label>Kode santri</label><input id="kd" style="width:100%;text-transform:uppercase" placeholder="XXXX-XXXX"><p><button onclick="tambahAnak()">Tambahkan</button></p></div>`;
 };
 async function tambahAnak(){const k=$('kd').value.trim();if(!k)return msgBox('Isi kode santri.');const q=await SB.rpc('klaim_santri',{p_kode:k,p_nama:'',p_hp:'',p_hubungan:null});if(q.error)return msgBox(q.error.message);if(!q.data)return msgBox('Kode tidak valid.');toast('Ananda '+q.data+' berhasil ditambahkan.');boot()}
 
 /* ---- Kode wali (admin) ---- */
 R.kode=async()=>{const k=c=>c?c.slice(0,4)+'-'+c.slice(4):'-';
-return `<div class="card noprint"><h3>Kode pendaftaran wali</h3><div class="mu">Bagikan kode hanya kepada wali santri yang bersangkutan. Siapa pun yang tahu kode bisa mendaftar dan melihat data anak itu. Ganti kode setelah semua wali mendaftar.</div><p><button onclick="cetakHalaman()">Cetak / simpan PDF</button></p></div><div class="card">`+U.santri.map(s=>`<div class="li"><span><b>${esc(s.nama)}</b> <span class="mu">${esc(s.kamar||'')}</span><div style="font-size:18px;font-weight:700;letter-spacing:1px">${k(s.kode_daftar)}</div><div class="noprint" style="margin-top:6px"><button onclick="kirimKode(${s.id})">Kirim via WA</button> <button class="sec" onclick="gantiKode(${s.id})">Ganti kode</button></div></span></div>`).join('')+'</div>'};
+return `<div class="card noprint"><h3>Kode pendaftaran wali</h3><p><button onclick="cetakHalaman()">Cetak / simpan PDF</button></p></div><div class="card">`+U.santri.map(s=>`<div class="li"><span><b>${esc(s.nama)}</b> <span class="mu">${esc(s.kamar||'')}</span><div style="font-size:18px;font-weight:700;letter-spacing:1px">${k(s.kode_daftar)}</div><div class="noprint" style="margin-top:6px"><button onclick="kirimKode(${s.id})">Kirim via WA</button> <button class="sec" onclick="gantiKode(${s.id})">Ganti kode</button></div></span></div>`).join('')+'</div>'};
 function kirimKode(id){const s=U.santri.find(x=>x.id==id);window.open('https://wa.me/?text='+encodeURIComponent('Assalamu’alaikum. Kode pendaftaran wali untuk Ananda '+s.nama+' di aplikasi SantriTrack PPP. AL-AS’ADIYAH: '+s.kode_daftar+'\nDaftar di: '+location.origin),'_blank')}
 async function gantiKode(id){uiConfirm('Ganti kode? Kode lama tidak berlaku lagi untuk pendaftaran baru.',async()=>{const{data,error}=await SB.rpc('ganti_kode',{p_santri:id});if(error)return msgBox(error.message);U.santri.find(x=>x.id==id).kode_daftar=data;draw()})}
 
@@ -1989,7 +2018,7 @@ async function gantiSandiAlumni(){
 R.akunwali=async()=>{
   if(U.me.role!=='admin')return '<div class="card">Akses khusus admin.</div>';
   const t=ok(await SB.from('profiles').select('*,wali_santri(hubungan,santri(nama))').eq('role','wali').order('nama'));
-  return `<div class="card"><h3>Akun wali (${t.length})</h3><div class="mu">Demi keamanan, kata sandi wali <b>tidak disimpan</b> dan tidak bisa dilihat. Jika wali lupa sandi, buat <b>sandi sementara</b> (tampil satu kali untuk disalin atau dikirim lewat WhatsApp), lalu minta wali menggantinya di menu Akun.</div><div style="margin-top:10px"><button type="button" onclick="bukaTambahWali()"><i class="fa-solid fa-user-plus"></i> Tambah akun wali</button></div></div>`
+  return `<div class="card"><h3>Akun wali (${t.length})</h3><div style="margin-top:10px"><button type="button" onclick="bukaTambahWali()"><i class="fa-solid fa-user-plus"></i> Tambah akun wali</button></div></div>`
   +(t.length?t.map(x=>{
     const anak=(x.wali_santri||[]).map(w=>esc(w.santri?.nama||'')+(w.hubungan?' ('+esc(w.hubungan)+')':'')).join(', ')||'Belum terhubung ke santri';
     return `<div class="card"><b>${esc(x.nama)}</b> <span class="mu">${esc(x.no_hp||'')}</span><div class="mu">${anak}</div>
@@ -2002,7 +2031,7 @@ function bukaTambahWali(){
   if(U.me.role!=='admin')return msgBox('Hanya admin yang dapat menambah akun wali.');
   const ov=document.createElement('div');ov.className='mdl-ov';
   ov.innerHTML=`<div class="mdl-box"><h4>Tambah Akun Wali</h4>
-    <p>Wali masuk memakai nomor HP ini dan kata sandi di bawah. Hubungkan ke santri lewat kode santri di menu "Anak saya".</p>
+    <p>Wali masuk memakai nomor HP ini dan kata sandi di bawah.</p>
     <label>Nama wali</label><input id="tw_nama" style="width:100%" placeholder="Contoh: Bapak Ahmad">
     <label>Nomor HP</label><input id="tw_hp" type="tel" style="width:100%" placeholder="08123456789">
     <label>Kata sandi (min. 6 karakter)</label><input id="tw_pw" type="text" style="width:100%" value="${bikinSandiAcak(8)}">
@@ -2121,7 +2150,7 @@ h+=`<div class="card"><h3>${JJ[k]}</h3><div class="mu">${r[0].total_kategori} pe
 return t.length?h:h+'<div class="card"><div class="mu">Belum ada data pelanggaran pada periode ini.</div></div>'};
 
 /* ---- Pengaturan logo (admin) ---- */
-R.pengaturan=async()=>`<div class="card"><h3>Logo lembaga</h3><div class="mu">Logo tampil di halaman masuk. Pakai gambar persegi (PNG/JPG), idealnya 512×512 px.</div><div style="margin:10px 0"><img src="${LOGO_URL(Date.now())}" onerror="this.onerror=null;this.src=LOGO_DEF" style="width:110px;height:110px;border-radius:50%;object-fit:contain;background:#fff;border:1px solid var(--bd)"></div><input id="lf" type="file" accept="image/*" style="width:100%"><p><button onclick="gantiLogo()">Simpan logo</button> <button class="sec" onclick="resetLogo()">Kembalikan logo bawaan</button></p><div class="mu">Perubahan bisa butuh sekitar satu menit untuk tampil di semua perangkat.</div></div>`;
+R.pengaturan=async()=>`<div class="card"><h3>Logo lembaga</h3><div style="margin:10px 0"><img src="${LOGO_URL(Date.now())}" onerror="this.onerror=null;this.src=LOGO_DEF" style="width:110px;height:110px;border-radius:50%;object-fit:contain;background:#fff;border:1px solid var(--bd)"></div><input id="lf" type="file" accept="image/*" style="width:100%"><p><button onclick="gantiLogo()">Simpan logo</button> <button class="sec" onclick="resetLogo()">Kembalikan logo bawaan</button></p></div>`;
 async function gantiLogo(){const f=$('lf').files[0];if(!f)return msgBox('Pilih gambar logo dulu.');
 try{const bl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,512/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(new Error('Gagal memproses gambar')),'image/png')};im.onerror=()=>rej(new Error('File bukan gambar'));im.src=r.result};r.readAsDataURL(f)});
 const{error}=await SB.storage.from('aset').upload('logo.png',bl,{upsert:true,contentType:'image/png',cacheControl:'60'});if(error)throw error;toast('Logo disimpan.');draw()}catch(e){msgBox(e.message)}}
@@ -2148,7 +2177,7 @@ function biayaHtml(k){const b=(k.biaya||[]).filter(x=>x.nama),tot=b.reduce((a,x)
 return `<div class="psbbox"><h4>Rincian Biaya</h4>${b.length?b.map(x=>`<div class="li"><span>${esc(x.nama)}${x.ket?`<div class="mu">${esc(x.ket)}</div>`:''}</span><b>${rp0(+x.nominal)}</b></div>`).join('')+`<div class="li"><b>Total</b><b>${rp0(tot)}</b></div>`:'<div class="mu">Belum diisi oleh pengurus.</div>'}</div><div class="psbbox"><h4>Persyaratan</h4>${sy.length?'<ol style="margin:0;padding-left:18px">'+sy.map(x=>`<li>${esc(x)}</li>`).join('')+'</ol>':'<div class="mu">Belum diisi oleh pengurus.</div>'}</div>`}
 const fld=(id,l,ic,t,ph)=>`<div class="lgf"><label>${l}</label><div class="lgi"><i class="fa-solid ${ic}"></i><input id="${id}" type="${t||'text'}" placeholder="${ph||''}"></div></div>`;
 async function psbView(inApp){const k=await getKonten();U.kp=k;U.psbApp=!!inApp;
-const _psb=(`<h2 class="lgh2">Pendaftaran Santri Baru</h2><p class="lgsub">Isi data calon santri, lalu cetak / simpan PDF formulirnya.</p>${biayaHtml(k)}
+const _psb=(`<h2 class="lgh2">Pendaftaran Santri Baru</h2>${biayaHtml(k)}
 <div style="font-size:12px;font-weight:800;color:#065f46;text-transform:uppercase;margin:8px 0">Data calon santri</div>
 ${fld('p_nama','Nama lengkap','fa-user')}${fld('p_tl','Tempat lahir','fa-location-dot')}${fld('p_tgl','Tanggal lahir','fa-calendar','date')}${fld('p_alamat','Alamat lengkap','fa-house')}${fld('p_sekolah','Asal sekolah','fa-school')}${fld('p_tingkat','Tingkat / kelas yang dituju','fa-graduation-cap')}${fld('p_anak','Anak ke- (dari berapa bersaudara)','fa-people-roof','text','Contoh: 2 dari 4')}
 <div style="font-size:12px;font-weight:800;color:#065f46;text-transform:uppercase;margin:8px 0">Data orang tua / wali</div>
@@ -2175,7 +2204,7 @@ $('v').innerHTML=`<div class="lgw" style="align-items:flex-start"><div class="do
 <div class="ttd"><div>Wali / orang tua<div class="ln">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</div></div><div>Panitia pendaftaran<div class="ln">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</div></div></div></div></div>`;window.scrollTo(0,0)}
 R.pendaftar=async()=>{const t=ok(await SB.from('pendaftar').select('*').order('id',{ascending:false}).limit(100));U.pd=t;
 return `<div class="card"><h3>Pendaftar santri baru (${t.length})</h3>
-<div class="mu">Calon santri mengisi formulir dari halaman masuk → “Pendaftaran santri baru”, atau admin/pengurus dapat mengisi langsung di bawah.</div>
+
 <p style="margin-top:10px"><button type="button" onclick="psbView(1)"><i class="fa-solid fa-user-plus"></i> Pendaftaran santri baru</button></p>`+(t.length?t.map(x=>`<div class="li"><span><b>${esc(x.data.nama)}</b> <span class="mu">${esc(x.nomor)}</span><div class="mu">${esc(x.data.tingkat||'')} · HP ${esc(x.data.hp||'')} · ${new Date(x.dibuat).toLocaleDateString('id-ID')}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="sec" onclick="psbLihat(${x.id})">Lihat / cetak</button>${x.status=='baru'?`<button onclick="psbJadikan(${x.id})">Terima &amp; jadikan santri</button><button class="sec" onclick="psbTolak(${x.id})">Tolak</button>`:''}<button class="dn" onclick="hapus('pendaftar',${x.id})">Hapus</button></div></span><span class="badge ${x.status=='diterima'?'b0':x.status=='ditolak'?'b2':'b1'}">${x.status}</span></div>`).join(''):'<div class="mu">Belum ada pendaftar.</div>')+'</div>'};
 async function psbLihat(id){const x=U.pd.find(y=>y.id==id),k=await getKonten();psbDoc(x.nomor,x.data,k,1,x.dibuat)}
 async function psbTolak(id){uiConfirm('Tandai pendaftar ini ditolak?',async()=>{const{error}=await SB.from('pendaftar').update({status:'ditolak'}).eq('id',id);if(error)return msgBox(error.message);draw()})}
@@ -2184,14 +2213,14 @@ async function psbJadikan(id){const x=U.pd.find(y=>y.id==id);uiConfirm('Jadikan 
 /* ---- Kelola konten (admin) ---- */
 const EDC={kegiatan:[['judul','Kegiatan','text'],['waktu','Waktu / hari','text'],['ket','Keterangan','text']],jadwal:[['hari','Hari','sel:Sabtu,Ahad,Senin,Selasa,Rabu,Kamis,Jumat'],['sesi','Sesi','sel:Siang,Malam'],['jam','Jam','text'],['pelajaran','Pelajaran','text'],['guru','Guru','text']],biaya:[['nama','Nama biaya','text'],['nominal','Nominal (Rp)','number'],['ket','Keterangan','text']]},MAIN={kegiatan:'judul',jadwal:'pelajaran',biaya:'nama'};
 const edRow=(key,v)=>`<div class="rw" style="border:1px solid var(--bd);border-radius:12px;padding:4px 10px 10px;margin-bottom:8px;background:#f8fafc">${EDC[key].map(c=>{const val=v?.[c[0]]??'',t=c[2];return `<label>${c[1]}</label>`+(t.startsWith('sel:')?`<select data-f="${c[0]}" style="width:100%">${t.slice(4).split(',').map(o=>`<option ${o==val?'selected':''}>${o}</option>`).join('')}</select>`:`<input data-f="${c[0]}" type="${t}" value="${esc(val)}" style="width:100%">`)}).join('')}<p style="margin:10px 0 0"><button type="button" class="dn" onclick="this.closest('.rw').remove()">Hapus baris</button></p></div>`;
-const edSec=(key,judul,sub,data)=>`<div class="card"><h3>${judul}</h3><div class="mu">${sub}</div><div id="ed-${key}" style="margin-top:10px">${(data||[]).map(v=>edRow(key,v)).join('')}</div><p><button type="button" class="sec" onclick="edAdd('${key}')">+ Tambah baris</button> <button type="button" onclick="edSimpan('${key}')">Simpan</button></p></div>`;
-const edTxt=(key,judul,sub,fs,val)=>`<div class="card"><h3>${judul}</h3><div class="mu">${sub}</div><div id="ed-${key}">${fs.map(f=>`<label>${f[1]}</label>${f[2]=='ta'?`<textarea data-f="${f[0]}" rows="${f[3]||4}" style="width:100%">${esc((val||{})[f[0]]||'')}</textarea>`:`<input data-f="${f[0]}" value="${esc((val||{})[f[0]]||'')}" style="width:100%">`}`).join('')}</div><p><button type="button" onclick="edSimpanTxt('${key}')">Simpan</button></p></div>`;
+const edSec=(key,judul,sub,data)=>`<div class="card"><h3>${judul}</h3>${sub?`<div class="mu">${sub}</div>`:''}<div id="ed-${key}" style="margin-top:10px">${(data||[]).map(v=>edRow(key,v)).join('')}</div><p><button type="button" class="sec" onclick="edAdd('${key}')">+ Tambah baris</button> <button type="button" onclick="edSimpan('${key}')">Simpan</button></p></div>`;
+const edTxt=(key,judul,sub,fs,val)=>`<div class="card"><h3>${judul}</h3>${sub?`<div class="mu">${sub}</div>`:''}<div id="ed-${key}">${fs.map(f=>`<label>${f[1]}</label>${f[2]=='ta'?`<textarea data-f="${f[0]}" rows="${f[3]||4}" style="width:100%">${esc((val||{})[f[0]]||'')}</textarea>`:`<input data-f="${f[0]}" value="${esc((val||{})[f[0]]||'')}" style="width:100%">`}`).join('')}</div><p><button type="button" onclick="edSimpanTxt('${key}')">Simpan</button></p></div>`;
 function edAdd(key){$('ed-'+key).insertAdjacentHTML('beforeend',edRow(key))}
 async function simpanKonten(key,val){const{error}=await SB.from('konten').upsert({kunci:key,nilai:val,diubah:new Date().toISOString()});if(error)return msgBox(error.message);U._kc=null;toast('Tersimpan.')}
 async function edSimpan(key){const v=[...document.querySelectorAll('#ed-'+key+' .rw')].map(r=>{const o={};r.querySelectorAll('[data-f]').forEach(i=>o[i.dataset.f]=i.type=='number'?(+i.value||0):i.value.trim());return o}).filter(o=>o[MAIN[key]]);await simpanKonten(key,v)}
 async function edSimpanTxt(key){const o={};document.querySelectorAll('#ed-'+key+' [data-f]').forEach(i=>o[i.dataset.f]=i.value.trim());await simpanKonten(key,key=='syarat'?o.teks:o)}
 R.konten=async()=>{const k=await getKonten();
-return edTxt('profil','Motto, visi &amp; misi','Tampil di menu Profil &amp; jadwal.',[['motto','Motto'],['visi','Visi','ta',3],['misi','Misi (satu butir per baris)','ta',5]],k.profil)+edSec('kegiatan','Kegiatan pondok','Contoh: sholat jamaah, ngaji kitab, muhadhoroh.',k.kegiatan)+edSec('jadwal','Jadwal pelajaran 1 pekan','Pilih hari dan sesi (Siang/Malam), lalu isi jam, pelajaran, dan guru.',k.jadwal)+edSec('biaya','Rincian biaya pendaftaran','Seragam, buku kitab, kosan, dan lainnya. Tampil di formulir pendaftaran.',k.biaya)+edTxt('syarat','Persyaratan pendaftaran','Satu persyaratan per baris.',[['teks','Persyaratan','ta',7]],{teks:k.syarat})};
+return edTxt('profil','Motto, visi &amp; misi','',[['motto','Motto'],['visi','Visi','ta',3],['misi','Misi (satu butir per baris)','ta',5]],k.profil)+edSec('kegiatan','Kegiatan pondok','',k.kegiatan)+edSec('jadwal','Jadwal pelajaran 1 pekan','',k.jadwal)+edSec('biaya','Rincian biaya pendaftaran','',k.biaya)+edTxt('syarat','Persyaratan pendaftaran','',[['teks','Persyaratan','ta',7]],{teks:k.syarat})};
 
 /* ===== Menu kotak ikon, daftar santri aktif/alumni, kartu santri, scan QR kamera ===== */
 Object.assign(IC,{direktorialumni:'fa-solid fa-users',daftarsantri:'fa-solid fa-users',kartu:'fa-solid fa-id-card',kartuedit:'fa-solid fa-id-card-clip',home:'fa-solid fa-house',riwayatsantri:'fa-solid fa-children',chat:'fa-solid fa-comments',penggunaaktif:'fa-solid fa-signal'});
@@ -2289,11 +2318,21 @@ const sf=(id,l,v,t)=>`<label>${l}</label><input id="${id}" type="${t||'text'}" v
 function formSantri(s){const n=!s;s=s||{};return `<div class="card" style="background:#f8fafc;margin:8px 0">${sf('e_nama','Nama',s.nama)}${sf('e_nis',n?'NIS (kosongkan = dibuat otomatis)':'NIS',s.nis)}${sf('e_kamar','Kamar',s.kamar)}${sf('e_kelas','Kelas',s.kelas)}${sf('e_ang','Tahun angkatan',s.angkatan,'number')}${sf('e_almt','Alamat santri',s.alamat)}<label>Status</label><select id="e_st" style="width:100%"><option value="aktif" ${!s.alumni&&s.aktif!==false?'selected':''}>Santri aktif</option><option value="alumni" ${s.alumni?'selected':''}>Alumni</option><option value="nonaktif" ${!s.alumni&&s.aktif===false?'selected':''}>Nonaktif</option></select>${sf('e_lulus','Tahun lulus (khusus alumni)',s.tahun_lulus,'number')}<p><button onclick="simpanSantri(${n?0:s.id})">Simpan</button> <button class="sec" onclick="U.se=null;draw()">Batal</button></p></div>`}
 async function simpanSantri(id){const v=i=>$(i).value.trim(),stVal=v('e_st'),al=stVal=='alumni',ak=stVal=='aktif',o={nama:v('e_nama'),nis:v('e_nis')||null,kamar:v('e_kamar')||null,kelas:v('e_kelas')||null,angkatan:+v('e_ang')||null,alamat:v('e_almt')||null,alumni:al,aktif:ak,tahun_lulus:al?(+v('e_lulus')||null):null};if(!o.nama)return msgBox('Nama wajib diisi.');
 const{error}=await(id?SB.from('santri').update(o).eq('id',id):SB.from('santri').insert(o));if(error)return msgBox(error.message);U.se=null;await reloadSantri();toast('Data santri disimpan.');draw()}
+function hapusSantri(id){
+  if(!U.me||U.me.role!=='admin')return msgBox('Hanya admin yang bisa menghapus.');
+  const x=(U.allSantri||[]).concat(U.santri||[]).find(y=>y.id==id)||{};
+  uiConfirm('Hapus permanen '+(x.alumni?'alumni':'santri')+' "'+(x.nama||'#'+id)+'"? Tindakan ini tidak bisa dibatalkan.',async()=>{
+    const r=await SB.from('santri').delete().eq('id',id).select('id');
+    if(r.error)return msgBox(r.error.code==='23503'?'Tidak bisa dihapus karena santri ini masih punya data terkait (transaksi, pelanggaran, dll). Ubah statusnya menjadi Nonaktif lewat tombol Edit, atau atur penghapusan berantai di Supabase.':r.error.message);
+    if(!r.data||!r.data.length)return msgBox('Data tidak terhapus. Periksa izin hapus (policy DELETE) tabel santri di Supabase.');
+    U.se=null;await reloadSantri();toast('Data dihapus.');draw();
+  });
+}
 R.daftarsantri=async()=>{const t=ok(await SB.from('santri').select('*').order('nama')),f=U.sf||'aktif',adm=U.me.role=='admin',na=t.filter(isAktifSantri).length,nl=t.filter(x=>x.alumni).length,nn=t.filter(x=>!x.alumni&&x.aktif===false).length;
 const r=t.filter(x=>(f=='semua'||(f=='aktif'?isAktifSantri(x):(f=='alumni'?x.alumni:(!x.alumni&&x.aktif===false))))),g={};r.forEach(x=>{const k=x.angkatan||0;(g[k]=g[k]||[]).push(x)});
 const ks=Object.keys(g).map(Number).sort((a,b)=>(b||-1)-(a||-1)),chip=(k,l)=>`<button class="${f==k?'':'sec'}" onclick="U.sf='${k}';draw()">${l}</button>`;
 return `<div class="card"><h3>Daftar santri</h3><div class="row">${chip('aktif','Aktif ('+na+')')}${chip('alumni','Alumni ('+nl+')')}${nn?chip('nonaktif','Nonaktif ('+nn+')'):''}${chip('semua','Semua ('+t.length+')')}</div><div class="row" style="margin-top:10px">${adm?`<button onclick="U.se='baru';draw()">+ Tambah</button>`:''}</div>${adm&&U.se=='baru'?formSantri(null):''}</div>`+
-(ks.length?ks.map(k=>`<div class="card"><h3>${k?'Angkatan '+k:'Tanpa angkatan'} <span class="mu" style="font-weight:500">(${g[k].length})</span></h3>`+g[k].map(x=>`<div class="li"><span><b>${esc(x.nama)}</b>${x.alumni?` <span class="badge b1">Alumni${x.tahun_lulus?' · lulus '+x.tahun_lulus:''}</span>`:(x.aktif===false?' <span class="badge b2">Nonaktif</span>':'')}<div class="mu">${[x.nis&&'NIS '+x.nis,x.kamar,x.kelas].filter(Boolean).map(esc).join(' · ')||'-'}</div>${adm&&U.se==x.id?formSantri(x):''}</span>${adm&&U.se!=x.id?`<button class="sec" onclick="U.se=${x.id};draw()">Edit</button>`:''}</div>`).join('')+'</div>').join(''):'<div class="card"><div class="mu">Tidak ada data.</div></div>')};
+(ks.length?ks.map(k=>`<div class="card"><h3>${k?'Angkatan '+k:'Tanpa angkatan'} <span class="mu" style="font-weight:500">(${g[k].length})</span></h3>`+g[k].map(x=>`<div class="li"><span><b>${esc(x.nama)}</b>${x.alumni?` <span class="badge b1">Alumni${x.tahun_lulus?' · lulus '+x.tahun_lulus:''}</span>`:(x.aktif===false?' <span class="badge b2">Nonaktif</span>':'')}<div class="mu">${[x.nis&&'NIS '+x.nis,x.kamar,x.kelas].filter(Boolean).map(esc).join(' · ')||'-'}</div>${adm&&U.se==x.id?formSantri(x):''}</span>${adm&&U.se!=x.id?`<span style="display:flex;gap:6px;flex:none"><button class="sec" onclick="U.se=${x.id};draw()">Edit</button><button class="dn" onclick="hapusSantri(${x.id})" title="Hapus"><i class="fa-solid fa-trash"></i> Hapus</button></span>`:''}</div>`).join('')+'</div>').join(''):'<div class="card"><div class="mu">Tidak ada data.</div></div>')};
 
 /* ---- Kartu santri (SVG vektor tajam & tombol cetak semua ukuran KTP dibuang) ---- */
 const KD0='PONPES PUTRI AL-AS’ADIYAH';
@@ -2416,9 +2455,9 @@ ${st?`<div class="row" style="flex-wrap:wrap;gap:8px">
 <button type="button" class="sec srbtn" onclick="srOpen('kt_sel','Cari santri untuk kartu')"><i class="fa-solid fa-magnifying-glass"></i> Cari santri…</button>
 <button type="button" onclick="cetakHalaman()"><i class="fa-solid fa-print"></i> Cetak tampilan</button>
 </div>
-<div class="mu" style="margin-top:8px">Ukuran kartu 85,6 × 54 mm (standar KTP).</div>`
+`
 :`<div class="row"><button onclick="cetakHalaman()"><i class="fa-solid fa-print"></i> Cetak kartu</button></div>
-<div class="mu" style="margin-top:8px">Sisi depan (foto &amp; QR) dan sisi belakang. Ukuran cetak standar kartu 85,6 × 54 mm.</div>`}
+`}
 </div>`;
   if(!list.length) return h+'<div class="card"><div class="mu">Belum ada santri.</div></div>';
   if(list.length===1){
@@ -2426,7 +2465,7 @@ ${st?`<div class="row" style="flex-wrap:wrap;gap:8px">
   }else{
     h+=`<div class="mu noprint" style="margin:8px 0">Menampilkan <b>${list.length}</b> sisi depan. Sisi belakang (latar sama) hanya <b>1 contoh</b> di bawah.</div>`;
     h+=`<div class="kw">`+list.map(s=>kartuHtml(s,kc,fotoDariMap(fo,s.foto_path),im,false,'f')).join('')+`</div>`;
-    h+=`<div class="card noprint"><h3>Contoh sisi belakang</h3><div class="mu">Latar &amp; isi belakang sama untuk semua santri — cukup cetak/salin satu kali.</div></div>`;
+    h+=`<div class="card noprint"><h3>Contoh sisi belakang</h3></div>`;
     h+=kartuHtml(list[0],kc,fotoDariMap(fo,list[0].foto_path),im,adm,'b');
   }
   return h;
@@ -2435,17 +2474,17 @@ ${st?`<div class="row" style="flex-wrap:wrap;gap:8px">
 R.kartuedit=async()=>{const k=await getKonten(),c={...KD,...(k.kartu||{})},fo=await getFotos(U.santri),im=await srcKartu(),pv=(src,fb,sz,rad)=>`<img src="${src}" onerror="${fb}" style="width:${sz}px;height:${sz}px;border-radius:${rad};object-fit:contain;background:#fff;border:1px solid var(--bd)">`;
 const q=(U.kesq||'').trim().toLowerCase();
 const listFoto=q?U.santri.filter(s=>String(s.nama||'').toLowerCase().includes(q)||String(s.nis||'').toLowerCase().includes(q)||String(s.kamar||'').toLowerCase().includes(q)):U.santri;
-return edTxt('kartu','Data kartu santri','Teks yang tampil di depan dan belakang kartu.',[['lembaga','Nama lembaga'],['subjudul','Judul kartu (contoh: KARTU SANTRI)'],['alamat','Alamat lembaga'],['kontak','Kontak jika kartu hilang (telepon / WhatsApp)'],['motto_ar','Motto — tulisan Arab','ta',2],['motto_id','Motto — terjemahan','ta',2],['perhatian','Teks “Perhatian” (satu poin per baris)','ta',5],['pengasuh','Keterangan tanda tangan (boleh 2 baris)','ta',2],['namapengasuh','Nama pengasuh (kosong = tertulis “Tanda Tangan”)'],['warnafoto','Warna latar bingkai foto (kode warna, contoh #e5e7eb)'],['redup','Gelapkan gambar latar (0–80, awal 25) agar tulisan terbaca']],c)
-+`<div class="card"><h3>Gambar latar kartu</h3><div class="mu">Unggah gambar (JPG/PNG) sebagai latar kartu, sebaiknya berbentuk landscape (rasio 85,6 : 54). Sisi belakang memakai gambar depan jika tidak diunggah terpisah. Atur “Gelapkan gambar latar” di atas agar tulisan tetap terbaca.</div>
+return edTxt('kartu','Data kartu santri','',[['lembaga','Nama lembaga'],['subjudul','Judul kartu (contoh: KARTU SANTRI)'],['alamat','Alamat lembaga'],['kontak','Kontak jika kartu hilang (telepon / WhatsApp)'],['motto_ar','Motto — tulisan Arab','ta',2],['motto_id','Motto — terjemahan','ta',2],['perhatian','Teks “Perhatian” (satu poin per baris)','ta',5],['pengasuh','Keterangan tanda tangan (boleh 2 baris)','ta',2],['namapengasuh','Nama pengasuh (kosong = tertulis “Tanda Tangan”)'],['warnafoto','Warna latar bingkai foto (kode warna, contoh #e5e7eb)'],['redup','Gelapkan gambar latar (0–80, awal 25) agar tulisan terbaca']],c)
++`<div class="card"><h3>Gambar latar kartu</h3>
 <label>Latar sisi depan</label>
 ${im.bgf?`<div style="margin:6px 0"><img src="${esc(im.bgf)}" alt="Latar depan" style="width:214px;height:135px;object-fit:cover;border-radius:10px;border:1px solid var(--bd);display:block"></div>`:'<div class="mu" style="margin:4px 0">Belum ada gambar latar depan.</div>'}
 <input id="bgf" type="file" accept="image/*" style="width:100%"><p><button onclick="unggahBg('f')">Simpan latar depan</button> <button class="sec" onclick="hapusBg('f')">Hapus</button></p>
 <label>Latar sisi belakang (opsional)</label>
 ${im.bgb?`<div style="margin:6px 0"><img src="${esc(im.bgb)}" alt="Latar belakang" style="width:214px;height:135px;object-fit:cover;border-radius:10px;border:1px solid var(--bd);display:block"></div>`:'<div class="mu" style="margin:4px 0">Belum ada gambar latar belakang.</div>'}
 <input id="bgb" type="file" accept="image/*" style="width:100%"><p><button onclick="unggahBg('b')">Simpan latar belakang</button> <button class="sec" onclick="hapusBg('b')">Hapus</button></p></div>`
-+`<div class="card"><h3>Logo kartu</h3><div class="mu">Kalau belum diatur, kartu memakai logo aplikasi.</div><div style="margin:10px 0">${pv(KLOGO_URL(Date.now()),"this.onerror=function(){this.onerror=null;this.src=LOGO_DEF};this.src=LOGO_URL()",90,'50%')}</div><input id="klf" type="file" accept="image/*" style="width:100%"><p><button onclick="unggahLogoKartu()">Simpan logo kartu</button> <button class="sec" onclick="hapusLogoKartu()">Pakai logo aplikasi</button></p></div>`
-+`<div class="card"><h3>Tanda tangan pengasuh</h3><div class="mu">Gambar tanda tangan (PNG berlatar transparan paling bagus). Tampil di belakang kartu.</div><div style="margin:10px 0">${pv(TTD_URL(Date.now()),"this.style.visibility='hidden'",90,'8px')}</div><input id="ttf" type="file" accept="image/*" style="width:100%"><p><button onclick="unggahTtd()">Simpan tanda tangan</button> <button class="sec" onclick="hapusTtd()">Hapus</button></p></div>`
-+`<div class="card"><h3>Foto santri</h3><div class="mu">Foto disimpan di penyimpanan privat: hanya pengurus dan wali santri yang bersangkutan yang dapat melihatnya. Nama, NIS, kamar, kelas, angkatan, dan alamat santri diubah di menu Data santri.</div><label class="ck" style="border:0"><input type="checkbox" id="fbg" checked> Hapus latar belakang foto otomatis (jadi transparan). PNG yang sudah transparan tidak diproses ulang, jadi bisa juga langsung unggah PNG.</label>
++`<div class="card"><h3>Logo kartu</h3><div style="margin:10px 0">${pv(KLOGO_URL(Date.now()),"this.onerror=function(){this.onerror=null;this.src=LOGO_DEF};this.src=LOGO_URL()",90,'50%')}</div><input id="klf" type="file" accept="image/*" style="width:100%"><p><button onclick="unggahLogoKartu()">Simpan logo kartu</button> <button class="sec" onclick="hapusLogoKartu()">Pakai logo aplikasi</button></p></div>`
++`<div class="card"><h3>Tanda tangan pengasuh</h3><div style="margin:10px 0">${pv(TTD_URL(Date.now()),"this.style.visibility='hidden'",90,'8px')}</div><input id="ttf" type="file" accept="image/*" style="width:100%"><p><button onclick="unggahTtd()">Simpan tanda tangan</button> <button class="sec" onclick="hapusTtd()">Hapus</button></p></div>`
++`<div class="card"><h3>Foto santri</h3><label class="ck" style="border:0"><input type="checkbox" id="fbg" checked> Hapus latar belakang foto otomatis (jadi transparan). PNG yang sudah transparan tidak diproses ulang, jadi bisa juga langsung unggah PNG.</label>
 <div class="sbar"><input id="ke_sq" placeholder="Cari nama / NIS / kamar santri…" value="${esc(U.kesq||'')}" oninput="U.kesq=this.value;draw()" autocomplete="off">${U.kesq?`<button type="button" class="sec" onclick="U.kesq='';draw()">Reset</button>`:''}</div>`
 +(listFoto.length?listFoto.map(s=>`<div class="li"><span style="display:flex;gap:10px;align-items:center"><span style="width:44px;height:56px;border-radius:8px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#94a3b8">${fotoDariMap(fo,s.foto_path)?`<img src="${esc(fotoDariMap(fo,s.foto_path))}" alt="" style="width:100%;height:100%;object-fit:cover">`:'<i class="fa-solid fa-user"></i>'}</span><span><b>${esc(s.nama)}</b><div class="mu">NIS ${esc(s.nis||'-')}${s.kamar?' · '+esc(s.kamar):''}</div></span></span><span><input id="fi-${s.id}" type="file" accept="image/*" style="display:none" onchange="unggahFoto(${s.id})"><button class="sec" onclick="$('fi-${s.id}').click()">Ganti foto</button></span></div>`).join(''):'<div class="mu">Santri tidak ditemukan.</div>')+'</div>'};
 
@@ -2477,7 +2516,7 @@ function loadJsQR(){
 }
 async function scanQR(){if(!window.jsQR){toast('Memuat pemindai QR…');await loadJsQR()}
 if(!window.jsQR)return msgBox('Pemindai QR belum termuat. Periksa koneksi internet, lalu coba lagi.');
-const ov=document.createElement('div');ov.id='scn';ov.style.cssText='position:fixed;inset:0;z-index:80;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff';ov.innerHTML='<video id="scv" playsinline muted style="width:100%;max-height:75%;object-fit:cover"></video><p style="padding:12px;text-align:center">Arahkan kamera ke QR di belakang kartu santri</p><button class="sec" onclick="stopQR()">Batal</button>';document.body.appendChild(ov);
+const ov=document.createElement('div');ov.id='scn';ov.style.cssText='position:fixed;inset:0;z-index:80;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff';ov.innerHTML='<video id="scv" playsinline muted style="width:100%;max-height:75%;object-fit:cover"></video><div style="display:flex;gap:10px"><button type="button" class="sec tbl-flash" onclick="toggleFlash(SCN&&SCN.st,this)"><i class="fa-solid fa-bolt"></i> Lampu</button><button class="sec" onclick="stopQR()">Batal</button></div>';document.body.appendChild(ov);
 try{SCN={st:await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}),on:true};const v=$('scv');v.srcObject=SCN.st;await v.play();const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
 const tick=()=>{if(!SCN||!SCN.on)return;if(v.videoWidth){c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);const im=x.getImageData(0,0,c.width,c.height),r=jsQR(im.data,im.width,im.height);if(r&&/^PPPAS-\d+$/i.test(r.data.trim())){const kd=r.data.trim().toUpperCase();stopQR();$('kc').value=kd;toast('Kode terbaca: '+kd);return}}requestAnimationFrame(tick)};tick()}catch(e){stopQR();msgBox('Kamera tidak bisa dibuka: '+e.message)}}
 function stopQR(){if(SCN){SCN.on=false;SCN.st.getTracks().forEach(t=>t.stop());SCN=null}const o=$('scn');if(o)o.remove()}
@@ -2504,15 +2543,23 @@ function hijriTxt(off){try{return new Intl.DateTimeFormat('id-ID-u-ca-islamic-um
 
 EDC.harian=[['sesi','Sesi','sel:Siang,Malam'],['jam','Jam','text'],['nama','Kegiatan','text'],['kat','Kategori','sel:Sholat,Mengaji,Sekolah,Makan,Lainnya']];MAIN.harian='nama';
 const _rk=R.konten;
-R.konten=async()=>{const k=await getKonten();return (await _rk())+edSec('harian','Jadwal harian pondok (siang dan malam)','Sholat, mengaji, sekolah, makan, dan lainnya. Jam boleh teks bebas, contoh 05.00–06.00 atau Ba’da Maghrib.',k.harian)+edTxt('waktu','Waktu sholat dan tanggal Hijriyah','Lokasi pondok dan koreksi menit tiap waktu. Kosongkan untuk memakai nilai awal.',[['lat','Garis lintang (contoh: -7.1)'],['lon','Garis bujur (contoh: 112.8)'],['k_subuh','Koreksi Subuh (menit, awal 2)'],['k_terbit','Koreksi Terbit (menit, awal -2)'],['k_dzuhur','Koreksi Dzuhur (menit, awal 2)'],['k_ashar','Koreksi Ashar (menit, awal 2)'],['k_maghrib','Koreksi Maghrib (menit, awal 2)'],['k_isya','Koreksi Isya’ (menit, awal 2)'],['hijri','Koreksi tanggal Hijriyah (hari, -2 sampai 2)']],k.waktu)};
+R.konten=async()=>{const k=await getKonten();return (await _rk())+edSec('harian','Jadwal harian pondok (siang dan malam)','',k.harian)+edTxt('waktu','Waktu sholat dan tanggal Hijriyah','',[['lat','Garis lintang (contoh: -7.1)'],['lon','Garis bujur (contoh: 112.8)'],['k_subuh','Koreksi Subuh (menit, awal 2)'],['k_terbit','Koreksi Terbit (menit, awal -2)'],['k_dzuhur','Koreksi Dzuhur (menit, awal 2)'],['k_ashar','Koreksi Ashar (menit, awal 2)'],['k_maghrib','Koreksi Maghrib (menit, awal 2)'],['k_isya','Koreksi Isya’ (menit, awal 2)'],['hijri','Koreksi tanggal Hijriyah (hari, -2 sampai 2)']],k.waktu)};
 
 /* ===== Foto transparan, aset kartu, jam real-time, suara adzan ===== */
 const MPU='https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675465747/';
 const ASET=f=>'https://mkbpucoojmeiuhhjvgrg.supabase.co/storage/v1/object/public/aset/'+f;
 function muatSkrip(src){return new Promise((res,rej)=>{if(document.querySelector('script[src="'+src+'"]'))return res();const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Gagal memuat '+src));document.head.appendChild(s)})}
 const okImg=u=>new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.src=u});
+/* Buang tepi kosong (transparan / putih) agar tanda tangan tampil proporsional; bintik kecil diabaikan */
+function pangkasTtd(u){return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{
+const w=im.naturalWidth,h=im.naturalHeight,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(im,0,0);
+const d=x.getImageData(0,0,w,h).data,kol=new Uint32Array(w),brs=new Uint32Array(h);
+for(let j=0;j<h;j++)for(let i=0;i<w;i++){const k=(j*w+i)*4;if(d[k+3]>40&&(d[k]<225||d[k+1]<225||d[k+2]<225||d[3]<40)){kol[i]++;brs[j]++}}
+const batas=(a,min)=>{let l=0,r=a.length-1;while(l<r&&a[l]<min)l++;while(r>l&&a[r]<min)r--;return[l,r]};
+const[x0,x1]=batas(kol,2),[y0,y1]=batas(brs,2),cw=x1-x0+1,ch=y1-y0+1;if(cw<8||ch<8)return res(u);
+const o=document.createElement('canvas');o.width=cw;o.height=ch;o.getContext('2d').drawImage(c,x0,y0,cw,ch,0,0,cw,ch);res(o.toDataURL('image/png'))}catch(e){res(u)}};im.onerror=()=>res(u);im.src=u})}
 async function srcKartu(){if(U._lg&&Date.now()-U._lgt<6e4)return U._lg;const v='?v='+(U._bgv||Math.floor(Date.now()/6e4)),k1=KLOGO_URL(U._bgv),k2=LOGO_URL(U._bgv),t=TTD_URL(U._bgv),bf=ASET('kartu-bg-depan.jpg')+v,bb=ASET('kartu-bg-belakang.jpg')+v;
-const[a,a2,tt,f,b]=await Promise.all([okImg(k1),okImg(k2),okImg(t),okImg(bf),okImg(bb)]);U._lg={lg:a?k1:(a2?k2:LOGO_DEF),ttd:tt?t:'',bgf:f?bf:'',bgb:b?bb:(f?bf:'')};U._lgt=Date.now();return U._lg}
+const[a,a2,tt,f,b]=await Promise.all([okImg(k1),okImg(k2),okImg(t),okImg(bf),okImg(bb)]);U._lg={lg:a?k1:(a2?k2:LOGO_DEF),ttd:tt?await pangkasTtd(t):'',bgf:f?bf:'',bgb:b?bb:(f?bf:'')};U._lgt=Date.now();return U._lg}
 const imgCv=(f,max)=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c)};im.onerror=()=>rej(new Error('File bukan gambar'));im.src=r.result};r.readAsDataURL(f)});
 function adaAlfa(c){const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0,t=0;for(let i=3;i<d.length;i+=28){t++;if(d[i]<250)n++}return n>t*0.02}
 function latarSeragam(c){const w=c.width,h=c.height,x=c.getContext('2d'),im=x.getImageData(0,0,w,h),d=im.data,pts=[];
@@ -2542,7 +2589,7 @@ const open=!!U.hariOpen;
 return `<div class="mcard hari-pull ${open?'':'collapsed'}" id="hari-pull">
   <div class="hp-handle" onclick="toggleHariPull()" ontouchstart="hariTouchStart(event)" ontouchmove="hariTouchMove(event)" ontouchend="hariTouchEnd(event)">
     <div class="hp-bar"></div>
-    <div class="mu hp-hint" style="font-size:11px;font-weight:600">Geser ke bawah untuk jadwal hari ini</div>
+    
   </div>
   <div class="hp-mini" onclick="toggleHariPull()">
     <div>
@@ -2569,8 +2616,8 @@ return `<div class="mcard hari-pull ${open?'':'collapsed'}" id="hari-pull">
       </div>
       <div id="cd" style="margin:10px 0 8px;font-size:13px;font-weight:700;color:#047857">${cd.txt}</div>
       <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px">${NS.map((nm,i)=>`<div style="text-align:center;border-radius:10px;padding:7px 1px;border:1px solid ${i==cd.i?'#047857':'#e2e8f0'};background:${i==cd.i?'#ecfdf5':'#f8fafc'}"><div class="mu" style="font-size:10px;font-weight:700">${nm}</div><div style="font-size:13px;font-weight:800;color:#0f172a">${hhmm(t[i])}</div></div>`).join('')}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px">
-        <div class="mu" style="font-size:11px">Waktu adzan perkiraan lokasi pondok. Atur di Kelola konten.</div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:8px">
+        
         <button class="sec" style="padding:6px 10px;font-size:12px;white-space:nowrap" onclick="toggleAdzan()"><i class="fa-solid fa-${on?'volume-high':'volume-xmark'}"></i> Adzan: ${on?'Aktif':'Mati'}</button>
       </div>
       <div style="text-align:center;margin-top:8px"><button type="button" class="sec" style="padding:6px 12px;font-size:12px" onclick="toggleHariPull(false)"><i class="fa-solid fa-chevron-up"></i> Sembunyikan</button></div>
@@ -2634,7 +2681,7 @@ R.direktorialumni=async()=>{
   const idByNis=new Map();
   [...(U.allSantri||[]),...cachedAl].forEach(x=>{if(x.id&&x.nis)idByNis.set(String(x.nis),x.id)});
   return `<div class="card"><h3><i class="fa-solid fa-users" style="color:#047857"></i> Direktori Alumni</h3>
-    <div class="mu">Informasi publik antar alumni (tanpa data privat).</div>
+    
   </div>
   <div class="card"><h3>Daftar (${list.length})</h3>
     ${list.length?list.map(x=>{
@@ -2747,7 +2794,7 @@ R.riwayatlengkap=async()=>{
     const lf=U.rlf||'aktif';
     const list=lf==='alumni'?alm:lf==='nonaktif'?non:lf==='semua'?all:aktif;
     const chip=(k,l)=>`<button class="${lf==k?'':'sec'}" style="padding:7px 12px;font-size:12px" onclick="U.rlf='${k}';draw()">${l}</button>`;
-    return `<div class="card"><h3>Riwayat lengkap santri</h3><div class="mu" style="margin-bottom:8px">Ketuk nama santri untuk melihat foto, biodata, dan seluruh riwayatnya.</div><div class="row">${chip('aktif','Aktif ('+aktif.length+')')}${chip('alumni','Alumni ('+alm.length+')')}${non.length?chip('nonaktif','Nonaktif ('+non.length+')'):''}${chip('semua','Semua ('+all.length+')')}</div></div>
+    return `<div class="card"><h3>Riwayat lengkap santri</h3><div class="row">${chip('aktif','Aktif ('+aktif.length+')')}${chip('alumni','Alumni ('+alm.length+')')}${non.length?chip('nonaktif','Nonaktif ('+non.length+')'):''}${chip('semua','Semua ('+all.length+')')}</div></div>
     <div class="card">`+(list.length?list.map(x=>`<div class="li" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px" onclick="U.rs=${x.id};U.rf='semua';draw()"><span><b>${esc(x.nama)}</b>${x.alumni?' <span class="badge b1">Alumni</span>':(x.aktif===false?' <span class="badge b2">Nonaktif</span>':'')}<div class="mu">${[x.nis&&'NIS '+x.nis,x.kamar,x.kelas].filter(Boolean).map(esc).join(' · ')||'-'}</div></span><i class="fa-solid fa-chevron-right" style="color:#94a3b8"></i></div>`).join(''):'<div class="mu">Tidak ada data.</div>')+'</div>';
   }
   /* ===== Tampilan 2: detail satu santri ===== */
@@ -2847,7 +2894,7 @@ R.saku=async()=>{
   const txHtml=tx.length
     ?tx.map(x=>'<div class="li"><span>'+esc(x.ket)+'<div class="mu">'+fdt(x.waktu)+'</div></span><b style="color:'+(x.tipe=='topup'?'var(--ok)':'var(--rd)')+'">'+(x.tipe=='topup'?'+':'-')+coin(x.jumlah)+'</b></div>').join('')
     :'<div class="mu">Belum ada transaksi.</div>';
-  return '<div class="card" style="background:linear-gradient(135deg,#064e3b,#047857);color:#fff"><div style="font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.06em">Sisa coin uang saku</div><div style="font-size:28px;font-weight:800;margin-top:4px">'+coin(sd)+'</div><div style="font-size:12px;opacity:.85;margin-top:4px">1 coin = Rp1 · dipakai untuk jajan/belanja di kasir pondok dan membayar tagihan.</div></div>'
+  return '<div class="card" style="background:linear-gradient(135deg,#064e3b,#047857);color:#fff"><div style="font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.06em">Sisa coin uang saku</div><div style="font-size:28px;font-weight:800;margin-top:4px">'+coin(sd)+'</div></div>'
     +'<div class="card"><h3>Isi ulang coin (transfer)</h3>'+rekHtml
     +'<label>Nominal transfer (Rp)</label><input id="tp_n" type="number" min="1000" placeholder="Contoh: 100000" style="width:100%"><label>Catatan (opsional)</label><input id="tp_k" placeholder="Contoh: transfer dari BCA a.n. Budi" style="width:100%"><label>Foto bukti transfer</label><input id="tp_f" type="file" accept="image/*" style="width:100%"><p><button id="tp_b" onclick="kirimTopup()">Kirim bukti transfer</button></p></div>'
     +rqHtml
@@ -2863,7 +2910,7 @@ R.konfirmasi=async()=>{const k=await getKonten(),t=ok(await SB.from('topup_reque
 const ps=t.filter(x=>x.bukti_path).map(x=>x.bukti_path),bm={};if(ps.length){const r=await SB.storage.from('bukti').createSignedUrls(ps,3600);(r.data||[]).forEach(x=>{if(x.signedUrl)bm[x.path]=x.signedUrl})}
 const w=t.filter(x=>x.status=='menunggu'),d=t.filter(x=>x.status!='menunggu');U.pend=w.length;
 const it=(x,p)=>`<div class="li"><span style="flex:1"><b>${esc(x.santri?.nama||'')}</b> <span class="mu">${esc(x.santri?.kamar||'')}</span> · <b>${rp(x.nominal)}</b><div class="mu">${esc(x.ket||'')}${x.ket?' · ':''}${fdt(x.dibuat)}</div>${bm[x.bukti_path]?`<div style="margin-top:6px"><a href="${esc(bm[x.bukti_path])}" target="_blank" rel="noopener"><img src="${esc(bm[x.bukti_path])}" style="max-width:170px;max-height:170px;border-radius:10px;border:1px solid var(--bd)"></a></div>`:''}${p?`<div style="margin-top:8px"><button onclick="setujuiTopup(${x.id})">Konfirmasi &amp; tambah ${coin(x.nominal)}</button> <button class="dn" onclick="tolakTopup(${x.id})">Tolak</button></div>`:(x.catatan_admin?`<div class="mu" style="color:var(--rd)">Alasan ditolak: ${esc(x.catatan_admin)}</div>`:'')}</span><span class="badge ${p?'b1':x.status=='disetujui'?'b0':'b2'}">${x.status}</span></div>`;
-return `<div class="card"><h3>Menunggu konfirmasi (${w.length})</h3>${w.map(x=>it(x,1)).join('')||'<div class="mu">Tidak ada permintaan baru.</div>'}</div><div class="card"><h3>Riwayat</h3>${d.map(x=>it(x,0)).join('')||'<div class="mu">Belum ada.</div>'}</div>`+edSec('rekening','Rekening tujuan isi ulang coin','Ditampilkan ke wali saat ingin mengisi ulang coin uang saku.',k.rekening)};
+return `<div class="card"><h3>Menunggu konfirmasi (${w.length})</h3>${w.map(x=>it(x,1)).join('')||'<div class="mu">Tidak ada permintaan baru.</div>'}</div><div class="card"><h3>Riwayat</h3>${d.map(x=>it(x,0)).join('')||'<div class="mu">Belum ada.</div>'}</div>`+edSec('rekening','Rekening tujuan isi ulang coin','',k.rekening)};
 EDC.rekening=[['bank','Nama bank / e-wallet','text'],['nomor','Nomor rekening','text'],['nama','Atas nama','text']];MAIN.rekening='nomor';
 async function setujuiTopup(id){
   let waliId=null,nama='';
@@ -2939,7 +2986,7 @@ R.strukturedit=async()=>{const k=await getKonten(),list=k.struktur||[];U._st=lis
     body+=`<div class="card"><h3 style="margin:0 0 10px;font-size:14px;color:#b45309">Belum dikelompokkan</h3><div class="st-sec" data-bagian="">${orphans.map((x,i)=>stRow(x,i,'')).join('')}</div></div>`;
   }
   return `<div class="card"><h3>Edit Struktur Organisasi</h3>
-    <div class="mu">Pisahkan tampilan menurut bagian: Pendiri/Pengasuh, Pengawas, Administrasi, Sekretaris, Bendahara, Keamanan, Kesehatan, dan Mading. Setiap bagian tampil terpisah di halaman struktur.</div>
+    
   </div>${body}<div class="card"><p style="margin:0"><button type="button" onclick="stSimpan()"><i class="fa-solid fa-floppy-disk"></i> Simpan seluruh struktur</button></p></div>`};
 function stRow(x,i,bagian){x=x||{};const u=fotoStr(x.foto);const bag=bagian!==undefined?bagian:(x.bagian||'');
   return `<div class="rw" data-f="${esc(x.foto||'')}" data-bagian="${esc(bag)}" style="border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:8px;background:#f8fafc">
@@ -3041,7 +3088,7 @@ R.tabungan=async()=>{
   }
   const nm=U.santri.find(x=>x.id==s)?.nama||'';
   let h=st?`<div class="card"><label style="margin-top:0">Pilih santri</label><select id="tb_sel" style="width:100%" onchange="U.ts=+this.value;draw()">${opts(false,s)}</select><div class="srwrap"><button type="button" class="sec srbtn" onclick="srOpen('tb_sel','Cari santri untuk tabungan')"><i class="fa-solid fa-magnifying-glass"></i> Cari santri…</button></div></div>`:'';
-  h+=`<div class="card" style="background:linear-gradient(135deg,#064e3b,#047857);color:#fff"><div style="font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.06em">${CHEST_SVG(20)} Saldo tabungan${st?' · '+esc(nm):''}</div><div style="font-size:28px;font-weight:800;margin-top:4px">${rp(sd)}</div><div style="font-size:12px;opacity:.85;margin-top:4px">Tabungan terpisah dari coin uang saku dan dikelola pengurus/admin.</div></div>`;
+  h+=`<div class="card" style="background:linear-gradient(135deg,#064e3b,#047857);color:#fff"><div style="font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.06em">${CHEST_SVG(20)} Saldo tabungan${st?' · '+esc(nm):''}</div><div style="font-size:28px;font-weight:800;margin-top:4px">${rp(sd)}</div></div>`;
   if(st)h+=`<div class="card"><h3>Catat transaksi tabungan</h3><label>Jenis</label><select id="tb_j" style="width:100%"><option value="setor">Setor tabungan (+)</option><option value="tarik">Tarik tabungan (−)</option></select><label>Nominal (Rp)</label><input id="tb_n" type="number" min="1" style="width:100%"><label>Keterangan</label><input id="tb_k" style="width:100%" placeholder="Contoh: setoran bulanan, beli kitab"><p><button onclick="catatTabungan()">Simpan</button></p></div>`;
   return h+`<div class="card"><h3>Riwayat tabungan</h3>`+(tx.length?tx.map(x=>`<div class="li"><span>${esc(x.ket||(x.tipe=='setor'?'Setor tabungan':'Tarik tabungan'))}<div class="mu">${tglTb(x)?fdt(tglTb(x)):''}</div></span><b style="color:${x.tipe=='setor'?'var(--ok)':'var(--rd)'}">${x.tipe=='setor'?'+':'-'}${rp(x.jumlah)}</b></div>`).join(''):(errTb?`<div class="mu" style="color:var(--rd)">Riwayat gagal dimuat: ${esc(errTb)}</div>`:'<div class="mu">Belum ada transaksi tabungan untuk santri ini.</div>'))+'</div>';
 };
@@ -3178,7 +3225,7 @@ R.penggunaaktif=async()=>{
   }
   const roleLbl=x=>x.role==='admin'?(x.is_utama?'Admin Utama':'Anggota Admin · Di bawah Admin Utama'):(x.role==='pengurus'?'Pengurus':x.role==='alumni'?'Alumni':'Wali Santri');
   return `<div id="pa_wrap"><div class="card"><h3><i class="fa-solid fa-signal" style="color:#059669"></i> Pengguna Sedang Aktif (${list.length})</h3>
-    <div class="mu" style="margin-bottom:8px">Menampilkan pengguna yang sedang membuka aplikasi secara langsung (termasuk anggota admin).</div>
+    
     <button type="button" id="online_refresh" class="sec" style="padding:6px 12px;font-size:12px" onclick="paRefresh(true)"><i class="fa-solid fa-rotate"></i> Segarkan</button>
   </div>
   <div class="card">
@@ -3574,7 +3621,7 @@ async function toggleRekamVN(){
     };
     VN_REC.start(250);
     if(btn)btn.classList.add('rec');
-    toast('Merekam… Ketuk mikrofon lagi untuk kirim.');
+    toast('Merekam…');
   }catch(e){msgBox(mediaErr(e))}
 }
 
@@ -4121,7 +4168,7 @@ R.pengaturan=async()=>{
   }catch(e){}
   const fmtSz=b=>!b?'':(b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB');
   return base+`<div class="card"><h3><i class="fa-solid fa-database" style="color:#059669"></i> Cadangan &amp; pemulihan data otomatis</h3>
-    <div class="mu">Aplikasi otomatis mencadangkan seluruh database (santri, absensi, tabungan, coin, tagihan, kesehatan, struktur, jadwal, dll.) ke penyimpanan cloud setiap hari (menyimpan 30 cadangan harian terakhir). Anda juga dapat mengunduh cadangan ke perangkat atau memulihkan data kapan saja.</div>
+    
     <p style="display:flex;gap:8px;flex-wrap:wrap">
       <button type="button" onclick="buatCadanganCloud(false)"><i class="fa-solid fa-cloud-arrow-up"></i> Cadangkan sekarang ke cloud</button>
       <button type="button" class="sec" onclick="unduhCadanganSekarang()"><i class="fa-solid fa-download"></i> Unduh file cadangan (.json)</button>
@@ -4140,12 +4187,70 @@ R.pengaturan=async()=>{
     </div>
     <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)">
       <div style="font-weight:700;font-size:13px;margin-bottom:4px">Pulihkan dari file di perangkat</div>
-      <div class="mu" style="margin-bottom:8px">Pilih file cadangan <code>.json</code> atau <code>.json.gz</code> yang pernah diunduh sebelumnya.</div>
+      
       <input id="bk_file" type="file" accept=".json,.gz,application/json,application/gzip" style="width:100%">
       <p style="margin-bottom:0"><button type="button" class="sec" onclick="pulihkanDariFile()"><i class="fa-solid fa-upload"></i> Pulihkan dari file</button></p>
     </div>
   </div>`;
 };
+
+
+/* ===== Reset aktivitas santri, latar kamera, suara cuaca & nasehat ===== */
+const RESET_TBL=['pelanggaran','sanksi_santri','kehadiran','transaksi','topup_request','tabungan','tagihan','izin','kesehatan','notifikasi'];
+async function resetAktivitasSantri(){
+  uiConfirm('Hapus SEMUA data aktivitas santri (absen, saldo/transaksi, tabungan, tagihan, pelanggaran, izin, kesehatan, notifikasi)? Data diri santri TIDAK dihapus. Tidak bisa dibatalkan — disarankan cadangkan dulu.',()=>{
+    uiConfirm('Yakin? Ini benar-benar menghapus semua aktivitas santri.',async()=>{
+      toast('Menghapus aktivitas…');const gagal=[];
+      for(const t of RESET_TBL){try{const r=await SB.from(t).delete().not('id','is',null);if(r.error&&!aqTabelHilang(r.error))gagal.push(t+': '+r.error.message)}catch(e){gagal.push(t)}}
+      if(gagal.length)msgBox('Sebagian gagal:\n'+gagal.join('\n'));else toast('Aktivitas santri berhasil direset.');
+      try{draw()}catch(e){}
+    },'Konfirmasi akhir');
+  },'Reset aktivitas santri');
+}
+const _rPengaturan2=R.pengaturan;
+R.pengaturan=async()=>{
+  const base=await _rPengaturan2();
+  if(!U.me||U.me.role!=='admin')return base;
+  return base+`<div class="card"><h3><i class="fa-solid fa-rotate" style="color:#dc2626"></i> Reset aktivitas santri</h3><p class="mu">Menghapus semua aktivitas (absen, saldo, tabungan, tagihan, pelanggaran, izin, kesehatan, notifikasi). Data diri santri tetap aman.</p><button type="button" class="dn" onclick="resetAktivitasSantri()"><i class="fa-solid fa-trash"></i> Reset data aktivitas santri</button></div>`;
+};
+/* latar kamera */
+let BGC=null;
+function bgUi(){const b=$('bgcam-btn');if(b)b.innerHTML='<i class="fa-solid fa-'+(BGC?'video':'video-slash')+'"></i>'}
+async function bgKameraToggle(){
+  if(BGC){try{BGC.getTracks().forEach(t=>t.stop())}catch(e){}BGC=null;const v=$('bgcam');if(v)v.remove();document.body.classList.remove('bgcam-on');bgUi();try{localStorage.setItem('bgcam','0')}catch(e){}return toast('Latar kamera dimatikan')}
+  try{
+    BGC=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    const v=document.createElement('video');v.id='bgcam';v.autoplay=true;v.muted=true;v.playsInline=true;v.srcObject=BGC;
+    v.style.cssText='position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;pointer-events:none';
+    document.body.appendChild(v);document.body.classList.add('bgcam-on');v.play().catch(()=>{});
+    bgUi();try{localStorage.setItem('bgcam','1')}catch(e){}toast('Latar kamera aktif');
+  }catch(e){msgBox('Kamera tidak bisa dibuka: '+(e.message||e))}
+}
+(function(){const st=document.createElement('style');st.textContent='#bgcam-btn,#suara-btn{position:fixed;right:12px;z-index:60;width:40px;height:40px;border-radius:50%;padding:0}#suara-btn{bottom:calc(182px + env(safe-area-inset-bottom,0px))}#bgcam-btn{bottom:calc(134px + env(safe-area-inset-bottom,0px))}body.lgmode #bgcam-btn{bottom:calc(62px + env(safe-area-inset-bottom,0px))}body.lgmode #suara-btn{bottom:calc(110px + env(safe-area-inset-bottom,0px))}body.mini #bgcam-btn{bottom:calc(190px + env(safe-area-inset-bottom,0px))}body.mini #suara-btn{bottom:calc(238px + env(safe-area-inset-bottom,0px))}body.bgcam-on,body.bgcam-on #v{background:transparent!important}body.bgcam-on .card{background:rgba(255,255,255,.82)!important}';document.head.appendChild(st)})();
+/* suara cuaca, nasehat & peringatan */
+const NASEHAT=['Jaga sholat lima waktu tepat pada waktunya.','Perbanyak istighfar dan dzikir hari ini.','Hormati guru dan sayangi sesama teman.','Ilmu yang bermanfaat adalah bekal terbaik, rajinlah belajar.','Jaga kebersihan, karena kebersihan sebagian dari iman.','Sabar dan syukur adalah kunci ketenangan hati.'];
+const WXT={rain:'Saat ini cuaca sedang hujan. Hati-hati di jalan, jangan lupa membawa payung, dan jaga kesehatan.',storm:'Peringatan, saat ini sedang hujan petir. Mohon menjauhi lapangan terbuka dan pohon besar, serta kurangi memakai alat elektronik.',cloud:'Saat ini cuaca mendung. Siapkan payung kalau akan keluar.',part:'Saat ini cuaca berawan. Tetap semangat beraktivitas.',clear:'Saat ini cuaca cerah. Jangan lupa minum air putih yang cukup.'};
+let SUARA={tm:null,last:''};
+function suaraBicara(teks){try{const u=new SpeechSynthesisUtterance(teks);u.lang='id-ID';u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function suaraCuaca(paksa){
+  const w=(window.WXG?WXG():{}).w||'part',t=(window.WXG?WXG():{}).tmp;
+  suaraBicara(WXT[w]+(t!=null?' Suhu sekitar '+t+' derajat.':'')+' Nasehat: '+NASEHAT[Math.floor(Math.random()*NASEHAT.length)]);
+  SUARA.last=w;
+}
+function suaraToggle(){
+  const on=localStorage.getItem('suara_cuaca')==='1';
+  if(on){clearInterval(SUARA.tm);try{speechSynthesis.cancel()}catch(e){}localStorage.setItem('suara_cuaca','0');toast('Suara cuaca & nasehat mati')}
+  else{localStorage.setItem('suara_cuaca','1');suaraCuaca();clearInterval(SUARA.tm);
+    SUARA.tm=setInterval(()=>{const w=(window.WXG?WXG():{}).w;if(w!==SUARA.last||Date.now()%(3*36e5)<6e4)suaraCuaca()},6e4);toast('Suara cuaca & nasehat aktif')}
+  suaraUi();
+}
+function suaraUi(){const b=$('suara-btn');if(b)b.innerHTML='<i class="fa-solid fa-'+(localStorage.getItem('suara_cuaca')==='1'?'volume-high':'volume-xmark')+'"></i>'}
+(function(){
+  const d=document.createElement('div');d.id='fab-extra';d.style.cssText='';
+  d.innerHTML='<button type="button" class="sec" id="bgcam-btn" title="Latar kamera" onclick="bgKameraToggle()"></button><button type="button" class="sec" id="suara-btn" title="Suara cuaca & nasehat" onclick="suaraToggle()"></button>';
+  const add=()=>{document.body.appendChild(d);suaraUi();bgUi()};
+  document.body?add():addEventListener('DOMContentLoaded',add);
+})();
 
 /* ===== MODE OFFLINE =====
    Tanpa internet: Dzikir (hitungan per akun) dan Jadwal Sholat tetap bisa dipakai.
@@ -4326,7 +4431,7 @@ function view(){B.classList.toggle('nohero',!!v.querySelector('.chat-wrap,.doc')
 new MutationObserver(function(){requestAnimationFrame(view)}).observe(v,{childList:true});view();
 addEventListener('resize',function(){if(raf)setRain(apply.rk)});
 
-getWx();apply();setInterval(apply,6e4);setInterval(getWx,18e5);
+window.WXG=function(){return WX};getWx();apply();setInterval(apply,6e4);setInterval(getWx,18e5);
 })();
 </script>
 <script id="tema-ibadah-js">
@@ -4369,7 +4474,7 @@ var Q=[
 ['لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ','Dzikir setelah salat: tiada tuhan selain Allah semata, milik-Nya segala kerajaan dan pujian, Dia Mahakuasa atas segala sesuatu.','HR. Bukhari & Muslim'],
 ['اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ وَلَا مُعْطِيَ لِمَا مَنَعْتَ','Ya Allah, tiada yang dapat menghalangi apa yang Engkau beri, dan tiada yang dapat memberi apa yang Engkau halangi.','HR. Bukhari & Muslim'],
 ['رَبِّ زِدْنِي عِلْمًا','Ya Tuhanku, tambahkanlah ilmu kepadaku.','QS. Thaha: 114']];
-var qi=0,qc=null,qFor=null,qh=$('hero'),qt=D.createElement('div');qt.id='qt';qt.title='Ketuk untuk kutipan lainnya';
+var qi=0,qc=null,qFor=null,qh=$('hero'),qt=D.createElement('div');qt.id='qt';
 function qDay(){var n=new Date(),d=Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(n.getFullYear(),0,0))/864e5);return(d*7+n.getFullYear())%QL().length}
 function QL(){return qc&&qc.length?qc:Q}
 function he(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
@@ -4400,12 +4505,24 @@ var ZD={n:0,id:'sub',t:33,snd:1,vib:1,day:'',tot:0},Z={};
 function zKey(){return'st_dz_'+((typeof U!=='undefined'&&U&&U.me&&U.me.id)?U.me.id:'tamu')}
 function zLoad(){var k=zKey();if(Z._k===k)return;var o={};for(var a in ZD)o[a]=ZD[a];try{var z0=JSON.parse(ls(k));if(z0)for(var b in z0)if(b!=='_k')o[b]=z0[b]}catch(e){}o._k=k;Z=o}
 zLoad();
-function today(){return new Date().toISOString().slice(0,10)}
+function today(){return tglLokal(0)}
+/* ---- Riwayat dzikir per hari (tanggal waktu setempat) ---- */
+function tglLokal(mundur){var d=new Date();d.setDate(d.getDate()-mundur);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function zHist(){if(!Z.hist){Z.hist={};if(Z.day&&Z.tot)Z.hist[Z.day]=Z.tot}return Z.hist}
+function zCatat(){if(!Z.hist){Z.hist={};if(Z.tot>1)Z.hist[Z.day]=Z.tot-1}Z.hist[Z.day]=(Z.hist[Z.day]||0)+1}
+function zTabel(){
+ var h=zHist(),baris=[],jml=function(n){var t=0;for(var i=0;i<n;i++)t+=h[tglLokal(i)]||0;return t};
+ for(var i=0;i<7;i++){var k=tglLokal(i);baris.push([i===0?'Hari ini':i===1?'Kemarin':new Date(k+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'short'}),h[k]||0])}
+ var semua=Object.keys(h).reduce(function(a,k){return a+h[k]},0);
+ baris.push(['Total 7 hari',jml(7),1],['Total 30 hari',jml(30),1],['Total semua',semua,1]);
+ return'<table style="width:100%"><tr><th style="text-align:left">Waktu</th><th style="text-align:right">Jumlah dzikir</th></tr>'+baris.map(function(b){return'<tr'+(b[2]?' style="font-weight:800"':'')+'><td style="text-align:left">'+b[0]+'</td><td style="text-align:right">'+b[1]+'</td></tr>'}).join('')+'</table>'}
+function zKartu(){return'<div class="card" id="dzriw"><h3>Data dzikir</h3><div id="dzhist">'+zTabel()+'</div><p style="margin:12px 0 0"><button type="button" class="dn" style="width:100%" onclick="stDz.hapus()"><i class="fa-solid fa-trash"></i> Reset data dzikir</button></p></div>'}
+function zHapus(){uiConfirm('Reset semua data dzikir akun ini?',function(){zLoad();Z.n=0;Z.tot=0;Z.day=today();Z.hist={};zSave();zUi()})}
 function zSave(){ss(Z._k||zKey(),JSON.stringify(Z))}
 function zp(){return Z.n?((Z.n-1)%Z.t+1)/Z.t:0}
-function zUi(){var n=$('dzn');if(!n)return;n.textContent=Z.n;$('dzr').style.strokeDashoffset=C*(1-zp());$('dzt').textContent=Z.tot;$('dzlap').textContent=Z.n>=Z.t?'Putaran ke-'+Math.ceil(Z.n/Z.t):'Target '+Z.t}
+function zUi(){var n=$('dzn');if(!n)return;n.textContent=Z.n;$('dzr').style.strokeDashoffset=C*(1-zp());$('dzt').textContent=Z.tot;var hb=$('dzhist');if(hb)hb.innerHTML=zTabel();$('dzlap').textContent=Z.n>=Z.t?'Putaran ke-'+Math.ceil(Z.n/Z.t):'Target '+Z.t}
 window.stDz={
- tap:function(){zLoad();var a=ac();if(Z.day!==today()){Z.day=today();Z.tot=0}Z.n++;Z.tot++;
+ tap:function(){zLoad();var a=ac();if(Z.day!==today()){Z.day=today();Z.tot=0}Z.n++;Z.tot++;zCatat();
   var m=Z.n%100,hit=Z.n%1000===0?1000:Z.n%500===0?500:m===0?100:m===33?33:m===41?41:0;
   if(Z.snd){if(hit)SND[hit]();else SND.tick()}
   if(Z.vib&&navigator.vibrate)navigator.vibrate(hit?VIB[hit]:12);
@@ -4414,9 +4531,10 @@ window.stDz={
  pick:function(id){Z.id=id;zSave();rerender()},
  tgt:function(t){Z.t=t;zSave();rerender()},
  reset:function(){Z.n=0;zSave();zUi()},
+ hapus:function(){zHapus()},
  snd:function(){Z.snd=Z.snd?0:1;if(Z.snd){ac();SND[33]()}zSave();rerender()},
  vib:function(){Z.vib=Z.vib?0:1;if(Z.vib&&navigator.vibrate)navigator.vibrate(40);zSave();rerender()}};
-function rerender(){var e=D.querySelector('.dz');if(e)e.outerHTML=dzHtml()}
+function rerender(){var e=D.querySelector('.dz');if(!e)return;var h=D.getElementById('dzriw');if(h)h.remove();e.outerHTML=dzHtml()}
 function dzHtml(){zLoad();if(Z.day!==today()){Z.day=today();Z.tot=0}var d=DZ.filter(function(x){return x[0]===Z.id})[0]||DZ[0];
  return'<div class="card dz"><div class="dzchips">'+DZ.map(function(x){return'<button type="button" class="'+(x[0]===Z.id?'on':'')+'" onclick="stDz.pick(\''+x[0]+'\')">'+x[2].split(' ').slice(0,2).join(' ')+'</button>'}).join('')+'</div>'
  +'<div class="dzar">'+d[1]+'</div><div class="dzlt">'+d[2]+'</div><div class="mu">'+d[3]+'</div>'
@@ -4424,7 +4542,7 @@ function dzHtml(){zLoad();if(Z.day!==today()){Z.day=today();Z.tot=0}var d=DZ.fil
  +'<button id="dzb" type="button" onclick="stDz.tap()" aria-label="Hitung dzikir"><span id="dzn">'+Z.n+'</span><small id="dzlap">'+(Z.n>=Z.t?'Putaran ke-'+Math.ceil(Z.n/Z.t):'Target '+Z.t)+'</small></button></div>'
  +'<div class="dzchips" style="justify-content:center">'+MS.map(function(t){return'<button type="button" class="'+(t===Z.t?'on':'')+'" onclick="stDz.tgt('+t+')">'+t+'×</button>'}).join('')+'</div>'
  +'<div class="dzrow"><button type="button" class="sec" onclick="stDz.reset()"><i class="fa-solid fa-rotate-left"></i> Ulang</button><button type="button" class="sec" onclick="stDz.snd()"><i class="fa-solid '+(Z.snd?'fa-volume-high':'fa-volume-xmark')+'"></i> Suara '+(Z.snd?'hidup':'mati')+'</button><button type="button" class="sec" onclick="stDz.vib()"><i class="fa-solid fa-mobile-screen"></i> Getar '+(Z.vib?'hidup':'mati')+'</button></div>'
- +'<p class="mu" style="margin:12px 0 0">Dzikir hari ini: <b id="dzt">'+Z.tot+'</b> · Nada lonceng berbeda di hitungan 33, 41, dan 100, berulang tiap putaran 100 (133, 141, 200, dst). Fanfare khusus di 500 dan 1000.</p></div>'}
+ +'<p class="mu" style="margin:12px 0 0">Dzikir hari ini: <b id="dzt">'+Z.tot+'</b></p></div>'+zKartu()}
 
 /* ===== Murottal ===== */
 var SR='Al-Fatihah|Al-Baqarah|Ali ‘Imran|An-Nisa’|Al-Ma’idah|Al-An’am|Al-A’raf|Al-Anfal|At-Taubah|Yunus|Hud|Yusuf|Ar-Ra’d|Ibrahim|Al-Hijr|An-Nahl|Al-Isra’|Al-Kahfi|Maryam|Thaha|Al-Anbiya’|Al-Hajj|Al-Mu’minun|An-Nur|Al-Furqan|Asy-Syu’ara’|An-Naml|Al-Qashash|Al-‘Ankabut|Ar-Rum|Luqman|As-Sajdah|Al-Ahzab|Saba’|Fathir|Yasin|Ash-Shaffat|Shad|Az-Zumar|Ghafir|Fushshilat|Asy-Syura|Az-Zukhruf|Ad-Dukhan|Al-Jatsiyah|Al-Ahqaf|Muhammad|Al-Fath|Al-Hujurat|Qaf|Adz-Dzariyat|Ath-Thur|An-Najm|Al-Qamar|Ar-Rahman|Al-Waqi’ah|Al-Hadid|Al-Mujadilah|Al-Hasyr|Al-Mumtahanah|Ash-Shaff|Al-Jumu’ah|Al-Munafiqun|At-Taghabun|Ath-Thalaq|At-Tahrim|Al-Mulk|Al-Qalam|Al-Haqqah|Al-Ma’arij|Nuh|Al-Jinn|Al-Muzzammil|Al-Muddatstsir|Al-Qiyamah|Al-Insan|Al-Mursalat|An-Naba’|An-Nazi’at|‘Abasa|At-Takwir|Al-Infithar|Al-Muthaffifin|Al-Insyiqaq|Al-Buruj|Ath-Thariq|Al-A’la|Al-Ghasyiyah|Al-Fajr|Al-Balad|Asy-Syams|Al-Lail|Adh-Dhuha|Al-Insyirah|At-Tin|Al-‘Alaq|Al-Qadr|Al-Bayyinah|Az-Zalzalah|Al-‘Adiyat|Al-Qari’ah|At-Takatsur|Al-‘Ashr|Al-Humazah|Al-Fil|Quraisy|Al-Ma’un|Al-Kautsar|Al-Kafirun|An-Nashr|Al-Lahab|Al-Ikhlas|Al-Falaq|An-Nas'.split('|');
@@ -4481,12 +4599,12 @@ try{
  IC.dzikir='fa-solid fa-hands-praying';IC.murottal='fa-solid fa-book-quran';IC.quran='fa-solid fa-book-open';
  R.dzikir=async function(){return dzHtml()};
  R.murottal=async function(){return mrHtml()};
- R.quran=async function(){return'<div class="card" style="text-align:center"><div class="dzar">القرآن الكريم</div><div class="dzlt">Al-Qur’an Digital</div><div class="mu" style="margin:6px 0 14px">Baca Al-Qur’an lengkap dari situs resmi quran.nu.or.id (butuh internet).</div><button type="button" onclick="window.open(\''+EXT.quran+'\',\'_blank\',\'noopener\')"><i class="fa-solid fa-book-open"></i> Buka Al-Qur’an</button></div>'};
+ R.quran=async function(){return'<div class="card" style="text-align:center"><div class="dzar">القرآن الكريم</div><div class="dzlt">Al-Qur’an Digital</div><button type="button" onclick="window.open(\''+EXT.quran+'\',\'_blank\',\'noopener\')"><i class="fa-solid fa-book-open"></i> Buka Al-Qur’an</button></div>'};
  /* Editor hadis beranda di Kelola konten */
  EDC.hadis=[['arab','Teks Arab (boleh kosong)','text'],['arti','Terjemahan / isi hadis','text'],['sumber','Sumber (contoh: HR. Bukhari)','text']];MAIN.hadis='arti';
  window.hdMuat=function(){var h=$('ed-hadis');if(!h)return;h.innerHTML='';Q.forEach(function(q){h.insertAdjacentHTML('beforeend',edRow('hadis',{arab:q[0],arti:q[1],sumber:q[2]}))})};
  var _rk2=R.konten;
- R.konten=async function(){var k=await getKonten();var sec=edSec('hadis','Hadis di beranda (depan masjid)','Tampil di gambar masjid pada beranda, berganti tiap hari dan bisa diketuk untuk berikutnya. Kosongkan semua baris untuk memakai hadis bawaan.',Array.isArray(k.hadis)?k.hadis:[]);sec=sec.replace('onclick="edAdd(\'hadis\')">+ Tambah baris</button>','onclick="edAdd(\'hadis\')">+ Tambah baris</button> <button type="button" class="sec" onclick="hdMuat()">Muat hadis bawaan</button>');return sec+await _rk2()};
+ R.konten=async function(){var k=await getKonten();var sec=edSec('hadis','Hadis di beranda (depan masjid)','',Array.isArray(k.hadis)?k.hadis:[]);sec=sec.replace('onclick="edAdd(\'hadis\')">+ Tambah baris</button>','onclick="edAdd(\'hadis\')">+ Tambah baris</button> <button type="button" class="sec" onclick="hdMuat()">Muat hadis bawaan</button>');return sec+await _rk2()};
  var _sk=window.simpanKonten;if(typeof _sk==='function')window.simpanKonten=async function(key){var r=await _sk.apply(this,arguments);if(key==='hadis')qLoad();return r};
 }catch(e){console.warn('Menu ibadah belum terpasang:',e)}
 })();
@@ -7070,7 +7188,7 @@ $('t5').onclick = () => {
 $('card').insertAdjacentHTML('beforeend', `<button id='tts' aria-label='Unduh suara Arab'>🗣️</button>`);
 document.body.insertAdjacentHTML(
   'beforeend',
-  `<div id='ttsd' hidden><div id='tin'><h3>🗣️ Suara Arab (Text-to-speech)</h3><div>Agar pelafalan huruf terdengar fasih berlogat Arab:</div><ol><li>Ketuk <b>Buka pengaturan TTS</b> (atau: Pengaturan → Bahasa → Text-to-speech).</li><li>Pilih mesin <b>Layanan Ucapan Google</b> → ⚙️ → <b>Instal data suara</b>.</li><li>Pilih <b>Arab</b> (Arab Saudi), lalu unduh.</li><li>Kembali ke sini dan ketuk <b>Tes suara</b>.</li></ol><div id='ttsS'></div><div class='row'><button class='opt' id='ttsA'><span>⚙️</span>Buka pengaturan TTS</button><button class='opt' id='ttsB'><span>⬇️</span>Play Store</button><button class='opt' id='ttsC'><span>🔊</span>Tes suara</button></div></div></div>`
+  `<div id='ttsd' hidden><div id='tin'><h3>🗣️ Suara Arab (Text-to-speech)</h3><div id='ttsS'></div><div class='row'><button class='opt' id='ttsA'><span>⚙️</span>Buka pengaturan TTS</button><button class='opt' id='ttsB'><span>⬇️</span>Play Store</button><button class='opt' id='ttsC'><span>🔊</span>Tes suara</button></div></div></div>`
 );
 
 function ttsStatus() {
@@ -7455,7 +7573,7 @@ showHi();
      ====================================================== */
   GAMES.run = {
     icon: '🏃', name: 'Lari Hijaiyah',
-    info: 'Geser ⬅️ ➡️ untuk pindah jalur, ⬆️ untuk lompat, ⬇️ untuk menunduk. Tangkap HURUF YANG BENAR dan hindari rintangan!',
+    info: '',
     F: 9,
     init: function () {
       var r = this;
@@ -7687,7 +7805,7 @@ showHi();
      ====================================================== */
   GAMES.shoot = {
     icon: '🎯', name: 'Tembak Huruf',
-    info: 'Ketuk (atau tahan) layar untuk menembak! Tembak gelembung HURUF YANG BENAR. Jangan sampai huruf yang dicari jatuh ke bawah.',
+    info: '',
     init: function () {
       var s = this; s.bub = []; s.bul = []; s.spawnT = 0.3; s.since = 0; s.fireT = 0; s.aim = -Math.PI / 2; s.down = false; s.px = 0; s.py = 0;
       s.stars = []; for (var k = 0; k < 50; k++) s.stars.push({ x: Math.random(), y: Math.random(), r: Math.random() * 1.6 + 0.3 });
@@ -7798,7 +7916,7 @@ showHi();
      ====================================================== */
   GAMES.snake = {
     icon: '🐍', name: 'Ular Hijaiyah',
-    info: 'Geser layar atau pakai tombol panah untuk mengarahkan ular. Makan HURUF YANG BENAR supaya ular memanjang. Dinding tembus ke sisi seberang!',
+    info: '',
     init: function () {
       var s = this; s.resize();
       var cx = (s.cols / 2) | 0, cy = (s.rows / 2) | 0;
@@ -7917,7 +8035,7 @@ showHi();
      ====================================================== */
   GAMES.balloon = {
     icon: '🎈', name: 'Pecah Balon',
-    info: 'Dengar dan lihat huruf yang dicari, lalu ketuk BALON yang benar! Jangan sampai balon yang benar terbang lepas.',
+    info: '',
     init: function () {
       var s = this; s.b = []; s.spawnT = 0.3; s.since = 0; s.clouds = [];
       for (var k = 0; k < 5; k++) s.clouds.push({ x: Math.random(), y: 0.1 + Math.random() * 0.7, s: 0.6 + Math.random() * 0.8, v: 0.01 + Math.random() * 0.02 });
@@ -7991,7 +8109,7 @@ showHi();
      ====================================================== */
   GAMES.memory = {
     icon: '🧠', name: 'Kartu Pasangan', noLives: true, noTarget: true,
-    info: 'Buka dua kartu. Cocokkan HURUF dengan GAMBAR yang namanya sama. Ingat posisi kartunya ya!',
+    info: '',
     sub: function () { return 'Ronde ' + Math.min(this.round + 1, 4) + '/4'; },
     init: function () { this.round = 0; this.sel = []; this.lock = 0; this.back = null; this.nextT = 0; this.cards = []; this.startRound(); hud(); },
     startRound: function () {
@@ -8075,7 +8193,7 @@ showHi();
      ====================================================== */
   GAMES.trace = {
     icon: '✍️', name: 'Tulis Huruf', noLives: true, noHar: true,
-    info: 'Ikuti bentuk huruf dengan jarimu. Tekan ✅ kalau sudah selesai. Yang bagus dapat bintang!',
+    info: '',
     B: 256,
     sub: function () { return '✍️'; },
     init: function () {
@@ -8223,7 +8341,7 @@ try{
   [TW,TS,TA].forEach(function(a){a.push(it)});
   TL.ngaji=it[1];
   IC.ngaji='fa-solid fa-gamepad';
-  R.ngaji=async function(){return '<div class="card" style="text-align:center"><div style="font-size:44px;color:var(--pr)"><i class="fa-solid fa-gamepad"></i></div><h3 style="margin:6px 0">Ngaji Ceria 3D</h3><div class="mu" style="margin:6px 0 14px">Belajar huruf hijaiyah sambil bermain.</div><button type="button" onclick="ngajiBuka()"><i class="fa-solid fa-play"></i> Main sekarang</button></div>'};
+  R.ngaji=async function(){return '<div class="card" style="text-align:center"><div style="font-size:44px;color:var(--pr)"><i class="fa-solid fa-gamepad"></i></div><h3 style="margin:6px 0">Ngaji Ceria 3D</h3><button type="button" onclick="ngajiBuka()"><i class="fa-solid fa-play"></i> Main sekarang</button></div>'};
 }catch(e){console.warn('Menu Ngaji Ceria belum terpasang:',e)}
 })();
 </script>
@@ -8248,6 +8366,287 @@ try{
   };
   setInterval(function(){if(U&&U.tab==='penggunaaktif'&&!document.hidden)paRefresh()},4000);
 })();
+</script>
+<script id="fitur-v10-js">
+/* ===== Instal aplikasi (PWA) ===== */
+const sudahTerpasang=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+function aturTombolInstal(){const b=$('instbtn');if(b)b.style.display=(sudahTerpasang()||(document.body.classList.contains('lgmode')))?'none':''}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__instalEv=e;aturTombolInstal()});
+window.addEventListener('appinstalled',()=>{window.__instalEv=null;const b=$('instbtn');if(b)b.style.display='none';toast('Aplikasi terpasang di layar utama.')});
+new MutationObserver(aturTombolInstal).observe(document.body,{attributes:true,attributeFilter:['class']});
+aturTombolInstal();
+async function jalankanInstal(){
+  const ev=window.__instalEv;if(!ev)return false;
+  window.__instalEv=null;
+  try{await ev.prompt();await ev.userChoice}catch(e){window.__instalEv=ev;return false}
+  return true;
+}
+/* Otomatis: jendela instal muncul pada ketukan pertama (browser mewajibkan ada ketukan pengguna) */
+let INSTAL_OTO=false;
+document.addEventListener('click',e=>{
+  if(INSTAL_OTO||!window.__instalEv||sudahTerpasang()||(e.target.closest&&e.target.closest('#instbtn')))return;
+  INSTAL_OTO=true;jalankanInstal();
+},true);
+async function pasangAplikasi(){
+  if(await jalankanInstal())return;
+  const ua=navigator.userAgent;
+  if(/iphone|ipad|ipod/i.test(ua))return msgBox('iPhone/iPad: Bagikan → Tambah ke Layar Utama.');
+  if(/FBAN|FBAV|Instagram|WhatsApp|; wv\)/i.test(ua))return msgBox('Instal tidak tersedia di browser dalam aplikasi. Buka di Chrome.');
+  if(location.protocol!=='https:'&&location.hostname!=='localhost')return msgBox('Instal gagal: alamat harus HTTPS.');
+  for(const f of ['manifest.json','sw.js','icon-192.png','icon-512.png']){
+    try{const r=await fetch(f,{cache:'no-store'});if(!r.ok||/text\/html/.test(r.headers.get('content-type')||''))return msgBox('Instal gagal: file '+f+' tidak ditemukan di server.')}
+    catch(e){return msgBox('Instal gagal: tidak ada koneksi.')}
+  }
+  msgBox('Instal belum tersedia. Aplikasi mungkin sudah terpasang, atau muat ulang halaman lalu coba lagi.');
+}
+
+/* ===== Senter (tombol tengah navigasi bawah) ===== */
+let SENTER={st:null,sibuk:false};
+function pasangSenter(){
+  const bn=$('bn');if(!bn||bn.querySelector('.senter'))return;
+  const b=document.createElement('button');b.type='button';b.className='senter';b.innerHTML='<i class="fa-solid fa-lightbulb"></i>Senter';b.onclick=toggleSenter;
+  bn.insertBefore(b,bn.children[Math.ceil(bn.children.length/2)]||null);tandaiSenter();
+}
+function tandaiSenter(){const b=document.querySelector('#bn .senter');if(b)b.classList.toggle('nyala',!!(SENTER.st||$('senter-layar')))}
+function matikanSenter(){
+  if(SENTER.st){SENTER.st.getTracks().forEach(t=>t.stop());SENTER.st=null}
+  const l=$('senter-layar');if(l)l.remove();tandaiSenter();
+}
+function senterLayar(){
+  const o=document.createElement('div');o.id='senter-layar';o.style.cssText='position:fixed;inset:0;z-index:9998;background:#fff;display:flex;align-items:flex-end;justify-content:center;padding-bottom:60px';
+  o.innerHTML='<button type="button">Matikan senter</button>';o.onclick=matikanSenter;document.body.appendChild(o);tandaiSenter();
+}
+async function toggleSenter(){
+  if(SENTER.sibuk)return;
+  if(SENTER.st||$('senter-layar'))return matikanSenter();
+  SENTER.sibuk=true;let st=null;
+  try{
+    st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+    const tr=st.getVideoTracks()[0];
+    await new Promise(r=>setTimeout(r,300));
+    await tr.applyConstraints({advanced:[{torch:true}]});
+    if(!tr.getSettings().torch&&!(tr.getCapabilities&&tr.getCapabilities().torch))throw new Error('tanpa torch');
+    SENTER.st=st;tandaiSenter();
+  }catch(e){
+    if(st)st.getTracks().forEach(t=>t.stop());
+    toast('Lampu HP tidak tersedia, memakai cahaya layar.');senterLayar();
+  }finally{SENTER.sibuk=false}
+}
+/* matikan senter bila aplikasi disembunyikan atau kamera dipakai fitur lain */
+document.addEventListener('visibilitychange',()=>{if(document.hidden)matikanSenter()});
+if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+  const asli=navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+  navigator.mediaDevices.getUserMedia=c=>{if(!SENTER.sibuk)matikanSenter();return asli(c)};
+}
+if($('bn').children.length)pasangSenter();
+
+/* ===== Lampu (flash) kamera ===== */
+async function toggleFlash(stream,btn){
+  const tr=stream&&stream.getVideoTracks()[0];
+  if(!tr)return toast('Kamera belum aktif.');
+  const cap=tr.getCapabilities?tr.getCapabilities():{};
+  if(!cap.torch)return toast('Lampu tidak didukung kamera/browser ini. Coba kamera belakang di Chrome Android.');
+  const on=btn.dataset.on!=='1';
+  try{await tr.applyConstraints({advanced:[{torch:on}]});btn.dataset.on=on?'1':'';btn.style.background=on?'#facc15':'';btn.style.color=on?'#0f172a':''}
+  catch(e){toast('Lampu gagal dinyalakan: '+(e.message||e))}
+}
+function resetFlash(){document.querySelectorAll('.tbl-flash').forEach(b=>{b.dataset.on='';b.style.background='';b.style.color=''})}
+
+/* ===== Menu baru: Aktivitas harian (absensi) & Twibbon ===== */
+TA.splice(TA.findIndex(t=>t[0]==='rekap')+1,0,['lapharian','Absensi harian']);
+[TW,TS,TA].forEach(a=>a.splice(a.length-1,0,['twibbon','Twibbon']));
+TL.lapharian='Absensi harian';TL.twibbon='Twibbon';
+IC.lapharian='fa-solid fa-calendar-check';IC.twibbon='fa-solid fa-camera-retro';
+MN.admin.find(x=>x[0]==='Laporan')[1].push('lapharian');
+['wali','pengurus','admin','alumni'].forEach(r=>MN[r].find(x=>/Info/.test(x[0]))[1].push('twibbon'));
+
+/* ---- Laporan absensi sehari-hari ---- */
+R.lapharian=async()=>{
+  if(U.me.role!=='admin')return '<div class="card">Akses khusus admin.</div>';
+  const tgl=U.lhTgl||aqNow().tgl,awal=new Date(tgl+'T00:00:00+07:00'),akhir=new Date(awal.getTime()+864e5);
+  const[rk,rp_,cfg]=await Promise.all([
+    SB.from('kehadiran').select('*').eq('tanggal',tgl).order('waktu').limit(5000),
+    SB.from('pelanggaran').select('santri_id,jenis,ket,waktu').gte('waktu',awal.toISOString()).lt('waktu',akhir.toISOString()).order('waktu').limit(5000),
+    aqCfg()]);
+  if(rk.error&&!aqTabelHilang(rk.error))throw rk.error;
+  const hadir=rk.data||[];
+  const semua=U.allSantri&&U.allSantri.length?U.allSantri:U.santri;
+  const nm=id=>(semua.find(s=>s.id==id)||{}).nama||('#'+id);
+  const namaSesi=k=>(cfg.find(x=>x.k===k)||{}).nama||aqNama(k);
+  const daftarKeg=new Set([...KG.map(k=>k[0]),...cfg.map(x=>x.nama)]);
+  const jam=v=>v?new Date(v).toLocaleTimeString('id-ID',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit'}):'-';
+  /* hanya pelanggaran yang berasal dari absensi (menu Absensi atau Absen QR) */
+  const dariAbsen=(rp_.error?ok(rp_):rp_.data||[]).filter(x=>daftarKeg.has(uraiAbsen(x.ket).keg));
+  const baris=[];
+  hadir.forEach(x=>baris.push({keg:namaSesi(x.kegiatan),id:x.santri_id,st:x.status==='hadir'?'Hadir':'Telat',w:x.waktu,via:'Absen QR'}));
+  dariAbsen.forEach(x=>{
+    const ur=uraiAbsen(x.ket),qr=ur.qr;
+    if(qr&&qr[2]==='telat'&&baris.some(b=>b.id==x.santri_id&&b.keg===qr[1]))return;
+    baris.push({keg:ur.keg,id:x.santri_id,st:ur.status?ur.status+(ur.alasan?': '+esc(ur.alasan):''):qr?(qr[2]==='telat'?'Telat':'Tidak hadir'):'Telat / tidak hadir',w:x.waktu,via:qr?'Absen QR':'Absensi manual'});
+  });
+  const g={};baris.forEach(b=>(g[b.keg]=g[b.keg]||[]).push(b));
+  const urut=Object.keys(g).sort((a,b)=>String(g[a][0].w).localeCompare(String(g[b][0].w)));
+  const n=f=>baris.filter(f).length;
+  return `<div class="card noprint"><h3>Absensi harian</h3><div class="row"><input type="date" value="${tgl}" onchange="U.lhTgl=this.value;draw()"><button onclick="cetakHalaman()">Cetak / simpan PDF</button></div></div><div class="card print-rekap"><h3>PPP. AL-AS’ADIYAH · Absensi ${tgl}</h3>
+  <div class="mu">Hadir ${n(b=>b.st==='Hadir')} · Telat ${n(b=>b.st==='Telat')} · Tidak hadir ${n(b=>b.st==='Tidak hadir')} · Absensi manual (telat/tidak hadir) ${n(b=>b.st==='Telat / tidak hadir')} · Beralasan ${n(b=>/^(Izin|Sakit|Alasan lain)/.test(b.st))}</div>`
+  +(urut.length?urut.map(k=>`<h3 style="margin-top:14px">${esc(k)} <span class="mu">(${g[k].length})</span></h3><div class="scroll" style="overflow-x:auto"><table><tr><th>Santri</th><th>Status</th><th>Jam catat</th><th>Sumber</th></tr>${g[k].map(b=>`<tr><td>${esc(nm(b.id))}</td><td>${b.st}</td><td>${jam(b.w)}</td><td>${b.via}</td></tr>`).join('')}</table></div>`).join(''):'<p class="mu">Belum ada absensi pada tanggal ini.</p>')+'</div>';
+};
+
+/* ---- Twibbon: kamera / unggah foto + bingkai + unduh ---- */
+const TWB_UKURAN=[['asli','Sesuai ukuran frame'],['1080x1080','Persegi 1:1 (1080×1080)'],['1080x1350','Potret 4:5 (1080×1350)'],['1080x1440','Potret 3:4 (1080×1440)'],['1080x1920','Story 9:16 (1080×1920)'],['1920x1080','Lanskap 16:9 (1920×1080)'],['2480x3508','A4 potret (2480×3508)']];
+let TWB={st:null,mode:'user',foto:null,frame:null,w:1080,h:1080,z:1,x:0,y:0,run:0};
+async function twbDaftar(){const r=await SB.from('konten').select('nilai').eq('kunci','twibbon').maybeSingle();if(r.error)throw r.error;return Array.isArray(r.data&&r.data.nilai)?r.data.nilai:[]}
+const twbUrl=p=>SB.storage.from('aset').getPublicUrl(p).data.publicUrl;
+function twbStopKamera(){if(TWB.st){TWB.st.getTracks().forEach(t=>t.stop());TWB.st=null}TWB.video=null;resetFlash()}
+R.twibbon=async()=>{
+  twbStopKamera();
+  const list=await twbDaftar(),adm=U.me.role==='admin';U.twbList=list;
+  if(!list.some(f=>f.path===U.twbPilih))U.twbPilih=list[0]?list[0].path:null;
+  setTimeout(twbMulai,0);
+  return `<div class="card"><h3>Twibbon</h3>
+  <label>Pilih frame</label><select id="twb_sel" style="width:100%" onchange="U.twbPilih=this.value;twbMuatFrame()">${list.length?list.map(f=>`<option value="${esc(f.path)}"${f.path===U.twbPilih?' selected':''}>${esc(f.nama)} (${f.w}×${f.h})</option>`).join(''):'<option value="">Belum ada frame</option>'}</select>
+  <canvas id="twb_cv" width="1080" height="1080" style="display:block;max-width:100%;max-height:65vh;margin:12px auto;background:#cbd5e1;border-radius:12px;touch-action:none;cursor:move"></canvas>
+  <label>Perbesar foto</label><input type="range" min="0.5" max="3" step="0.01" value="1" style="width:100%" oninput="TWB.z=+this.value">
+  
+  <div class="row" style="flex-wrap:wrap;margin-top:10px"><button type="button" onclick="twbKamera()"><i class="fa-solid fa-camera"></i> Kamera</button><button type="button" class="sec" onclick="twbPutar()"><i class="fa-solid fa-camera-rotate"></i> Putar</button><button type="button" class="sec tbl-flash" onclick="toggleFlash(TWB.st,this)"><i class="fa-solid fa-bolt"></i> Lampu</button><button type="button" onclick="twbJepret()"><i class="fa-solid fa-circle-dot"></i> Jepret</button></div>
+  <div class="row" style="flex-wrap:wrap;margin-top:10px"><button type="button" class="sec" onclick="document.getElementById('twb_file').click()"><i class="fa-solid fa-upload"></i> Unggah foto</button><button type="button" onclick="twbUnduh()"><i class="fa-solid fa-download"></i> Download</button></div>
+  <input id="twb_file" type="file" accept="image/*" style="display:none" onchange="twbFoto(this)"></div>`
+  +(adm?`<div class="card"><h3>Upload frame (admin)</h3><label>Nama frame</label><input id="twb_nm" style="width:100%"><label>Ukuran</label><select id="twb_uk" style="width:100%">${TWB_UKURAN.map(u=>`<option value="${u[0]}">${u[1]}</option>`).join('')}</select><label>File frame</label><input id="twb_ff" type="file" accept="image/png,image/webp" style="width:100%"><p><button type="button" onclick="twbUploadFrame(this)">Simpan frame</button></p>${list.map(f=>`<div class="li"><span><b>${esc(f.nama)}</b><div class="mu">${f.w}×${f.h}</div></span><button type="button" class="dn" onclick="twbHapusFrame('${esc(f.path)}')">Hapus</button></div>`).join('')}</div>`:'');
+};
+function twbMulai(){
+  const cv=$('twb_cv');if(!cv)return;
+  TWB.foto=null;TWB.frame=null;TWB.z=1;TWB.x=TWB.y=0;
+  let tarik=null;
+  cv.onpointerdown=e=>{tarik={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)};
+  cv.onpointermove=e=>{if(!tarik)return;const k=cv.width/cv.getBoundingClientRect().width;TWB.x+=(e.clientX-tarik.x)*k;TWB.y+=(e.clientY-tarik.y)*k;tarik={x:e.clientX,y:e.clientY}};
+  cv.onpointerup=cv.onpointercancel=()=>{tarik=null};
+  twbMuatFrame();
+  const run=++TWB.run;
+  const loop=()=>{if(run!==TWB.run)return;if(!cv.isConnected){twbStopKamera();return}twbGambar(cv);requestAnimationFrame(loop)};
+  loop();
+}
+function twbMuatFrame(){
+  const f=(U.twbList||[]).find(y=>y.path===U.twbPilih);
+  TWB.frame=null;TWB.w=f?f.w:1080;TWB.h=f?f.h:1080;
+  const cv=$('twb_cv');if(cv){cv.width=TWB.w;cv.height=TWB.h}
+  if(!f)return;
+  const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{if(U.twbPilih===f.path)TWB.frame=im};im.onerror=()=>toast('Frame gagal dimuat.');im.src=twbUrl(f.path);
+}
+function twbGambar(cv){
+  const x=cv.getContext('2d'),W=cv.width,H=cv.height;x.clearRect(0,0,W,H);
+  const v=TWB.video,src=v&&v.videoWidth?v:TWB.foto;
+  if(src){
+    const sw=src.videoWidth||src.width,sh=src.videoHeight||src.height,k=Math.max(W/sw,H/sh)*TWB.z;
+    x.save();x.translate(W/2+TWB.x,H/2+TWB.y);if(src===v&&TWB.mode==='user')x.scale(-1,1);x.drawImage(src,-sw*k/2,-sh*k/2,sw*k,sh*k);x.restore();
+  }
+  if(TWB.frame)x.drawImage(TWB.frame,0,0,W,H);
+}
+async function twbKamera(){
+  twbStopKamera();
+  try{
+    let st;
+    try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:TWB.mode},width:{ideal:1920},height:{ideal:1080}}})}
+    catch(e){st=await navigator.mediaDevices.getUserMedia({video:true})}
+    if(!$('twb_cv')){st.getTracks().forEach(t=>t.stop());return}
+    const v=document.createElement('video');v.muted=true;v.playsInline=true;v.srcObject=st;await v.play();
+    TWB.st=st;TWB.video=v;TWB.foto=null;
+  }catch(e){msgBox('Kamera tidak bisa dibuka: '+(e.message||e))}
+}
+function twbPutar(){TWB.mode=TWB.mode==='user'?'environment':'user';if(TWB.st)twbKamera();else toast(TWB.mode==='user'?'Kamera depan':'Kamera belakang')}
+function twbJepret(){
+  const v=TWB.video;if(!v||!v.videoWidth)return msgBox('Nyalakan kamera dulu.');
+  const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const x=c.getContext('2d');
+  if(TWB.mode==='user'){x.translate(c.width,0);x.scale(-1,1)}x.drawImage(v,0,0);
+  twbStopKamera();TWB.foto=c;toast('Foto diambil.');
+}
+async function twbFoto(el){
+  const f=el.files[0];if(!f)return;
+  try{const c=await imgCv(f,2560);twbStopKamera();TWB.foto=c;TWB.x=TWB.y=0}catch(e){msgBox(e.message)}
+  el.value='';
+}
+function twbUnduh(){
+  const cv=$('twb_cv');if(!cv)return;
+  if(!TWB.foto&&!(TWB.video&&TWB.video.videoWidth))return msgBox('Ambil foto atau unggah foto dulu.');
+  if(U.twbPilih&&!TWB.frame)return msgBox('Frame masih dimuat, coba lagi sebentar.');
+  twbGambar(cv);
+  try{cv.toBlob(b=>{if(!b)return msgBox('Gagal membuat gambar.');const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='twibbon-'+Date.now()+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)},'image/png')}
+  catch(e){msgBox('Gagal mengunduh: '+e.message)}
+}
+async function twbUploadFrame(btn){
+  if(U.me.role!=='admin')return;
+  const f=$('twb_ff').files[0];if(!f)return msgBox('Pilih file frame dulu.');
+  btn.disabled=true;
+  try{
+    const uk=$('twb_uk').value;let c=await imgCv(f,uk==='asli'?2560:4096);
+    if(uk!=='asli'){const[w,h]=uk.split('x').map(Number),o=document.createElement('canvas');o.width=w;o.height=h;
+      if(Math.abs(c.width/c.height-w/h)>0.02)toast('Rasio frame berbeda dengan ukuran pilihan, gambar disesuaikan (direntangkan).');
+      o.getContext('2d').drawImage(c,0,0,w,h);c=o}
+    const bl=await new Promise(r=>c.toBlob(r,'image/png')),path='twibbon-'+Date.now()+'.png';
+    const up=await SB.storage.from('aset').upload(path,bl,{contentType:'image/png'});if(up.error)throw up.error;
+    const list=(await twbDaftar()).concat({path,nama:$('twb_nm').value.trim()||'Frame '+new Date().toLocaleDateString('id-ID'),w:c.width,h:c.height});
+    const r=await SB.from('konten').upsert({kunci:'twibbon',nilai:list,diubah:new Date().toISOString()});if(r.error)throw r.error;
+    U.twbPilih=path;U._kc=null;toast('Frame disimpan.');draw();
+  }catch(e){btn.disabled=false;msgBox('Gagal upload frame: '+(e.message||e))}
+}
+function twbHapusFrame(path){
+  if(U.me.role!=='admin')return;
+  uiConfirm('Hapus frame ini?',async()=>{
+    try{
+      const list=(await twbDaftar()).filter(f=>f.path!==path);
+      const r=await SB.from('konten').upsert({kunci:'twibbon',nilai:list,diubah:new Date().toISOString()});if(r.error)throw r.error;
+      await SB.storage.from('aset').remove([path]);U._kc=null;toast('Frame dihapus.');draw();
+    }catch(e){msgBox(e.message||String(e))}
+  });
+}
+
+/* ===== Edit absensi (dengan alasan pendukung) ===== */
+const STATUS_ABSEN=['Izin','Sakit','Alasan lain'];
+/* ket absensi: "Kegiatan", "Kegiatan (telat|tidak hadir, absen QR)", atau hasil edit "... · Izin: alasan" */
+function uraiAbsen(ket){
+  let dasar=String(ket||''),status='',alasan='';
+  const m=/^(.*?) · (Izin|Sakit|Alasan lain): ([\s\S]*)$/.exec(dasar);
+  if(m){dasar=m[1];status=m[2];alasan=m[3]}
+  const qr=/^(.*) \((telat|tidak hadir), absen QR\)$/.exec(dasar);
+  return{dasar,keg:qr?qr[1]:dasar,qr,status,alasan};
+}
+async function jenisAsliAbsen(keg){const k=KG.find(x=>x[0]===keg);if(k)return k[1];const c=(await aqCfg()).find(x=>x.nama===keg);return(c&&c.jenis)||'lain'}
+async function kartuEditAbsen(){
+  const tgl=U.eaTgl||aqNow().tgl,awal=new Date(tgl+'T00:00:00+07:00'),akhir=new Date(awal.getTime()+864e5);
+  const kepala=`<div class="card"><h3>Edit absensi</h3><input type="date" value="${tgl}" onchange="U.eaTgl=this.value;draw()" style="width:100%">`;
+  const r=await SB.from('pelanggaran').select('id,santri_id,jenis,ket,waktu').gte('waktu',awal.toISOString()).lt('waktu',akhir.toISOString()).order('waktu',{ascending:false}).limit(1000);
+  if(r.error)return kepala+`<div class="mu">Gagal memuat: ${esc(r.error.message)}</div></div>`;
+  const nama=new Set([...KG.map(k=>k[0]),...(await aqCfg()).map(x=>x.nama)]);
+  const rows=(r.data||[]).filter(x=>nama.has(uraiAbsen(x.ket).keg));
+  U.eaRows=rows;
+  const nm=id=>((U.allSantri||[]).concat(U.santri).find(s=>s.id==id)||{}).nama||('#'+id);
+  return kepala+(rows.length?`<div class="absen-box">${rows.map(x=>{const u=uraiAbsen(x.ket);return `<div class="li"><span><b>${esc(nm(x.santri_id))}</b><div class="mu">${esc(u.keg)} · ${u.status?esc(u.status+': '+u.alasan):'Telat / tidak hadir'}</div></span><button type="button" class="sec" onclick="editAbsen(${x.id})"><i class="fa-solid fa-pen"></i> Edit</button></div>`}).join('')}</div>`:'<div class="mu" style="margin-top:8px">Tidak ada catatan absensi pada tanggal ini.</div>')+'</div>';
+}
+const _absensiAsli=R.absensi;
+R.absensi=async()=>{const[a,b]=await Promise.all([_absensiAsli(),kartuEditAbsen()]);return a+b};
+function editAbsen(id){
+  const x=(U.eaRows||[]).find(y=>y.id==id);if(!x)return;
+  const u=uraiAbsen(x.ket),nm=((U.allSantri||[]).concat(U.santri).find(s=>s.id==x.santri_id)||{}).nama||('#'+x.santri_id);
+  const lama=$('ea-ov');if(lama)lama.remove();
+  const ov=document.createElement('div');ov.id='ea-ov';ov.className='mdl-ov';
+  ov.innerHTML=`<div class="mdl-box"><h4>Edit absensi</h4><div><b>${esc(nm)}</b> · ${esc(u.keg)}</div>
+  <label>Status</label><select id="ea_st" style="width:100%"><option value="">Telat / tidak hadir (tanpa alasan)</option>${STATUS_ABSEN.map(v=>`<option${u.status===v?' selected':''}>${v}</option>`).join('')}<option value="hadir">Hadir (hapus catatan)</option></select>
+  <label>Alasan pendukung</label><textarea id="ea_al" rows="3" style="width:100%">${esc(u.alasan)}</textarea>
+  <div class="mdl-acts"><button type="button" class="sec" id="ea_batal">Batal</button><button type="button" id="ea_simpan">Simpan</button></div></div>`;
+  document.body.appendChild(ov);
+  $('ea_batal').onclick=()=>ov.remove();
+  $('ea_simpan').onclick=async()=>{
+    const st=$('ea_st').value,al=$('ea_al').value.trim();
+    if(STATUS_ABSEN.includes(st)&&!al)return msgBox('Isi alasan pendukung.');
+    const btn=$('ea_simpan');btn.disabled=true;
+    try{
+      const q=st==='hadir'?SB.from('pelanggaran').delete().eq('id',id):SB.from('pelanggaran').update(st?{jenis:'lain',ket:u.dasar+' · '+st+': '+al}:{jenis:await jenisAsliAbsen(u.keg),ket:u.dasar}).eq('id',id);
+      const r=await q.select('id');
+      if(r.error)throw r.error;
+      if(!r.data||!r.data.length)throw new Error('Perubahan ditolak. Periksa izin UPDATE/DELETE tabel pelanggaran di Supabase.');
+      ov.remove();toast('Absensi diperbarui.');draw();
+    }catch(e){btn.disabled=false;msgBox(e.message||String(e))}
+  };
+}
 </script>
 </body>
 </html>
