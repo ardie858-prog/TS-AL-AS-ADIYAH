@@ -145,6 +145,7 @@ body.lgmode #bn{display:none}
 main{padding-bottom:96px}
 /* ===== Kartu santri (hijau & emas) 85,6 x 54 mm ===== */
 .kw{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0}
+.kbx{display:none!important}
 .kcard{position:relative;font-size:9.4px;width:34em;height:21.4em;border-radius:1.3em;overflow:hidden;flex:none;color:#fff;background:linear-gradient(135deg,#0c4a34,#14532d 55%,#0a3a28);box-shadow:0 4px 14px rgba(0,0,0,.25);font-family:'Plus Jakarta Sans',system-ui,sans-serif;display:flex;flex-direction:column;-webkit-text-size-adjust:none;text-size-adjust:none;letter-spacing:normal;word-spacing:normal}
 .kcard .kpat{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
 .kcard .kpat svg{width:100%;height:100%;display:block}
@@ -256,6 +257,8 @@ main{padding-bottom:96px}
   .kcard,.kcard *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;-webkit-text-size-adjust:none!important;text-size-adjust:none!important}
   .kcard{width:85.6mm!important;height:54mm!important;font-size:2.517mm!important;box-shadow:none!important;border-radius:3mm!important;break-inside:avoid;letter-spacing:normal!important;word-spacing:normal!important}
   .kw{gap:6mm;break-inside:avoid}
+  .kbx{display:flex!important}
+  #bgcam-btn,#suara-btn,#fab-extra{display:none!important}
   body.print-only header,
   body.print-only #bn,
   body.print-only .tabs,
@@ -2467,6 +2470,7 @@ ${st?`<div class="row" style="flex-wrap:wrap;gap:8px">
     h+=`<div class="kw">`+list.map(s=>kartuHtml(s,kc,fotoDariMap(fo,s.foto_path),im,false,'f')).join('')+`</div>`;
     h+=`<div class="card noprint"><h3>Contoh sisi belakang</h3></div>`;
     h+=kartuHtml(list[0],kc,fotoDariMap(fo,list[0].foto_path),im,adm,'b');
+    h+=`<div class="kw kbx">`+list.slice(1).map(s=>kartuHtml(s,kc,fotoDariMap(fo,s.foto_path),im,false,'b')).join('')+`</div>`;
   }
   return h;
 };
